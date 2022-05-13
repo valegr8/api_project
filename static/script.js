@@ -13,6 +13,14 @@ var counter = 0;
         
         //console.log(data);
         
+        var tableHeaderRowCount = 0;
+        var rowCount = table.rows.length;
+        for (var i = tableHeaderRowCount; i < rowCount; i++) {
+            table.deleteRow(tableHeaderRowCount);
+        }
+        
+        counter = 0;
+        
         return data.map(function(house) { // Map through the results and for each run the code below
             
             // let houseId = house.self.substring(house.self.lastIndexOf('/') + 1);
