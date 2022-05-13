@@ -43,7 +43,7 @@ app.post('/house', (req, res) => {
     res.send('House added to the database');
     res.status(201);
     
-    res.location("/houses/" + product.id);
+    res.location("/houses/" + house.id);
 });
 
 //HOUSE LIST
