@@ -4,6 +4,8 @@ const app = express();
 
 const users = require('./users.js');
 const listings = require('./listings.js');
+const authentication = require('./authentication.js');
+const tokenChecker = require('./tokenChecker.js');
 
 
 /**
@@ -18,6 +20,11 @@ app.use(express.urlencoded({ extended: true }));
  */
 app.use('/', express.static('static'));
 
+
+/**
+ * Authentication routing and middleware
+ */
+ app.use('/api/v1/authentications', authentication);
 
 /**
  * Resource routing

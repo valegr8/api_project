@@ -30,6 +30,16 @@
             </div>
         </form>
     </div>
+
+    <br><br>
+
+    <form action="api/v1/students" method="post" name="loginform" id="loginform">
+      <span>Utente collegato:</span>
+      <span id="loggedUser"></span>
+      <input name="email" value="email" id="loginEmail"/>
+      <input name="email" value="password" id="loginPassword"/>
+      <button type="button" onclick="login()">LogIn</button>
+    </form>
     <!-- Optional JavaScript -->
     <script src="script.js"></script> 
     <!-- Option 1: Bootstrap Bundle with Popper -->
