@@ -1,13 +1,13 @@
 var counter = 0;
 /**
- * This function refresh the list of houses
+ * This function refresh the list of listings
  */
- function loadHouses() {
+ function loadListings() {
 
-    const table = document.getElementById('houses'); // Get the list where we will place our houses
+    const table = document.getElementById('listings'); // Get the list where we will place our listings
     
 
-    fetch('/houses')
+    fetch('../api/v1/listings')
     .then((resp) => resp.json()) // Transform the data into json
     .then(function(data) { // Here you get the data to modify as you please
         
@@ -21,13 +21,13 @@ var counter = 0;
         
         counter = 0;
         
-        return data.map(function(house) { // Map through the results and for each run the code below
+        return data.map(function(listing) { // Map through the results and for each run the code below
             
-            // let houseId = house.self.substring(house.self.lastIndexOf('/') + 1);
+            // let listingId = listing.self.substring(listing.self.lastIndexOf('/') + 1);
             var row = table.insertRow();
             counter++;
             row.insertCell(0).innerHTML = counter;
-            row.insertCell(1).innerHTML = `<a href="${house.self}">${house.name}</a>`;
+            row.insertCell(1).innerHTML = `<a href="${listing.self}">${listing.title}</a>`;
         })
     })
     .catch( error => console.error(error) );// If there is any error you will catch them here
@@ -36,25 +36,25 @@ var counter = 0;
 
 
 /**
- * This function is called by clicking on the "insert house" button.
- * It creates a new house given the specified name,
- * and force the refresh of the whole list of houses.
+ * This function is called by clicking on the "insert listing" button.
+ * It creates a new listing given the specified title,
+ * and force the refresh of the whole list of listings.
  */
- function insertHouse()
+ function insertListing()
  {
-    //get the house name
-    var houseName = document.getElementById("houseName").value;
+    //get the listing title
+    var listingTitle = document.getElementById("listingTitle").value;
 
-    console.log(houseName);
+    console.log(listingTitle);
 
-    fetch('/house', {
+    fetch('../api/v1/listings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify( { name: houseName } ),
+        body: JSON.stringify( { title: listingTitle } ),
     })
     .then((resp) => {
         console.log(resp);
-        loadHouses();
+        loadListings();
         return;
     })
     .catch( error => console.error(error) ); // If there is any error you will catch them here
