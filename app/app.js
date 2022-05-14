@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 
+const annunci = require('./annunci.js');
+
 //documentation
 // const swaggerUi = require('swagger-ui-express');
 // const swaggerDocument = require('./swagger.json');
@@ -46,12 +48,11 @@ app.post('/house', (req, res) => {
     res.location("/houses/" + house.id);
 });
 
-//HOUSE LIST
-app.get('/houses', (req, res) => {
-    res.json(houses);
-});
 
-//HOUSE BY ISBN
+//lista degli annunci
+app.get('/api/v1/annunci', annunci);
+
+//singolo annuncio
 app.get('/house/:id', (req, res) => {
 
     const id = req.params.id;
