@@ -22,7 +22,11 @@ app.use('/', express.static('static'));
 /**
  * Resource routing
  */
-app.use('/api/v1/listings', listings);
+ //api per la collezione
+ //di annunci
+app.use('/api/v1/posts/', listings);
+
+
 app.use('/api/v1/users', users);
 
 
