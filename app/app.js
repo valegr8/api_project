@@ -1,5 +1,8 @@
 const express = require('express');
 const app = express();
+
+//set public folder as static to access its content
+app.use(express.static(__dirname+'../../public'));
 // const bodyParser = require('body-parser');
 
 const users = require('./users.js');

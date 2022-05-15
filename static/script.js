@@ -112,31 +112,42 @@
   */
  function login()
  {
-     //get the form object
-     var email = document.getElementById("loginEmail").value;
-     var password = document.getElementById("loginPassword").value;
-     // console.log(email);
+    //get the form object
+    var email = document.getElementById("loginEmail").value;
+    var password = document.getElementById("loginPassword").value;
  
-     fetch('../api/v1/authentications', {
-         method: 'POST',
-         headers: { 'Content-Type': 'application/json' },
-         body: JSON.stringify( { email: email, password: password } ),
-     })
-     .then((resp) => resp.json()) // Transform the data into json
-     .then(function(data) { // Here you get the data to modify as you please
-         //console.log(data);
-         loggedUser.token = data.token;
-         loggedUser.email = data.email;
-         loggedUser.id = data.id;
-         loggedUser.self = data.self;
-         // loggedUser.id = loggedUser.self.substring(loggedUser.self.lastIndexOf('/') + 1);
-         document.getElementById("loggedUser").innerHTML = loggedUser.email;
-         if (document.getElementById("loggedUser").innerHTML == "undefined") {
-             document.getElementById("loggedUser").innerHTML = "utente non esiste";
-         }
-         return;
-     })
-     .catch( error => console.error(error) ); // If there is any error you will catch them here
+    fetch('../api/v1/authentications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify( { email: email, password: password } ),
+    })
+    .then((resp) => resp.json()) // Transform the data into json
+    .then(function(data) {       // Here you get the data to modify as you please
+        //check if the login is correct
+        if (data.email == undefined) 
+        {
+            const alert = document.createElement("div");
+            alert.setAttribute('class', 'alert alert-danger alert-dismissible fade show');
+            alert.setAttribute('role', 'alert');
+            alert.innerHTML = "Nome utente o password errati. \
+                                                      <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>";
+            const main_div = document.getElementById("main_div");
+            main_div.appendChild(alert);
+        } else 
+        {
+            loggedUser.token = data.token;
+            loggedUser.email = data.email;
+            loggedUser.id = data.id;
+            loggedUser.self = data.self;
+
+            //disable login button
+            document.getElementById("login").disabled = true; 
+            //enable logout button
+            document.getElementById("logout").disabled = false; 
+        }
+        return;
+    })
+    .catch( error => console.error(error) ); // If there is any error you will catch them here
  
  }
  
