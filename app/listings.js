@@ -6,17 +6,27 @@ const u = require('../utils/comode.js');
 
 //get collezione di annunci
 router.get('', async (req, res) => {
-    let listings = await Listing.find({});
-    listings = listings.map( (listing) => {
+    let posts = await Listing.find({});
+    posts = posts.map( (post) => {
         return {
-            self: '/api/v1/posts/' + listing.id,
-            title: listing.title
+            self: '/api/v1/posts/' + post.id,
+            title: post.title
         };
     });
-    u.rispondiGet(listings,res);
+    u.rispondiGet(posts,res);
 });
 
-//gli altri metodi verranno dopo
+router.get('/:id', async (req, res) => {
+    let post = await Listing.findById(req.params.id);
+	
+    u.rispondiGet({
+        self: '/api/v1/posts/' + post.id,
+        title: post.title
+    },res);
+});
+
+//gli altri metodi verranno
+//implementati più tardi
 
 
 module.exports = router;
