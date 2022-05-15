@@ -11,6 +11,10 @@ u.rispondiGet = (o,res) => {
 		res.status(404).json('Not Found');
 };
 
+u.notAllowed = (res) => {
+	res.status(405).json('Method Not Allowed');
+};
+
 //comoda per il debugging
 u.printd = (a) => {
 	console.log(a);//da migliorare
