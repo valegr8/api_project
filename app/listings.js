@@ -16,6 +16,19 @@ router.get('', async (req, res) => {
     u.rispondiGet(posts,res);
 });
 
+//la cancellazione dell'intera
+//collezione non è permessa.
+router.delete('', async (req, res) => {
+	u.notAllowed(res);
+});
+
+router.put('', async (req, res) => {
+	u.notAllowed(res);
+});
+
+//-----------
+
+//get singolo annuncio per id
 router.get('/:id', async (req, res) => {
     let post = await Listing.findById(req.params.id);
 	
