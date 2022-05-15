@@ -24,7 +24,7 @@ app.use('/', express.static('static'));
 /**
  * Authentication routing and middleware
  */
- app.use('/api/v1/authentications', authentication);
+app.use('/api/v1/authentications', authentication);
 
 /**
  * Resource routing
