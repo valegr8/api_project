@@ -17,10 +17,34 @@ u.notAllowed = (res) => {
 	res.status(405).json('Method Not Allowed');
 };
 
+//invia una risposta http
+//con codice di errore 400
+u.badRequest = (res) => {
+	res.status(400).json('Bad Request');
+};
+
+//invia una risposta http
+//con codice di errore 404
+u.notFound = (res) => {
+	res.status(404).json('Not Found');
+};
+
 //comoda per il debugging
 u.printd = (a) => {
-	console.log(a);//da migliorare
+	console.log(a);
 };
+
+//controlla la validità
+//dei parametri :id
+u.isIdValid = (id) => {
+	let r = true;
+	if(!id){
+		r = false;
+	}else if(id && (isNaN(parseInt(id)))){
+		r = false;
+	}
+	return r;
+}
 
 //utile per le risposte alle
 //richieste get

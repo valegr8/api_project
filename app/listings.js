@@ -34,9 +34,17 @@ router.put('', async (req, res) => {
 
 //get singolo annuncio per id
 router.get('/:id', async (req, res) => {
-	let query = {app_id : req.params.id};
-    let post = await Listing.findOne(query).where('app_id').equals(query.app_id);
-    u.rispondiGet(post,res);
+	let condizione = u.isIdValid(req.params.id);
+	if(!condizione){
+		u.badRequest(res);
+	}else{
+		let query = {app_id : req.params.id};
+		let post = await Listing.findOne(query).where('app_id').equals(query.app_id).exec().then((post)=>{
+			u.rispondiGet(post,res);
+		}).catch((e) => {
+			u.notFound(res);
+		});
+	}
 });
 
 //gli altri metodi verranno
