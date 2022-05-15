@@ -6,12 +6,11 @@ const u = require('../utils/comode.js');
 
 //get collezione di annunci
 router.get('', async (req, res) => {
-    let posts = await Listing.find({});
+    let posts = await Listing.find({});	
     posts = posts.map( (post) => {
-        return {
-            self: '/api/v1/posts/' + post.id,
-            title: post.title
-        };
+		let s = '/api/v1/posts/' + post.toObject().app_id;
+		let r = u.addProp(post,'location',s);		
+        return r;
     });
     u.rispondiGet(posts,res);
 });
@@ -33,7 +32,7 @@ router.get('/:id', async (req, res) => {
     let post = await Listing.findById(req.params.id);
 	
     u.rispondiGet({
-        self: '/api/v1/posts/' + post.id,
+        self: '/api/v1/posts/' + post.app_id,
         title: post.title
     },res);
 });
