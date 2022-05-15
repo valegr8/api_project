@@ -19,11 +19,11 @@
         </a>
         <div class="btn-group btn-group-lg" role="group" aria-label="...">
           <button class="btn btn-light" onclick="loadListings()">Annunci</button>
-          <button class="btn btn-light" onclick="newListingPage()">Crea</button>
-          <button class="btn btn-light" onclick="registerPage()">Registrati</button>
+          <button id="create" class="btn btn-light" onclick="newListingPage()" disabled>Crea</button>
+          <button id="register" class="btn btn-light" onclick="registerPage()">Registrati</button>
           <button id="login" class="btn btn-light" onclick="loginPage()">LogIn</button>
           <button id="logout" class="btn btn-light" onclick="logout()" disabled>LogOut</button>
-          <span id="loggedUser"></span>
+          <span id="user"></span>
         </div>
       </div>
     </div>

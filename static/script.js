@@ -144,6 +144,13 @@
             document.getElementById("login").disabled = true; 
             //enable logout button
             document.getElementById("logout").disabled = false; 
+            //enable create button
+            document.getElementById("create").disabled = false; 
+            //disable register button
+            document.getElementById("register").disabled = true; 
+
+            //show username on top of the page
+            document.getElementById("user").innerHTML = loggedUser.email;
         }
         return;
     })
