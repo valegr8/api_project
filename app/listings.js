@@ -4,6 +4,11 @@ const Listing = require('./models/listing'); // get our mongoose model
 
 const u = require('../utils/comode.js');
 
+//Nota per le modifiche future:
+//Lo schema delle collezione nel cloud
+//deve concordare con quello di
+//models/listings
+
 //get collezione di annunci
 router.get('', async (req, res) => {
     let posts = await Listing.find({});	
@@ -29,12 +34,17 @@ router.put('', async (req, res) => {
 
 //get singolo annuncio per id
 router.get('/:id', async (req, res) => {
-    let post = await Listing.findById(req.params.id);
-	
-    u.rispondiGet({
-        self: '/api/v1/posts/' + post.app_id,
-        title: post.title
-    },res);
+	let condizione = u.isIdValid(req.params.id);
+	if(!condizione){
+		u.badRequest(res);
+	}else{
+		let query = {app_id : req.params.id};
+		let post = await Listing.findOne(query).where('app_id').equals(query.app_id).exec().then((post)=>{
+			u.rispondiGet(post,res);
+		}).catch((e) => {
+			u.notFound(res);
+		});
+	}
 });
 
 //gli altri metodi verranno
