@@ -3,7 +3,7 @@ const router = express.Router();
 // get mongoose model
 const Listing = require('./models/post'); 
 
-const u = require('../utils/comode.js');
+const u = require('../utils/utils.js');
 
 //Nota per le modifiche future:
 //Lo schema delle collezione nel cloud
@@ -20,7 +20,7 @@ router.get('', async (req, res) => {
 		let r = u.addProp(post,'location',s);		
         return r;
     });
-    u.rispondiGet(posts,res);
+    u.getResponse(posts,res);
 });
 
 /**
@@ -44,7 +44,7 @@ router.get('/:id', async (req, res) => {
 	}else{
 		let query = {app_id : req.params.id};
 		let post = await Listing.findOne(query).where('app_id').equals(query.app_id).exec().then((post)=>{
-			u.rispondiGet(post,res);
+			u.getResponse(post,res);
 		}).catch((e) => {
 			u.notFound(res);
 		});
