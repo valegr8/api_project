@@ -9,7 +9,10 @@ HouseMate is a web API that allows users to view and create posts for renting ho
 
 ### List All Posts [GET]
 
-
+This method returns a JSON containing the whole collection of posts.
+The field app_id represents the unique identifier for each post.
+The field location provides helpful information to the client so that
+it can fetch easily a specific post.
 
 + Response 200 (application/json)
 
@@ -35,6 +38,7 @@ HouseMate is a web API that allows users to view and create posts for renting ho
         ]
         
 ### Delete All Posts [DELETE]
+Clearing the list is not allowed.
 + Response 405 (application/json)
 
             {
@@ -42,6 +46,9 @@ HouseMate is a web API that allows users to view and create posts for renting ho
             }
 
 ### Put A List Of Posts [PUT]
+This method is not allowed.
+The list is already updated by the insertions and deletions
+performed by the users.
 + Response 405 (application/json)
 
             {
@@ -51,9 +58,14 @@ HouseMate is a web API that allows users to view and create posts for renting ho
 ### Single Post [/post/:id]        
         
 ### Fetch one post [GET]
-
+This method fetches a post by its app_id.
 + Response 200 (application/json)
 
+        {
+            "_id":"628099dc6824befa6e372e2a",
+            "title":"annuncio",
+            "app_id":1
+        }
 
 ### Create a New Listing [POST]
 + Request (application/json)
