@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 // get mongoose model
-const Listing = require('./models/post'); 
+const Posts = require('./models/post'); 
 
-const u = require('../utils/comode.js');
+const u = require('../utils/useful.js');
 
 //Nota per le modifiche future:
 //Lo schema delle collezione nel cloud
@@ -14,13 +14,13 @@ const u = require('../utils/comode.js');
  * Get posts collection
  */
 router.get('', async (req, res) => {
-    let posts = await Listing.find({});	
+    let posts = await Posts.find({});	
     posts = posts.map( (post) => {
 		let s = '/api/v1/posts/' + post.toObject().app_id;
 		let r = u.addProp(post,'location',s);		
         return r;
     });
-    u.rispondiGet(posts,res);
+    u.getResponse(posts,res);
 });
 
 /**
@@ -43,8 +43,8 @@ router.get('/:id', async (req, res) => {
 		u.badRequest(res);
 	}else{
 		let query = {app_id : req.params.id};
-		let post = await Listing.findOne(query).where('app_id').equals(query.app_id).exec().then((post)=>{
-			u.rispondiGet(post,res);
+		let post = await Posts.findOne(query).where('app_id').equals(query.app_id).exec().then((post)=>{
+			u.getResponse(post,res);
 		}).catch((e) => {
 			u.notFound(res);
 		});
