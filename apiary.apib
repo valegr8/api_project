@@ -31,9 +31,40 @@ HouseMate is a web API that allows users to view and create posts for renting ho
                 "location":"/api/v1/posts/3"
             }
         ]
+        
+### Delete All Posts [DELETE]
++ Response 405 (application/json)
 
+            {
+                "Method Not Allowed"
+            }
+
+### Put A List Of Posts [PUT]
++ Response 405 (application/json)
+
+            {
+                "Method Not Allowed"
+            }
+
+### Single Post [/post/:id]        
+        
+### Fetch one post [GET]
+
++ Response 200 (application/json)
+
+<<<<<<< HEAD
 ### Create a New Listing [POST]
 
+=======
+        {
+            "_id":"628099dc6824befa6e372e2a",
+            "title":"annuncio",
+            "app_id":1
+        }
+
+### Coming Soon [POST]
+
+>>>>>>> 52fd01651ede2c19c2165c2f2c338241fd586cf3
 You may create a new listing using this action. It takes a JSON
 object containing all the listing parameters and adds the field to
 the database.
