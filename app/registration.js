@@ -23,17 +23,12 @@ router.post('', async function(req,res) {
         console.log("user already existing");
         return;
     }
-
-    // ... i assume that the password was already checked by the input form
-
-    	
 	//create new user
     user = new User({
         email: uEmail,
         password: uPassword
     });
     user.save(function(err){});
-    
 
     // if user is found and password is right create a token
 	var payload = {
