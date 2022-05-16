@@ -53,26 +53,25 @@ function loadPosts() {
     {    
         fetch('../api/v1/posts')
         .then((resp) => resp.json()) // Transform the data into json
-        .then(function(data) { // Here you get the data to modify as you please
-            
-            //console.log(data);
-            
-            var tableHeaderRowCount = 0;
-            var rowCount = table.rows.length;
-            for (var i = tableHeaderRowCount; i < rowCount-1; i++) {
-                table.deleteRow(tableHeaderRowCount);
+        .then(function(data) { // Here you get the data to modify
+            // console.log(data);
+            var first = 0;
+            for (var i = 0; i < table.rows.length-1; i++) {
+                table.deleteRow(first);
             }
             
+            if (!data.message) 
+                console.log('no data');
+            if (!Array.isArray(data.message)) 
+                console.log('results are not an array');
+
             counter = 0;
-            
-            return data.map(function(post) { // Map through the results and for each run the code below
-                
-                // let postId = post.self.substring(post.self.lastIndexOf('/') + 1);
+            return data.message.map(function(post) { // Map through the results and for each run the code below
                 var row = table.insertRow();
                 counter++;
                 row.insertCell(0).innerHTML = counter;
                 row.insertCell(1).innerHTML = `<a href="${post.self}">${post.title}</a>`;
-            })
+            });
         })
         .catch( error => console.error(error) );// If there is any error you will catch them here
     }
