@@ -1,12 +1,13 @@
 const express = require('express');
 const app = express();
 
-//set public folder as static to access its content
+/**
+ * Set public folder as static to access its content
+ */
 app.use(express.static(__dirname+'../../public'));
-// const bodyParser = require('body-parser');
 
 const users = require('./users.js');
-const listings = require('./listings.js');
+const posts = require('./posts.js');
 const authentication = require('./authentication.js');
 const tokenChecker = require('./tokenChecker.js');
 
@@ -32,11 +33,7 @@ app.use('/api/v1/authentications', authentication);
 /**
  * Resource routing
  */
- //api per la collezione
- //di annunci
-app.use('/api/v1/posts/', listings);
-
-
+app.use('/api/v1/posts/', posts);
 app.use('/api/v1/users', users);
 
 

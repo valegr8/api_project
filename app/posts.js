@@ -1,15 +1,18 @@
 const express = require('express');
 const router = express.Router();
-const Listing = require('./models/listing'); // get our mongoose model
+// get mongoose model
+const Listing = require('./models/post'); 
 
 const u = require('../utils/comode.js');
 
 //Nota per le modifiche future:
 //Lo schema delle collezione nel cloud
 //deve concordare con quello di
-//models/listings
+//models/posts
 
-//get collezione di annunci
+/**
+ * Get posts collection
+ */
 router.get('', async (req, res) => {
     let posts = await Listing.find({});	
     posts = posts.map( (post) => {
@@ -20,8 +23,9 @@ router.get('', async (req, res) => {
     u.rispondiGet(posts,res);
 });
 
-//la cancellazione dell'intera
-//collezione non è permessa.
+/**
+ * Delete not allowed
+ */
 router.delete('', async (req, res) => {
 	u.notAllowed(res);
 });
@@ -30,9 +34,9 @@ router.put('', async (req, res) => {
 	u.notAllowed(res);
 });
 
-//-----------
-
-//get singolo annuncio per id
+/**
+ * Get single post by its id
+ */
 router.get('/:id', async (req, res) => {
 	let condizione = u.isIdValid(req.params.id);
 	if(!condizione){
@@ -46,9 +50,5 @@ router.get('/:id', async (req, res) => {
 		});
 	}
 });
-
-//gli altri metodi verranno
-//implementati più tardi
-
 
 module.exports = router;

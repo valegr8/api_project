@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const User = require('./models/user'); // get our mongoose model
-
-
+// get mongoose model
+const User = require('./models/user'); 
 
 router.get('/me', async (req, res) => {
     if(!req.loggedUser) {
