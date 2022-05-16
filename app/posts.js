@@ -1,15 +1,12 @@
 const express = require('express');
 const router = express.Router();
-// get mongoose model
+/**
+ * Get post model
+ */
 const Post = require('./models/post'); 
 
 const utils = require('../utils/utils.js');
 const { printd } = require('../utils/utils.js');
-
-//Nota per le modifiche future:
-//Lo schema delle collezione nel cloud
-//deve concordare con quello di
-//models/posts
 
 /**
  * Get posts collection

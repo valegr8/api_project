@@ -1,8 +1,13 @@
 const express = require('express');
 const router = express.Router();
-// get mongoose model
+/**
+ * Get user model
+ */
 const User = require('./models/user'); 
 
+/**
+ * TODO: add description
+ */
 router.get('/me', async (req, res) => {
     if(!req.loggedUser) {
         return;
@@ -16,6 +21,9 @@ router.get('/me', async (req, res) => {
     });
 });
 
+/**
+ * TODO: add description
+ */
 router.get('', async (req, res) => {
     let users;
 
@@ -34,6 +42,9 @@ router.get('', async (req, res) => {
     res.status(200).json(users);
 });
 
+/**
+ * TODO: add description
+ */
 router.post('', async (req, res) => {
     
 	let user = new User({
@@ -53,9 +64,10 @@ router.post('', async (req, res) => {
     res.location("/api/v1/users/" + userId).status(201).send();
 });
 
-
-
 // https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript
+/**
+ * TODO: add description
+ */
 function checkIfEmailInString(text) {
     // eslint-disable-next-line
     var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
