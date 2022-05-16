@@ -25,5 +25,6 @@
   "bugs": {
     "url": "https://github.com/valegr8/api_project/issues"
   },
-  "homepage": "https://github.com/valegr8/api_project#readme"
+  "homepage": "https://github.com/valegr8/api_project#readme",
+  "devDependencies": {}
 }
