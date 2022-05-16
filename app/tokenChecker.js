@@ -34,4 +34,4 @@ const tokenChecker = function(req, res, next) {
 	});
 };
 
-module.exports = tokenChecker
+module.exports = tokenChecker;

@@ -11,7 +11,6 @@ const posts = require('./posts.js');
 const authentication = require('./authentication.js');
 const tokenChecker = require('./tokenChecker.js');
 
-
 /**
  * Configure Express.js parsing middleware
  */

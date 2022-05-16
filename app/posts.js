@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 // get mongoose model
-const Posts = require('./models/post'); 
+const Post = require('./models/post'); 
 
-const u = require('../utils/utils.js');
+const utils = require('../utils/utils.js');
+const { printd } = require('../utils/utils.js');
 
 //Nota per le modifiche future:
 //Lo schema delle collezione nel cloud
@@ -14,41 +15,64 @@ const u = require('../utils/utils.js');
  * Get posts collection
  */
 router.get('', async (req, res) => {
-    let posts = await Posts.find({});	
+    let posts = await Post.find({});	
     posts = posts.map( (post) => {
-		let s = '/api/v1/posts/' + post.toObject().app_id;
-		let r = u.addProp(post,'location',s);		
-        return r;
+		// let s = '/api/v1/posts/' + post.toObject().app_id; //cosa è stato fatto qui? aggiungere descrizione
+		// let r = utils.addProp(post,'location',s);		
+        // return r;
+		return {
+            self: '/api/v1/posts/' + post.id,
+            title: post.title
+        };
     });
-    u.getResponse(posts,res);
+    utils.setResponseStatus(posts,res);
 });
 
 /**
  * Delete not allowed
  */
 router.delete('', async (req, res) => {
-	u.notAllowed(res);
+	utils.notAllowed(res);
 });
 
 router.put('', async (req, res) => {
-	u.notAllowed(res);
+	utils.notAllowed(res);
 });
 
 /**
- * Get single post by its id
+ * Get a single post by its id
  */
 router.get('/:id', async (req, res) => {
-	let condizione = u.isIdValid(req.params.id);
+	let condizione = utils.isIdValid(req.params.id);
 	if(!condizione){
-		u.badRequest(res);
+		utils.badRequest(res);
 	}else{
 		let query = {app_id : req.params.id};
-		let post = await Posts.findOne(query).where('app_id').equals(query.app_id).exec().then((post)=>{
-			u.getResponse(post,res);
+		let post = await Post.findOne(query).where('app_id').equals(query.app_id).exec().then((post)=>{
+			utils.setResponseStatus(post,res);
 		}).catch((e) => {
-			u.notFound(res);
+			utils.notFound(res);
 		});
 	}
+});
+
+/**
+ * Create a new post
+ */
+router.post('', async (req, res) => {
+	let post = new Post({
+        title: req.body.title
+    });
+    
+	post = await post.save();
+    
+    let postId = post.id;
+
+    printd('Post saved successfully');
+
+    res.location("/api/v1/posts/" + postId);
+	utils.created(post, res);
+	
 });
 
 module.exports = router;
