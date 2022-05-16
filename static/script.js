@@ -132,7 +132,7 @@ function login()
                                                       <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>";
             const main_div = document.getElementById("main_div");
             main_div.appendChild(alert);
-        } else 
+        } else
         {
             loggedUser.token = data.token;
             loggedUser.email = data.email;
@@ -165,14 +165,51 @@ function register(){
     var email = document.getElementById("registerEmail").value;
     var password = document.getElementById("registerPassword").value;
 
+    if(email == '' || password == ''){
+        const alert = document.createElement("div");
+        alert.setAttribute('class', 'alert alert-danger alert-dismissible fade show');
+        alert.setAttribute('role', 'alert');
+        alert.innerHTML = "Email o password non validi \ <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>";
+        const main_div = document.getElementById("main_div");
+        main_div.appendChild(alert);
+        return;
+    }
+
     fetch('../api/v1/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify( { email: email, password: password }  ),
     })
-    .then((resp) => {
-        console.log(resp);
+    .then((resp) => resp.json()) // Transform the data into json
+    .then(function(data){
+        console.log(data);
+        if(data.email == undefined){
+            const alert = document.createElement("div");
+            alert.setAttribute('class', 'alert alert-danger alert-dismissible fade show');
+            alert.setAttribute('role', 'alert');
+            alert.innerHTML = "Email already exist. \ <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>";
+            const main_div = document.getElementById("main_div");
+            main_div.appendChild(alert);
+        }else{
+            loggedUser.token = data.token;
+            loggedUser.email = data.email;
+            loggedUser.id = data.id;
+            loggedUser.self = data.self;
+
+            //disable login button
+            document.getElementById("login").disabled = true; 
+            //enable logout button
+            document.getElementById("logout").disabled = false; 
+            //enable create button
+            document.getElementById("create").disabled = false; 
+            //disable register button
+            document.getElementById("register").disabled = true; 
+            //show username on top of the page
+            document.getElementById("user").innerHTML = loggedUser.email;
+            loadPosts();
+        }
         return;
+        
     })
     .catch( error => console.error(error) ); // If there is any error you will catch them here
     

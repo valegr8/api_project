@@ -11,7 +11,7 @@ const u = require('../utils/comode');
 router.post('', async function(req,res) {
 
     let uEmail = req.body.email;
-    let uPassword = req.body.psw;
+    let uPassword = req.body.password;
 
     //search if there is already a user with the same email
     let user = await User.findOne({ email: req.body.email}).exec();
@@ -32,6 +32,8 @@ router.post('', async function(req,res) {
         email: uEmail,
         password: uPassword
     });
+    user.save(function(err){});
+    
 
     // if user is found and password is right create a token
 	var payload = {
@@ -46,9 +48,9 @@ router.post('', async function(req,res) {
 
 	res.json({
 		success: true,
-		message: 'User saved!',
+		message: 'User created!',
 		token: token,
-		email: uEmail,
+		email: user.email,
 		id: user._id,
 		self: "api/v1/" + user._id
 	});
