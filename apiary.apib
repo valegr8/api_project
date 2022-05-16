@@ -84,3 +84,26 @@ This method fetches a post by its app_id.
 
             
 ##  User Collection [/users]
+
+### Registration [POST]
+
+This method allows to add an user
+
++ Request (application/json)
+
+        {
+            "email": "prova@prova.com"
+            "password": "ASecurePassword"
+        }
+
++ Response 200 (application/json)
+
+        {
+            "success": true
+            "message": "User created!"
+            "token": "628099dc6824bsadefa6e372e2a" 
+            "email": "prova@prova.com"
+            "id": "628240wq213258274ea229984ddee"
+            "self": "api/v1/628240258274ea229984ddee"
+
+        }
