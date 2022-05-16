@@ -10,7 +10,6 @@ const users = require('./users.js');
 const posts = require('./posts.js');
 const authentication = require('./authentication.js');
 const tokenChecker = require('./tokenChecker.js');
-const register = require('./registration.js');
 
 /**
  * Configure Express.js parsing middleware
@@ -29,10 +28,6 @@ app.use('/', express.static('static'));
  */
 app.use('/api/v1/authentications', authentication);
 
-/**
- * Authentication routing and middleware
- */
- app.use('/api/v1/register', register);
 
 /**
  * Resource routing
