@@ -10,6 +10,7 @@ const users = require('./users.js');
 const posts = require('./posts.js');
 const authentication = require('./authentication.js');
 const tokenChecker = require('./tokenChecker.js');
+const register = require('./registration.js');
 
 
 /**
@@ -24,17 +25,22 @@ app.use(express.urlencoded({ extended: true }));
  */
 app.use('/', express.static('static'));
 
-
 /**
  * Authentication routing and middleware
  */
 app.use('/api/v1/authentications', authentication);
 
 /**
+ * Authentication routing and middleware
+ */
+ app.use('/api/v1/register', register);
+
+/**
  * Resource routing
  */
 app.use('/api/v1/posts/', posts);
 app.use('/api/v1/users', users);
+
 
 
 /* Default 404 handler */

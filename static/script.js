@@ -157,6 +157,26 @@ function login()
 
     loadPosts(); //shows posts page
 }
+
+/**
+ * Function called when the register button is pressed
+ */
+function register(){
+    var email = document.getElementById("registerEmail").value;
+    var password = document.getElementById("registerPassword").value;
+
+    fetch('../api/v1/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify( { email: email, password: password }  ),
+    })
+    .then((resp) => {
+        console.log(resp);
+        return;
+    })
+    .catch( error => console.error(error) ); // If there is any error you will catch them here
+    
+}
  
 /**
  * This function is called by clicking on the "add new post" button.
