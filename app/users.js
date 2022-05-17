@@ -7,7 +7,7 @@ const jwt = require('jsonwebtoken');
 const User = require('./models/user'); 
 
 /**
- * TODO: add description
+ * function for getting the user logged at the moment
  */
 router.get('/me', async (req, res) => {
     if(!req.loggedUser) {
@@ -23,7 +23,7 @@ router.get('/me', async (req, res) => {
 });
 
 /**
- * TODO: add description
+ * this function gets all the users registered
  */
 router.get('', async (req, res) => {
     let users;
@@ -41,28 +41,6 @@ router.get('', async (req, res) => {
     });
 
     res.status(200).json(users);
-});
-
-/**
- * TODO: add description
- */
-router.post('', async (req, res) => {
-    
-	let user = new User({
-        email: req.body.email,
-        password: req.body.password
-    });
-
-    if (!user.email || typeof user.email != 'string' || !checkIfEmailInString(user.email)) {
-        res.status(400).json({ error: 'The field "email" must be a non-empty string, in email format' });
-        return;
-    }
-    
-	user = await user.save();
-    
-    let userId = user.id;
-
-    res.location("/api/v1/users/" + userId).status(201).send();
 });
 
 
