@@ -2,9 +2,25 @@
  * This variable stores the logged in user
  */
 var loggedUser = {};
-
-
 var counter = 0;
+
+
+function showAlert(message, type){
+    var alertPlaceholder = document.getElementById('liveAlertPlaceholder')
+    var alert = (message, type) => {
+        const wrapper = document.createElement('div');
+        wrapper.innerHTML = [
+            `<div class="alert alert-${type} alert-dismissible" role="alert">`,
+            `   <div>${message}</div>`,
+            '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+            '</div>'
+        ].join('')
+        alertPlaceholder.append(wrapper)
+    }
+    alert(message, type);
+}
+
+
 /**
  * This function refresh the list of posts
  */
@@ -113,7 +129,15 @@ function login()
     //get the form object
     var email = document.getElementById("loginEmail").value;
     var password = document.getElementById("loginPassword").value;
- 
+    if(email == ""){
+        showAlert("Inserisci Email", "danger");
+        return;
+    }
+    if(password == ""){
+        showAlert("Inserisci password", "danger");
+        return;
+    }
+
     fetch('../api/v1/authentications', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -124,13 +148,8 @@ function login()
         //check if the login is correct
         if (data.email == undefined) 
         {
-            const alert = document.createElement("div");
-            alert.setAttribute('class', 'alert alert-danger alert-dismissible fade show');
-            alert.setAttribute('role', 'alert');
-            alert.innerHTML = "Nome utente o password errati. \
-                                                      <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>";
-            const main_div = document.getElementById("main_div");
-            main_div.appendChild(alert);
+            showAlert("Email o password non validi", "danger");
+
         } else{
             loggedUser.token = data.token;
             loggedUser.email = data.email;
@@ -138,22 +157,23 @@ function login()
             loggedUser.self = data.self;
 
             //disable login button
-            document.getElementById("login").disabled = true; 
+            document.getElementById("login").hidden = true; 
             //enable logout button
-            document.getElementById("logout").disabled = false; 
+            document.getElementById("logout").hidden = false; 
             //enable create button
             document.getElementById("create").disabled = false; 
             //disable register button
-            document.getElementById("register").disabled = true; 
+            document.getElementById("register").hidden = true; 
 
             //show username on top of the page
             document.getElementById("user").innerHTML = loggedUser.email;
+            loadPosts(); //shows posts page
         }
         return;
     })
     .catch( error => console.error(error) ); // If there is any error you will catch them here
 
-    loadPosts(); //shows posts page
+   
 }
 
 /**
@@ -163,34 +183,23 @@ function register(){
     var email = document.getElementById("registerEmail").value;
     var password = document.getElementById("registerPassword").value;
 
-    if(email == '' || password == ''){
-        const alert = document.createElement("div");
-        alert.setAttribute('class', 'alert alert-danger alert-dismissible fade show');
-        alert.setAttribute('role', 'alert');
-        alert.innerHTML = "Email o password non validi \ <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>";
-        const main_div = document.getElementById("main_div");
-        main_div.appendChild(alert);
+    if(email == ""){
+        showAlert("Inserisci Email", "danger");
+        return;
+    }
+    if(password == ""){
+        showAlert("Inserisci password", "danger");
         return;
     }
 
     if(!checkIfEmailInString(email)){
-        const alert = document.createElement("div");
-        alert.setAttribute('class', 'alert alert-danger alert-dismissible fade show');
-        alert.setAttribute('role', 'alert');
-        alert.innerHTML = "Email non valida. \ <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>";
-        const main_div = document.getElementById("main_div");
-        main_div.appendChild(alert);
+        showAlert("Email non valida", "danger");
         return;
     }
 
 
     if(password.localeCompare(document.getElementById("registerPasswordVer").value) != 0){
-        const alert = document.createElement("div");
-        alert.setAttribute('class', 'alert alert-danger alert-dismissible fade show');
-        alert.setAttribute('role', 'alert');
-        alert.innerHTML = "Le password non coincidono. \ <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>";
-        const main_div = document.getElementById("main_div");
-        main_div.appendChild(alert);
+        showAlert("Le password non coincidono", "danger");
         return;
     }
 
@@ -203,12 +212,7 @@ function register(){
     .then(function(data){
         console.log(data);
         if(data.email == undefined){
-            const alert = document.createElement("div");
-            alert.setAttribute('class', 'alert alert-danger alert-dismissible fade show');
-            alert.setAttribute('role', 'alert');
-            alert.innerHTML = "Email is already being used. \ <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>";
-            const main_div = document.getElementById("main_div");
-            main_div.appendChild(alert);
+            showAlert("Email gia' in uso", "danger");
         }else{
             loggedUser.token = data.token;
             loggedUser.email = data.email;
@@ -216,16 +220,17 @@ function register(){
             loggedUser.self = data.self;
 
             //disable login button
-            document.getElementById("login").disabled = true; 
+            document.getElementById("login").hidden = true; 
             //enable logout button
-            document.getElementById("logout").disabled = false; 
+            document.getElementById("logout").hidden = false; 
             //enable create button
             document.getElementById("create").disabled = false; 
             //disable register button
-            document.getElementById("register").disabled = true; 
+            document.getElementById("register").hidden = true; 
             //show username on top of the page
             document.getElementById("user").innerHTML = loggedUser.email;
             loadPosts();
+            showAlert("Registrato con successo!", "success");
         }
         return;
         
@@ -340,13 +345,12 @@ function loginPage()
         form.setAttribute('action', "api/v1/users");
         form.setAttribute('name', 'loginform');
         form.setAttribute('id', 'loginform');
-        form.innerHTML = "<h2>Log in:</h2>";
+        form.innerHTML = "<h2>Login:</h2>";
 
         const div_email = document.createElement("div");
-        div_email.setAttribute('class', "form-group");
-        div_email.setAttribute('id', "loginDiv");
+        div_email.setAttribute('class', "form-floating mb-3");
+        div_email.setAttribute('id', "emailDiv");
 
-        div_email.innerHTML = "<label for='inputEmail'>Email</label>";
         
         // create an input elemet for the email
         const email = document.createElement("input");
@@ -355,11 +359,14 @@ function loginPage()
         email.setAttribute('class', "form-control");
         email.setAttribute('placeholder', "Email");
 
-        const div_pwd = document.createElement("div");
-        div_pwd.setAttribute('class', "form-group");
-        div_pwd.setAttribute('id', "loginDiv");
+        const email_lbl = document.createElement("label");
+        email_lbl.setAttribute("for", "loginEmail");
+        email_lbl.innerHTML = "Email";
 
-        div_pwd.innerHTML = "<label for='inputPassword'>Password</label>";
+        const div_pwd = document.createElement("div");
+        div_pwd.setAttribute('class', "form-floating mb-3");
+        div_pwd.setAttribute('id', "pwdDiv");
+
 
         // create an input elemet for the password
         const pwd = document.createElement("input");
@@ -368,6 +375,10 @@ function loginPage()
         pwd.setAttribute('class', "form-control");
         pwd.setAttribute('placeholder', "Password");
         pwd.setAttribute('type', 'password');
+
+        const pwd_lbl = document.createElement("label");
+        pwd_lbl.setAttribute("for", "loginPassword");
+        pwd_lbl.innerHTML = "Password";
 
         // create a button
         const button = document.createElement("button");
@@ -378,11 +389,14 @@ function loginPage()
         button.innerText = "Log in";
 
         div_email.appendChild(email);
+        div_email.appendChild(email_lbl);
         div_pwd.appendChild(pwd);
+        div_pwd.appendChild(pwd_lbl);
 
         form.appendChild(div_email);
         form.appendChild(div_pwd);
         form.appendChild(button);
+
 
         const main_div = document.getElementById("main_div");
         main_div.appendChild(form);
@@ -429,10 +443,9 @@ function registerPage()
         form.innerHTML = "<h2>Registra un nuovo account:</h2>";
 
         const div_email = document.createElement("div");
-        div_email.setAttribute('class', "form-group");
-        div_email.setAttribute('id', "registerDiv");
+        div_email.setAttribute('class', "form-floating mb-3");
+        div_email.setAttribute('id', "emailDiv");
 
-        div_email.innerHTML = "<label for='inputEmail'>Email</label>";
         
         // create an input elemet for the email
         const email = document.createElement("input");
@@ -441,11 +454,14 @@ function registerPage()
         email.setAttribute('class', "form-control");
         email.setAttribute('placeholder', "Email");
 
-        const div_pwd = document.createElement("div");
-        div_pwd.setAttribute('class', "form-group");
-        div_pwd.setAttribute('id', "registerDiv");
+        const email_lbl = document.createElement("label");
+        email_lbl.setAttribute("for", "registerEmail");
+        email_lbl.innerHTML = "Email";
 
-        div_pwd.innerHTML = "<label for='inputPassword'>Password</label>";
+        const div_pwd = document.createElement("div");
+        div_pwd.setAttribute('class', "form-floating mb-3");
+        div_pwd.setAttribute('id', "pwdDiv");
+
 
         // create an input elemet for the password
         const pwd = document.createElement("input");
@@ -454,22 +470,29 @@ function registerPage()
         pwd.setAttribute('class', "form-control");
         pwd.setAttribute('placeholder', "Password");
         pwd.setAttribute('type', 'password');
+
+        const pwd_lbl = document.createElement("label");
+        pwd_lbl.setAttribute("for", "registerPassword");
+        pwd_lbl.innerHTML = "Password";
+
         
+        const div_pwd_conf = document.createElement("div");
+        div_pwd_conf.setAttribute('class', "form-floating mb-3");
+        div_pwd_conf.setAttribute('id', "pwdDiv");
 
-        //Create input to verify the password
-        const div_pwd_ver = document.createElement("div");
-        div_pwd_ver.setAttribute('class', "form-group");
-        div_pwd_ver.setAttribute('id', "registerDivVer");
 
-        div_pwd_ver.innerHTML = "<label for='inputPasswordVer'>Confirm Password</label>";
+        // create an input elemet for the password confirmation
+        const pwd_conf = document.createElement("input");
+        pwd_conf.setAttribute('id', "registerPasswordVer");
+        pwd_conf.setAttribute('name', "password");
+        pwd_conf.setAttribute('class', "form-control");
+        pwd_conf.setAttribute('placeholder', "Password");
+        pwd_conf.setAttribute('type', 'password');
 
-        // create an input elemet for the password
-        const pwd_ver = document.createElement("input");
-        pwd_ver.setAttribute('id', "registerPasswordVer");
-        pwd_ver.setAttribute('name', "password");
-        pwd_ver.setAttribute('class', "form-control");
-        pwd_ver.setAttribute('placeholder', "Confirm Password");
-        pwd_ver.setAttribute('type', 'password');
+        const pwd_conf_lbl = document.createElement("label");
+        pwd_conf_lbl.setAttribute("for", "registerPasswordVer");
+        pwd_conf_lbl.innerHTML = "Confirm Password";
+
 
 
         // create a button
@@ -481,12 +504,15 @@ function registerPage()
         button.innerText = "Registrati";
 
         div_email.appendChild(email);
+        div_email.appendChild(email_lbl);
         div_pwd.appendChild(pwd);
-        div_pwd_ver.appendChild(pwd_ver);
+        div_pwd.appendChild(pwd_lbl);
+        div_pwd_conf.appendChild(pwd_conf);
+        div_pwd_conf.appendChild(pwd_conf_lbl);
 
         form.appendChild(div_email);
         form.appendChild(div_pwd);
-        form.appendChild(div_pwd_ver);
+        form.appendChild(div_pwd_conf);
         form.appendChild(button);
 
         const main_div = document.getElementById("main_div");
