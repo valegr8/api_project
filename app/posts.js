@@ -14,9 +14,6 @@ const { printd } = require('../utils/utils.js');
 router.get('', async (req, res) => {
     let posts = await Post.find({});	
     posts = posts.map( (post) => {
-		// let s = '/api/v1/posts/' + post.toObject().app_id; //cosa è stato fatto qui? aggiungere descrizione
-		// let r = utils.addProp(post,'location',s);		
-        // return r;
 		return {
             self: '/api/v1/posts/' + post.id,
             title: post.title
@@ -44,8 +41,8 @@ router.get('/:id', async (req, res) => {
 	if(!condizione){
 		utils.badRequest(res);
 	}else{
-		let query = {app_id : req.params.id};
-		let post = await Post.findOne(query).where('app_id').equals(query.app_id).exec().then((post)=>{
+		let query = {_id : req.params.id};
+		let post = await Post.findOne(query).where('_id').equals(query._id).exec().then((post)=>{
 			utils.setResponseStatus(post,res);
 		}).catch((e) => {
 			utils.notFound(res);
