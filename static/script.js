@@ -3,14 +3,16 @@
  */
 var loggedUser = {};
 var counter = 0;
-
+const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+window.onload = loadPosts();
 
 function showAlert(message, type){
     var alertPlaceholder = document.getElementById('liveAlertPlaceholder')
     var alert = (message, type) => {
         const wrapper = document.createElement('div');
         wrapper.innerHTML = [
-            `<div class="alert alert-${type} alert-dismissible" role="alert">`,
+            `<div class="alert alert-${type} alert-dismissible fade show" role="alert">`,
             `   <div>${message}</div>`,
             '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
             '</div>'
@@ -18,6 +20,17 @@ function showAlert(message, type){
         alertPlaceholder.append(wrapper)
     }
     alert(message, type);
+}
+
+function enNavButtons(){
+        //disable login button
+        document.getElementById("login").hidden = true; 
+        //enable logout button
+        document.getElementById("logout").hidden = false; 
+        //enable create button
+        document.getElementById("create").disabled = false; 
+        //disable register button
+        document.getElementById("register").hidden = true; 
 }
 
 
@@ -156,17 +169,11 @@ function login()
             loggedUser.id = data.id;
             loggedUser.self = data.self;
 
-            //disable login button
-            document.getElementById("login").hidden = true; 
-            //enable logout button
-            document.getElementById("logout").hidden = false; 
-            //enable create button
-            document.getElementById("create").disabled = false; 
-            //disable register button
-            document.getElementById("register").hidden = true; 
+            enNavButtons();
 
             //show username on top of the page
             document.getElementById("user").innerHTML = loggedUser.email;
+            showAlert("Accesso come "+ loggedUser.email +"!", "success");
             loadPosts(); //shows posts page
         }
         return;
@@ -224,7 +231,7 @@ function register(){
             //enable logout button
             document.getElementById("logout").hidden = false; 
             //enable create button
-            document.getElementById("create").disabled = false; 
+            document.getElementById("create").hidden = false; 
             //disable register button
             document.getElementById("register").hidden = true; 
             //show username on top of the page
