@@ -47,7 +47,7 @@ router.get('', async (req, res) => {
 /**
  * function for creating a new user
  */
- router.post('/register', async function(req,res) {
+ router.post('', async function(req,res) {
 
     let uEmail = req.body.email;
     let uPassword = req.body.password;

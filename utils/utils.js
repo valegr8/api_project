@@ -7,14 +7,14 @@ const u = {};
  * Sets a 405 http response status, method not allowed
  */
 u.notAllowed = (res) => {
-	res.status(405).json({status: 404, message: 'Method Not Allowed'});
+	res.status(405).json({status: 405, message: 'Method Not Allowed'});
 };
 
 /**
  * Sets a 400 http response status, bad request
  */
 u.badRequest = (res) => {
-	res.status(400).json({status: 404, message: 'Bad Request'});
+	res.status(400).json({status: 400, message: 'Bad Request'});
 };
 
 /**
