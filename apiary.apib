@@ -19,28 +19,29 @@ it can fetch easily a specific post.
             {
                 "message":[
                             {
-                                "self": "/api/v1/posts/62820571d8c6c80678f2a27f",
-                                "title": "prova"
+                                "self":"/api/v1/posts/62820571d8c6c80678f2a27f",
+                                "title":"prova"
                             },
                             {
-                                "self": "/api/v1/posts/62820a7a8fd36bc87bc00d81",
-                                "title": "altra prova"
+                                "self":"/api/v1/posts/62820a7a8fd36bc87bc00d81",
+                                "title":"altra prova"
                             }
                         ]
-            }
-
-### Delete All Posts [DELETE]
-Clearing the list is not allowed.
-+ Response 405 (application/json)
-
-            {
-                "Method Not Allowed"
             }
 
 ### Put A List Of Posts [PUT]
 This method is not allowed.
 The list is already updated by the insertions and deletions
 performed by the users.
+
++ Response 405 (application/json)
+
+            {
+                "Method Not Allowed"
+            }
+            
+### Delete All Posts [DELETE]
+Clearing the list is not allowed. This api returns a 405 status code: Method not allowed.
 + Response 405 (application/json)
 
             {
@@ -54,41 +55,48 @@ This method fetches a post by its app_id.
 + Response 200 (application/json)
 
         {
-            "_id": "628099dc6824befa6e372e2a",
-            "title": "annuncio",
-            "app_id": 1
+            "_id":"628099dc6824befa6e372e2a",
+            "title":"annuncio",
+            "app_id":1
         }
 
 ### Create a New Post [POST]
+This post request allows to create a new post and add the data in the database. Each post has an owner
+that is identified by the email, that is unique. The response returns a location that is formed by the id of the post:
+`/posts/{id}` and a status code 201 "Resource created". Also the body of the response should be formed by 
+the parameters of the newly created post.
+
 + Request (application/json)
 
         {
             "title": "Stanza singola per studenti"
-		    "description": "Affittasi stanza singola in via Verdi a 300€ spese incluse.",
-		    "createdBy": "mario.rossi@email.com"
+            "description": "Affittasi stanza singola in via Verdi a 300€ spese incluse.",
+            "createdBy": "mario.rossi@email.com"
         }
 + Response 201 (application/json)
 
     + Headers
-
+    
             Location: /posts/628099dc6824befa6e372e2a
-
+            
     + Body
-
-        {
-            "_id": "628099dc6824befa6e372e2a",
-            "title": "Stanza singola per studenti"
-		    "description": "Affittasi stanza singola in via Verdi a 300€ spese incluse.",
-		    "createdBy": "mario.rossi@email.com"
-        }
+    
+                {
+                    "_id": "628099dc6824befa6e372e2a",
+                    "title": "Stanza singola per studenti"
+                    "description": "Affittasi stanza singola in via Verdi a 300€ spese incluse.",
+                    "createdBy": "mario.rossi@email.com"
+                }
 
 
             
 ##  User Collection [/users]
 
-### Registration [POST]
+### Create a new user [POST]
 
-This method allows to add an user
+This method allows to add an user to register in the system. The request is formed by the email 
+and the password for the account. The response returns a status code of "success" (200) and other 
+parameters useful for the login, such as the account token and the email.
 
 + Request (application/json)
 
@@ -106,7 +114,6 @@ This method allows to add an user
             "email": "prova@prova.com"
             "id": "628240wq213258274ea229984ddee"
             "self": "api/v1/628240258274ea229984ddee"
-
         }
         
         
