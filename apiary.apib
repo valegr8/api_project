@@ -19,15 +19,16 @@ it can fetch easily a specific post.
             {
                 "message":[
                             {
-                                "self":"/api/v1/posts/62820571d8c6c80678f2a27f",
-                                "title":"prova"
+                                "self": "/api/v1/posts/62820571d8c6c80678f2a27f",
+                                "title": "prova"
                             },
                             {
-                                "self":"/api/v1/posts/62820a7a8fd36bc87bc00d81",
-                                "title":"altra prova"
+                                "self": "/api/v1/posts/62820a7a8fd36bc87bc00d81",
+                                "title": "altra prova"
                             }
                         ]
             }
+
 ### Delete All Posts [DELETE]
 Clearing the list is not allowed.
 + Response 405 (application/json)
@@ -53,23 +54,32 @@ This method fetches a post by its app_id.
 + Response 200 (application/json)
 
         {
-            "_id":"628099dc6824befa6e372e2a",
-            "title":"annuncio",
-            "app_id":1
+            "_id": "628099dc6824befa6e372e2a",
+            "title": "annuncio",
+            "app_id": 1
         }
 
-### Create a New Listing [POST]
+### Create a New Post [POST]
 + Request (application/json)
 
         {
             "title": "Stanza singola per studenti"
+		    "description": "Affittasi stanza singola in via Verdi a 300€ spese incluse.",
+		    "createdBy": "mario.rossi@email.com"
         }
 + Response 201 (application/json)
 
+    + Headers
+
+            Location: /posts/628099dc6824befa6e372e2a
+
+    + Body
+
         {
-            "_id":"628099dc6824befa6e372e2a",
-            "title":"annuncio",
-            "app_id":1
+            "_id": "628099dc6824befa6e372e2a",
+            "title": "Stanza singola per studenti"
+		    "description": "Affittasi stanza singola in via Verdi a 300€ spese incluse.",
+		    "createdBy": "mario.rossi@email.com"
         }
 
 
@@ -132,8 +142,7 @@ each one's email.
                 "self": "/api/v1/users/628226f130a27be5e2fb1240",
                 "email": "admnin123"
             }
-    
-            Adde
+        ]
         
         
 ###

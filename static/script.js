@@ -188,8 +188,6 @@ function login()
         return;
     })
     .catch( error => console.error(error) ); // If there is any error you will catch them here
-
-   
 }
 
 /**
@@ -291,7 +289,6 @@ function newPostPage()
         const div_title = document.createElement("div");
         div_title.setAttribute('class', "form-floating mb-3");
         div_title.setAttribute('id', "usrDiv");
-
         
         // create an input elemet for the title
         const ttl = document.createElement("input");
@@ -314,7 +311,6 @@ function newPostPage()
         const div_desc = document.createElement("div");
         div_desc.setAttribute('class', "input-group mb-3");
         div_desc.setAttribute('id', "usrDiv");
-
 
         // create an input elemet for the description
         const desc = document.createElement("textarea");
@@ -344,13 +340,9 @@ function newPostPage()
         div_desc.appendChild(desc_lbl);
         div_desc.appendChild(desc);
 
-
-
         form.appendChild(div_title);
         form.appendChild(div_desc);
         form.appendChild(button);
-
-        
 
         const main_div = document.getElementById("main_div");
         main_div.appendChild(form);
@@ -415,7 +407,6 @@ function loginPage()
         const div_pwd = document.createElement("div");
         div_pwd.setAttribute('class', "form-floating mb-3");
         div_pwd.setAttribute('id', "pwdDiv");
-
 
         // create an input elemet for the password
         const pwd = document.createElement("input");
@@ -495,7 +486,6 @@ function registerPage()
         const div_usr = document.createElement("div");
         div_usr.setAttribute('class', "form-floating mb-3");
         div_usr.setAttribute('id', "usrDiv");
-
         
         // create an input elemet for the username
         const usr = document.createElement("input");
@@ -514,7 +504,6 @@ function registerPage()
         div_email.setAttribute('class', "form-floating mb-3");
         div_email.setAttribute('id', "emailDiv");
 
-        
         // create an input elemet for the email
         const email = document.createElement("input");
         email.setAttribute('id', "registerEmail");
@@ -551,7 +540,6 @@ function registerPage()
         div_pwd_conf.setAttribute('class', "form-floating mb-3");
         div_pwd_conf.setAttribute('id', "pwdDiv");
 
-
         // create an input elemet for the password confirmation
         const pwd_conf = document.createElement("input");
         pwd_conf.setAttribute('id', "registerPasswordVer");
@@ -564,7 +552,6 @@ function registerPage()
         pwd_conf_lbl.setAttribute("for", "registerPasswordVer");
         pwd_conf_lbl.innerHTML = "Confirm Password";
         //CONF PASSWORD INPUT------------------------------------     
-
 
         // create a button
         const button = document.createElement("button");

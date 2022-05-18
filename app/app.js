@@ -17,7 +17,6 @@ const tokenChecker = require('./tokenChecker.js');
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
 /**
  * Serve front-end static files
  */
@@ -28,14 +27,11 @@ app.use('/', express.static('static'));
  */
 app.use('/api/v1/authentications', authentication);
 
-
 /**
  * Resource routing
  */
 app.use('/api/v1/posts/', posts);
 app.use('/api/v1/users', users);
-
-
 
 /* Default 404 handler */
 app.use((req, res) => {
