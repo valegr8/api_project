@@ -5,5 +5,7 @@ var Schema = mongoose.Schema;
 module.exports = mongoose.model('Post', new Schema({
 	// _id: mongoose.ObjectId,
 	title: String,
+	description: String,
+	createdBy: String,
 	app_id: Number
 }));
