@@ -33,6 +33,11 @@ function enNavButtons(){
         document.getElementById("register").hidden = true; 
 }
 
+function createCartPost(self, title, descr){
+    return `<div class='card  mb-3' style='width: 36rem;'> \
+    <img src="https://www.lago.it/wp-content/uploads/2018/05/1_Lanfranchi_Lago-Milano-9.jpg" class="card-img-top rounded"><div class='card-body' ><h5 class='card-title'>${title}</h5><p class='card-text'>${descr}</p><a href='${self}' class='btn btn-primary'>Vai all'annuncio</a></div></div>`;
+}
+
 
 /**
  * This function refresh the list of posts
@@ -90,8 +95,7 @@ function loadPosts() {
             counter = 0;
             return data.message.map(function(post) { // Map through the results and for each run the code below
                 counter++;
-                postDiv.innerHTML+= `<div class='card' style='width: 36rem;'> \
-                <svg class='bd-placeholder-img card-img-top' width='100%' height='180' xmlns='http://www.w3.org/2000/svg' role='img' aria-label='Placeholder: Image cap' preserveAspectRatio='xMidYMidslice' focusable='false'><title>Placeholder</title><rect width='100%' height='100%' fill='#868e96'></rect><text x='50%' y='50%' fill='#dee2e6' dy='.3em'>Image cap</text></svg><div class='card-body' ><h5 class='card-title'>${post.title}</h5><p class='card-text'>Some quick example text to build on the card title and make up the bulk of the card's content.</p><a href='${post.self}' class='btn btn-primary'>Go somewhere</a></div></div>`;
+                postDiv.innerHTML+= createCartPost(post.self,post.title, post.description);
             });
         })
         .catch( error => console.error(error) );// If there is any error you will catch them here
@@ -107,13 +111,14 @@ function insertPost()
 {
     //get the post title
     var postTitle = document.getElementById("postTitle").value;
-
+    var postDesc = document.getElementById("postDesc").value;
+    
     console.log(postTitle);
 
     fetch('../api/v1/posts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify( { title: postTitle } ),
+        body: JSON.stringify( { title: postTitle , description: postDesc , email: loggedUser.email} ),
     })
     .then((resp) => {
         console.log(resp);
@@ -160,12 +165,13 @@ function login()
             loggedUser.email = data.email;
             loggedUser.id = data.id;
             loggedUser.self = data.self;
+            loggedUser.username = data.username;
 
             enNavButtons();
 
             //show username on top of the page
-            document.getElementById("user").innerHTML = loggedUser.email;
-            showAlert("Accesso come "+ loggedUser.email +"!", "success");
+            document.getElementById("user").innerText = loggedUser.username;
+            showAlert("Benvenuto "+ loggedUser.username +"!", "success");
             loadPosts(); //shows posts page
         }
         return;
@@ -181,6 +187,7 @@ function login()
 function register(){
     var email = document.getElementById("registerEmail").value;
     var password = document.getElementById("registerPassword").value;
+    var username = document.getElementById("registerUsr").value;
 
     if(email == ""){
         showAlert("Inserisci Email", "danger");
@@ -205,7 +212,7 @@ function register(){
     fetch('../api/v1/users/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify( { email: email, password: password }  ),
+        body: JSON.stringify( { email: email, password: password, username: username }  ),
     })
     .then((resp) => resp.json()) // Transform the data into json
     .then(function(data){
@@ -217,17 +224,11 @@ function register(){
             loggedUser.email = data.email;
             loggedUser.id = data.id;
             loggedUser.self = data.self;
+            loggedUser.username = data.username;
 
-            //disable login button
-            document.getElementById("login").hidden = true; 
-            //enable logout button
-            document.getElementById("logout").hidden = false; 
-            //enable create button
-            document.getElementById("create").hidden = false; 
-            //disable register button
-            document.getElementById("register").hidden = true; 
+            enNavButtons();
             //show username on top of the page
-            document.getElementById("user").innerHTML = loggedUser.email;
+            document.getElementById("user").innerHTML = loggedUser.username;
             loadPosts();
             showAlert("Registrato con successo!", "success");
         }
@@ -275,19 +276,47 @@ function newPostPage()
         form.setAttribute('action', "api/v1/posts");
         form.innerHTML = "<h2>Crea nuovo annuncio:</h2>";
 
-        // create a div element, used to style the form inputs
+        //TITLE INPUT------------------------------------
         const div_title = document.createElement("div");
-        div_title.setAttribute('class', "form-group");
-        div_title.setAttribute('id', "newPostDiv");
+        div_title.setAttribute('class', "form-floating mb-3");
+        div_title.setAttribute('id', "usrDiv");
 
-        div_title.innerHTML = "<label for='inputTitle'>Titolo</label>";
         
-        // create an input elemet
-        const input = document.createElement("input");
-        input.setAttribute('id', "postTitle");
-        input.setAttribute('name', "title");
-        input.setAttribute('class', "form-control");
-        input.setAttribute('placeholder', "Enter title");
+        // create an input elemet for the title
+        const ttl = document.createElement("input");
+        ttl.setAttribute('id', "postTitle");
+        ttl.setAttribute('name', "title");
+        ttl.setAttribute('maxlength', "30");
+        ttl.setAttribute('class', "form-control");
+        ttl.setAttribute('placeholder', "Titolo");
+
+        const ttl_info = document.createElement("div");
+        ttl_info.setAttribute("class", "form-text");
+        ttl_info.innerHTML = "Lunghezza massima: 30 caratteri";
+
+        const ttl_lbl = document.createElement("label");
+        ttl_lbl.setAttribute("for", "postTitle");
+        ttl_lbl.innerHTML = "Titolo";
+        //TITLE INPUT------------------------------------
+
+        //DESC INPUT------------------------------------
+        const div_desc = document.createElement("div");
+        div_desc.setAttribute('class', "input-group mb-3");
+        div_desc.setAttribute('id', "usrDiv");
+
+
+        // create an input elemet for the description
+        const desc = document.createElement("textarea");
+        desc.setAttribute('id', "postDesc");
+        desc.setAttribute('name', "postDesc");
+        desc.setAttribute('class', "form-control");
+        desc.setAttribute('maxlength', "500");
+        desc.setAttribute('placeholder', "Descrizione");
+
+        const desc_lbl = document.createElement("span");
+        desc_lbl.setAttribute("class", "input-group-text");
+        desc_lbl.innerHTML = "Descrizione";
+        //DESC INPUT------------------------------------
 
         // create a button
         const button = document.createElement("button");
@@ -297,10 +326,20 @@ function newPostPage()
         button.setAttribute('class', "btn btn-primary");
         button.innerText = "Salva";
 
-        div_title.appendChild(input);
-        div_title.appendChild(button);
+        div_title.appendChild(ttl);
+        div_title.appendChild(ttl_lbl);
+        div_title.appendChild(ttl_info);
+        
+        div_desc.appendChild(desc_lbl);
+        div_desc.appendChild(desc);
+
+
 
         form.appendChild(div_title);
+        form.appendChild(div_desc);
+        form.appendChild(button);
+
+        
 
         const main_div = document.getElementById("main_div");
         main_div.appendChild(form);
@@ -441,6 +480,25 @@ function registerPage()
         form.setAttribute('id', 'registerform');
         form.innerHTML = "<h2>Registra un nuovo account:</h2>";
 
+        //USERNAME INPUT------------------------------------
+        const div_usr = document.createElement("div");
+        div_usr.setAttribute('class', "form-floating mb-3");
+        div_usr.setAttribute('id', "usrDiv");
+
+        
+        // create an input elemet for the username
+        const usr = document.createElement("input");
+        usr.setAttribute('id', "registerUsr");
+        usr.setAttribute('name', "username");
+        usr.setAttribute('class', "form-control");
+        usr.setAttribute('placeholder', "Username");
+
+        const usr_lbl = document.createElement("label");
+        usr_lbl.setAttribute("for", "registerUsr");
+        usr_lbl.innerHTML = "Username";
+        //USERNAME INPUT------------------------------------
+
+        //EMAIL INPUT------------------------------------------
         const div_email = document.createElement("div");
         div_email.setAttribute('class', "form-floating mb-3");
         div_email.setAttribute('id', "emailDiv");
@@ -456,7 +514,9 @@ function registerPage()
         const email_lbl = document.createElement("label");
         email_lbl.setAttribute("for", "registerEmail");
         email_lbl.innerHTML = "Email";
+        //EMAIL INPUT------------------------------------------
 
+        //PASSWORD INPUT---------------------------------------
         const div_pwd = document.createElement("div");
         div_pwd.setAttribute('class', "form-floating mb-3");
         div_pwd.setAttribute('id', "pwdDiv");
@@ -473,8 +533,9 @@ function registerPage()
         const pwd_lbl = document.createElement("label");
         pwd_lbl.setAttribute("for", "registerPassword");
         pwd_lbl.innerHTML = "Password";
+        //PASSWORD INPUT---------------------------------------
 
-        
+        //CONF PASSWORD INPUT------------------------------------     
         const div_pwd_conf = document.createElement("div");
         div_pwd_conf.setAttribute('class', "form-floating mb-3");
         div_pwd_conf.setAttribute('id', "pwdDiv");
@@ -491,7 +552,7 @@ function registerPage()
         const pwd_conf_lbl = document.createElement("label");
         pwd_conf_lbl.setAttribute("for", "registerPasswordVer");
         pwd_conf_lbl.innerHTML = "Confirm Password";
-
+        //CONF PASSWORD INPUT------------------------------------     
 
 
         // create a button
@@ -501,14 +562,15 @@ function registerPage()
         button.setAttribute('onclick', "register()");
         button.setAttribute('class', "btn btn-primary");
         button.innerText = "Registrati";
-
+        div_usr.appendChild(usr);
+        div_usr.appendChild(usr_lbl);
         div_email.appendChild(email);
         div_email.appendChild(email_lbl);
         div_pwd.appendChild(pwd);
         div_pwd.appendChild(pwd_lbl);
         div_pwd_conf.appendChild(pwd_conf);
         div_pwd_conf.appendChild(pwd_conf_lbl);
-
+        form.appendChild(div_usr);
         form.appendChild(div_email);
         form.appendChild(div_pwd);
         form.appendChild(div_pwd_conf);

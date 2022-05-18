@@ -47,6 +47,7 @@ router.post('', async function(req, res) {
 		message: 'Enjoy your token!',
 		token: token,
 		email: user.email,
+		username: user.username,
 		id: user._id,
 		self: "api/v1/" + user._id
 	});

@@ -18,7 +18,8 @@ router.get('/me', async (req, res) => {
 
     res.status(200).json({
         self: '/api/v1/users/' + user.id,
-        email: user.email
+        email: user.email,
+        username: user.username,
     });
 });
 
@@ -51,6 +52,7 @@ router.get('', async (req, res) => {
 
     let uEmail = req.body.email;
     let uPassword = req.body.password;
+    let uUsername = req.body.username;
 
     //search if there is already a user with the same email
     let user = await User.findOne({ email: req.body.email}).exec();
@@ -64,7 +66,8 @@ router.get('', async (req, res) => {
 	//create new user
     user = new User({
         email: uEmail,
-        password: uPassword
+        password: uPassword,
+        username: uUsername
     });
     user.save(function(err){});
 
@@ -84,6 +87,7 @@ router.get('', async (req, res) => {
 		message: 'User created!',
 		token: token,
 		email: user.email,
+        username: user.username,
 		id: user._id,
 		self: "api/v1/" + user._id
 	});

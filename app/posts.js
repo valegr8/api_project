@@ -16,7 +16,9 @@ router.get('', async (req, res) => {
     posts = posts.map( (post) => {
 		return {
             self: '/api/v1/posts/' + post.id,
-            title: post.title
+            title: post.title,
+			description: post.description,
+			createdBy: post.createdBy
         };
     });
     utils.setResponseStatus(posts,res);
@@ -55,7 +57,9 @@ router.get('/:id', async (req, res) => {
  */
 router.post('', async (req, res) => {
 	let post = new Post({
-        title: req.body.title
+        title: req.body.title,
+		description: req.body.description,
+		createdBy: req.body.email
     });
     
 	post = await post.save();
