@@ -22,6 +22,17 @@ function showAlert(message, type){
     alert(message, type);
 }
 
+function logout(){
+    document.getElementById("login").hidden = false; 
+    document.getElementById("logout").hidden = true; 
+    document.getElementById("create").disabled = true; 
+    document.getElementById("register").hidden = false;
+    loggedUser = {}
+    loadPosts();
+    document.getElementById("user").innerText ="";
+    showAlert("Disconnesso!", "success");
+}
+
 function enNavButtons(){
         //disable login button
         document.getElementById("login").hidden = true; 
