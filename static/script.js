@@ -67,27 +67,20 @@ function loadPosts() {
         div.setAttribute('id', "posts_div");
 
         div.innerHTML = "<h2>Annunci:</h2> \
-                            <table id='posts' class='table table-hover'> \
-                                    <tr> \
-                                        <th>#</th> \
-                                        <th>Title</th> \
-                                    </tr> \
-                                </table>";
+                            <div id='posts'></div>";
         const main_div = document.getElementById("main_div");
         main_div.appendChild(div);
     }
 
-    const table = document.getElementById('posts'); // Get the list where we will place our posts
-    if(table)
+    const postDiv = document.getElementById('posts'); // Get the list where we will place our posts
+    if(postDiv)
     {    
         fetch('../api/v1/posts')
         .then((resp) => resp.json()) // Transform the data into json
         .then(function(data) { // Here you get the data to modify
             // console.log(data);
             var first = 0;
-            for (var i = 0; i < table.rows.length-1; i++) {
-                table.deleteRow(first);
-            }
+            postDiv.innerHTML = "";
             
             if (!data.message) 
                 console.log('no data');
@@ -96,10 +89,9 @@ function loadPosts() {
 
             counter = 0;
             return data.message.map(function(post) { // Map through the results and for each run the code below
-                var row = table.insertRow();
                 counter++;
-                row.insertCell(0).innerHTML = counter;
-                row.insertCell(1).innerHTML = `<a href="${post.self}">${post.title}</a>`;
+                postDiv.innerHTML+= `<div class='card' style='width: 36rem;'> \
+                <svg class='bd-placeholder-img card-img-top' width='100%' height='180' xmlns='http://www.w3.org/2000/svg' role='img' aria-label='Placeholder: Image cap' preserveAspectRatio='xMidYMidslice' focusable='false'><title>Placeholder</title><rect width='100%' height='100%' fill='#868e96'></rect><text x='50%' y='50%' fill='#dee2e6' dy='.3em'>Image cap</text></svg><div class='card-body' ><h5 class='card-title'>${post.title}</h5><p class='card-text'>Some quick example text to build on the card title and make up the bulk of the card's content.</p><a href='${post.self}' class='btn btn-primary'>Go somewhere</a></div></div>`;
             });
         })
         .catch( error => console.error(error) );// If there is any error you will catch them here
