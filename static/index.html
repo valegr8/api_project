@@ -19,24 +19,21 @@
       <div class="container-fluid">
         <a class="navbar-brand" href="#" onclick="loadPosts()">
           <img src="/images/logoCOLORI.png" width="30" height="30" class="d-inline-block align-top" alt="">
-          <span id="user" class="me-2">HouseMate</span>
+          <span class="me-2">HouseMate</span>
         </a>
-        <div class="">
+        <div class="btn-toolbar" role="toolbar">
+          <div class="btn-group btn-group-lg me-2" role="group">
+            <button id="create" class="btn btn-primary" onclick="newPostPage()" disabled>Crea</button>
+          </div>
+        </div>
+        <div>
+          <span id="user" class="navbar-text h5"></span>
           <div class="btn-group btn-group-lg me-2" role="group">
             <button id="register" class="btn btn-primary"  onclick="registerPage()">Registrati</button>
             <button id="login" class="btn btn-primary"  onclick="loginPage()">Login</button>
             <button id="logout" class="btn btn-primary"   onclick="logout()" hidden>Logout</button>
           </div>
         </div>
-        <div class="btn-toolbar" role="toolbar">
-          <div class="btn-group btn-group-lg me-2" role="group">
-            <button id="create" class="btn btn-primary" onclick="newPostPage()" disabled>Crea</button>
-          </div>
-        </div>
-        <form class="d-flex" role="search">
-          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success" type="submit">Search</button>
-        </form>
       </div>
     </nav>
     <div id="liveAlertPlaceholder" class="container"></div>
