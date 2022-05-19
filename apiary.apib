@@ -87,7 +87,14 @@ Its body contains the status code together with its human-friendly description.
 
             }
 
++ Response 404 (application/json)
+   
+            {
+                    
+                "status": 404,
+                "message": "Not Found"
 
+            }
 ## Single Post [/posts/{post_id}]
 
 ### Fetch one post [GET]
@@ -104,7 +111,23 @@ This method fetches a post by its post_id.
                             "__v": 0
                 }
         }
-            
+         
++ Response 404 (application/json)
+   
+            {
+                    
+                "status": 404,
+                "message": "Not Found"
+
+            }  
++ Response 400 (application/json)
+   
+            {
+                    
+                "status": 400,
+                "message": "Bad Request"
+
+            }
 ##  User Collection [/users]
 
 ### Create a new user [POST]
