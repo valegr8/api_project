@@ -60,6 +60,16 @@ u.addProp = (o,prop,value) => {
 	return o;//è importante.
 };
 
+//Non è l'ottimo ma fa' il suo
+//lavoro.
+//Ho messo 6 per l'univocità.
+let last_post_id = 6;
+//Provides an id for a new post.
+u.generatePostId = () => {
+	last_post_id++;
+	return last_post_id;
+};
+
 /**
  * Sets a status, 200 ok or 404 Not found
  */

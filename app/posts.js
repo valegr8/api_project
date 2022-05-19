@@ -71,12 +71,13 @@ router.post('', async (req, res) => {
 	let post = new Post({
         title: req.body.title,
 		description: req.body.description,
-		createdBy: req.body.email
+		createdBy: req.body.email,
+		post_id: utils.generatePostId()
     });
     
 	post = await post.save();
     
-    let postId = post.id;
+    let postId = post.post_id;
 
     printd('Post saved successfully');
 
