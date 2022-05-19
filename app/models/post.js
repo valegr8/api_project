@@ -6,5 +6,5 @@ module.exports = mongoose.model('Post', new Schema({
 	title: String,
 	description: String,
 	createdBy: String,
-	app_id: Number
+	post_id: Number
 }));

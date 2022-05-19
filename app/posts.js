@@ -14,12 +14,15 @@ const { printd } = require('../utils/utils.js');
 router.get('', async (req, res) => {
     let posts = await Post.find({});	
     posts = posts.map( (post) => {
-		return {
-            self: '/api/v1/posts/' + post.id,
-            title: post.title,
+		let o = {
+			title: post.title,
 			description: post.description,
 			createdBy: post.createdBy
-        };
+		};
+		let path = '/api/v1/posts/' + post.toObject().post_id;
+		u.addProp(o,'self',path);
+		
+		return o;
     });
     utils.setResponseStatus(posts,res);
 });
@@ -43,8 +46,8 @@ router.get('/:id', async (req, res) => {
 	if(!condizione){
 		utils.badRequest(res);
 	}else{
-		let query = {_id : req.params.id};
-		let post = await Post.findOne(query).where('_id').equals(query._id).exec().then((post)=>{
+		let query = {post_id : req.params.id};
+		let post = Post.findOne(query).where('post_id').equals(query.post_id).exec().then((post)=>{
 			utils.setResponseStatus(post,res);
 		}).catch((e) => {
 			utils.notFound(res);
