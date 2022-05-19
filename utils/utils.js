@@ -63,6 +63,8 @@ u.addProp = (o,prop,value) => {
 //Non è l'ottimo ma fa' il suo
 //lavoro.
 //Ho messo 6 per l'univocità.
+//Ovviamente se spegni il server
+//riparte da questo valore.
 let last_post_id = 6;
 //Provides an id for a new post.
 u.generatePostId = () => {

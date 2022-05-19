@@ -76,7 +76,6 @@ router.post('', async (req, res) => {
     });
     
 	post = await post.save();
-    
     let postId = post.post_id;
 
     printd('Post saved successfully');
