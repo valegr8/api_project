@@ -34,9 +34,10 @@ u.printd = (a) => {
 /**
  * Verifies validity of an id
  */
-u.isIdValid = (id) => {
+u.isIdValid = (id) => {	
 	let r = true;
-	if(!id || (id && (isNaN(parseInt(id)))))
+	let p = parseInt(id);
+	if(!id || (id && (isNaN(p))) || p <= 0)
 	{
 		r = false;
 	}
