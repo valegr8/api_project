@@ -13,16 +13,10 @@ const { printd } = require('../utils/utils.js');
  */
 router.get('', async (req, res) => {
     let posts = await Post.find({});	
-    posts = posts.map( (post) => {
-		let o = {
-			title: post.title,
-			description: post.description,
-			createdBy: post.createdBy
-		};
+    posts = posts.map( (post) => {		
 		let path = '/api/v1/posts/' + post.toObject().post_id;
-		u.addProp(o,'self',path);
-		
-		return o;
+		post = utils.addProp(post,'self',path);
+		return post;
     });
     utils.setResponseStatus(posts,res);
 });
