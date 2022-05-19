@@ -75,13 +75,21 @@ router.post('', async (req, res) => {
 		post_id: utils.generatePostId()
     });
     
-	post = await post.save();
-    let postId = post.post_id;
-
-    printd('Post saved successfully');
-
-    res.location("/api/v1/posts/" + postId);
-	utils.created(post, res);
+	//Ho spostato il codice nella gestione
+	//della promise. Await è stato rimosso
+	//perché adesso sarebbe ridondante.
+	post = post.save().then((savedPost) =>{
+		let postId = post.post_id;
+		printd('Post saved successfully');
+		res.location("/api/v1/posts/" + postId);
+		utils.created(post, res);
+	}).catch((e) => {
+		//Gestiamo il fallimento di una post
+		//rispondendo 404, come nel tutorial
+		//alle API RESTful suggerito da Robol.
+		utils.notFound(res);
+	});
+    
 	
 });
 
