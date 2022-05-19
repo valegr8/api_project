@@ -34,9 +34,10 @@ u.printd = (a) => {
 /**
  * Verifies validity of an id
  */
-u.isIdValid = (id) => {
+u.isIdValid = (id) => {	
 	let r = true;
-	if(!id || (id && (isNaN(parseInt(id)))))
+	let p = parseInt(id);
+	if(!id || (id && (isNaN(p))) || p <= 0)
 	{
 		r = false;
 	}
@@ -47,10 +48,28 @@ u.isIdValid = (id) => {
  * Useful to answer get requests
  */
 u.addProp = (o,prop,value) => {
+	//Le prime due righe di codice sono
+	//importanti dunque non cancellatele
+	//pensando che siano ridondanti.
+	//In poche parole, il loro ruolo è
+	//quello di cambiare il metodo con cui
+	//il parametro verrà convertito in JSON.
 	let t = JSON.stringify(o);
 	o = JSON.parse(t);
-	o[prop] = value;
-	return o;
+	o[prop] = value;//semplicemente aggiunge la proprietà.
+	return o;//è importante.
+};
+
+//Non è l'ottimo ma fa' il suo
+//lavoro.
+//Ho messo 6 per l'univocità.
+//Ovviamente se spegni il server
+//riparte da questo valore.
+let last_post_id = 6;
+//Provides an id for a new post.
+u.generatePostId = () => {
+	last_post_id++;
+	return last_post_id;
 };
 
 /**
