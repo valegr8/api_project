@@ -8,6 +8,7 @@ const Post = require('./models/post');
 const utils = require('../utils/utils.js');
 const { printd } = require('../utils/utils.js');
 
+
 /**
  * Get posts collection
  */
@@ -27,6 +28,8 @@ router.get('', async (req, res) => {
 		//ho trovato su stackOverFlow.
 		//Potete trovare ulteriori dettagli in utils.js
 		post = utils.addProp(post,'self',path);
+		//le altre proprietà sono già parte di post
+		//perciò non serve aggiungerle nuovamente.
 		return post;
     });
     utils.setResponseStatus(posts,res);
@@ -67,16 +70,17 @@ router.get('/:id', async (req, res) => {
 /**
  * Create a new post
  */
-router.post('', async (req, res) => {
+router.post('', async (req, res) => {	
 	let post = new Post({
         title: req.body.title,
 		description: req.body.description,
-		createdBy: req.body.email
+		createdBy: req.body.email,
+		post_id: req.body.post_id
     });
     
 	post = await post.save();
     
-    let postId = post.id;
+    let postId = post.post_id;
 
     printd('Post saved successfully');
 
