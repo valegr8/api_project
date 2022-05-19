@@ -48,10 +48,16 @@ u.isIdValid = (id) => {
  * Useful to answer get requests
  */
 u.addProp = (o,prop,value) => {
+	//Le prime due righe di codice sono
+	//importanti dunque non cancellatele
+	//pensando che siano ridondanti.
+	//In poche parole, il loro ruolo è
+	//quello di cambiare il metodo con cui
+	//il parametro verrà convertito in JSON.
 	let t = JSON.stringify(o);
 	o = JSON.parse(t);
-	o[prop] = value;
-	return o;
+	o[prop] = value;//semplicemente aggiunge la proprietà.
+	return o;//è importante.
 };
 
 /**
