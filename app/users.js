@@ -23,26 +23,6 @@ router.get('/me', async (req, res) => {
     });
 });
 
-/**
- * this function gets all the users registered
- */
-router.get('', async (req, res) => {
-    let users;
-
-    if (req.query.email)
-        users = await User.find({email: req.query.email}).exec();
-    else
-        users = await User.find().exec();
-
-    users = users.map( (entry) => {
-        return {
-            self: '/api/v1/users/' + entry.id,
-            email: entry.email
-        }
-    });
-
-    res.status(200).json(users);
-});
 
 /**
  * function for creating a new user
@@ -96,7 +76,11 @@ router.get('', async (req, res) => {
 
 // https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript
 /**
- * TODO: add description
+ * this function checks if the email
+ * provided is of the correct format.
+ * It basically checks if a string composed
+ * of the specified characters is present 
+ * in the email
  */
 function checkIfEmailInString(text) {
     // eslint-disable-next-line
