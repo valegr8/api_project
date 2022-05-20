@@ -282,6 +282,12 @@ function register(){
     var password = document.getElementById("registerPassword").value;
     var username = document.getElementById("registerUsr").value;
 
+
+    if (username == "") {
+        showAlert("Inserisci username", "danger");
+        return;
+    }
+    
     if(email == ""){
         showAlert("Inserisci Email", "danger");
         return;
