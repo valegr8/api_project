@@ -183,39 +183,25 @@ parameters useful for the login, such as the account token and the email.
         }
         
         
-### List all Users [GET]
+##  Authentication [/authentications]
 
-This method allows to get all user registered to the service, including
-each one's email.
+### Authenticate a user [POST]
+
+This method allows a user to authenticate to the service: first the
+email of the user is fetched, then a user with the same email is searched,
+and, if found, the passwords are compared: if they are the same, a java web token (jwt)
+is returned. If the passwords don't match, a json is returned, displaying the 
+message error. Also if a user with the same email provided is not found, another
+json is returned, informing of the error. 
 
 + Response 200 (application/json)
 
-        [
-            {
-                "self": "/api/v1/users/627fb93e6daddf9f174e7567",
-                "email": "harrypotter"
-            },
-            {
-                "self": "/api/v1/users/6282096ac4239ca9b8520338",
-                "email": "admin"
-            },
-            {
-                "self": "/api/v1/users/628223a19127e6c8feb60e5f",
-                "email": "pippo"
-            },
-            {
-                "self": "/api/v1/users/628223ab9127e6c8feb60e62",
-                "email": "admin2"
-            },
-            {
-                "self": "/api/v1/users/62822430b84146e3dc014f7e",
-                "email": "aldo"
-            },
-            {
-                "self": "/api/v1/users/628226f130a27be5e2fb1240",
-                "email": "admnin123"
-            }
-        ]
-        
-
-## Authentication [/authentication]
+        {
+            "success": true,
+            "message": "Enjoy your token!",
+            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBpcHBvQGVtYWlsLmNvbSIsImlkIjoiNjI4N2FiY2RmMGE5NmJkOTc1YTNhODRlIiwiaWF0IjoxNjUzMDYwNTAzLCJleHAiOjE2NTMxNDY5MDN9.SUaMnP1YDdaGTIH-5au7NG7MlLTH_pIkOqUqQ1g0WiQ",
+            "email": "pippo@email.com",
+            "username": "pippo",
+            "id": "6287abcdf0a96bd975a3a84e",
+            "self": "api/v1/6287abcdf0a96bd975a3a84e"
+        }
