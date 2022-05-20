@@ -4,6 +4,7 @@ const router = express.Router();
  * Get post model
  */
 const Post = require('./models/post'); 
+const User = require('./models/user'); 
 
 const utils = require('../utils/utils.js');
 const { printd } = require('../utils/utils.js');
@@ -68,10 +69,28 @@ router.get('/:id', async (req, res) => {
  * Create a new post
  */
 router.post('', async (req, res) => {
+	//Now, a post can uploaded by someone
+	//as long as they are a signed-up user.
+	let user_email = req.body.email;
+	let user = null;
+	let query = {
+		email : user_email
+	};
+	//checks whether the user is already signed up.
+	user = await User.findOne(query).exec();
+	
+	if(user == null){
+		//400
+		printd('User does not exist');
+		utils.badRequest(res);
+		return;//the run ends here.
+	}
+		
+	
 	let post = new Post({
         title: req.body.title,
 		description: req.body.description,
-		createdBy: req.body.email,
+		createdBy: user.email,
 		post_id: utils.generatePostId()
     });
     
@@ -83,10 +102,11 @@ router.post('', async (req, res) => {
 		printd('Post saved successfully');
 		res.location("/api/v1/posts/" + postId);
 		utils.created(post, res);
-	}).catch((e) => {
+	}).catch((e) => {		
 		//Gestiamo il fallimento di una post
 		//rispondendo 404, come nel tutorial
 		//alle API RESTful suggerito da Robol.
+		printd('Post saving failed');
 		utils.notFound(res);
 	});
     
