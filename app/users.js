@@ -7,24 +7,6 @@ const jwt = require('jsonwebtoken');
 const User = require('./models/user'); 
 
 /**
- * function for getting the user logged at the moment
- */
-router.get('/me', async (req, res) => {
-    if(!req.loggedUser) {
-        return;
-    }
-
-    let user = await User.findOne({email: req.loggedUser.email});
-
-    res.status(200).json({
-        self: '/api/v1/users/' + user.id,
-        email: user.email,
-        username: user.username,
-    });
-});
-
-
-/**
  * function for creating a new user
  */
  router.post('', async function(req,res) {
