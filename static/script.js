@@ -33,6 +33,9 @@ function logout(){
     showAlert("Disconnesso!", "success");
 }
 
+/**
+ * Function that enables and disables buttons
+ */
 function enNavButtons(){
         //disable login button
         document.getElementById("login").hidden = true; 
@@ -44,17 +47,92 @@ function enNavButtons(){
         document.getElementById("register").hidden = true; 
 }
 
-function createCardPost(self, title, descr){
+/**
+ * Create a post with a card user interface (bootstap)
+ */
+function createCardPost(id, title, descr,createdBy){
     return `<div class='card  mb-3' style='width: 36rem;'> \
-            <img src="https://www.lago.it/wp-content/uploads/2018/05/1_Lanfranchi_Lago-Milano-9.jpg" class="card-img-top rounded"> \
+                <p class='card-text'>Utente: ${createdBy}</p>
+                <img src="https://www.lago.it/wp-content/uploads/2018/05/1_Lanfranchi_Lago-Milano-9.jpg" class="card-img-top rounded"> \
                 <div class='card-body' > \
                     <h5 class='card-title'>${title}</h5> \
                     <p class='card-text'>${descr}</p> \
-                    <a href='${self}' class='btn btn-primary'>Vai all'annuncio</a> \
+                    <button id='detail_btn' onclick='loadDetails(${id})' class='btn btn-primary'>Vai all'annuncio</button> \
                 </div> \
             </div>`;
 }
 
+/**
+ * This function creates a page that shows the details of a post
+ */
+function loadDetails(id) {
+        //remove posts
+        const posts_div = document.getElementById("posts_div");
+        if(posts_div) 
+        {
+            posts_div.remove();
+            console.log("removing posts");
+        }
+        //remove form login
+        const login_form = document.getElementById("loginform");
+        if(login_form) 
+        {
+            login_form.remove();
+            console.log("removing login form");
+        }
+        //remove form register
+        const form_register = document.getElementById("registerform");
+        if(form_register) 
+        {
+            form_register.remove();
+            console.log("removing register form");
+        }
+        //remove form create
+        const create_form = document.getElementById("createform");
+        if(create_form) 
+        {
+            create_form.remove();
+            console.log("removing create form");
+        }
+        //check if the create form already exists
+        if(!document.getElementById("posts_div")) 
+        {       
+            const div = document.createElement("div");
+            div.setAttribute('class', "form-group");
+            div.setAttribute('id', "posts_div");
+    
+            div.innerHTML = "<div id='posts'></div>";
+            const main_div = document.getElementById("main_div");
+            main_div.appendChild(div);
+        }
+    
+        const postDiv = document.getElementById('posts'); // Get the list where we will place our posts
+        if(postDiv)
+        {   
+            fetch('../api/v1/posts/' + id)
+            .then((resp) => resp.json()) // Transform the data into json
+            .then(function(data) { // Here you get the data to modify
+                console.log(data);
+                var first = 0;
+                postDiv.innerHTML = "";
+                
+                if (!data.message) 
+                    console.log('no data');
+                if (!Array.isArray(data.message)) 
+                    console.log('result is not an array');
+
+                post = data.message;
+                postDiv.innerHTML+= "<h2>" +post.title+"</h2>"
+                postDiv.innerHTML+= createCardPost(post.post_id, post.title, post.description, post.createdBy);
+
+                //remove button at the end of the post
+                const detail_btn = document.getElementById('detail_btn');
+                if(detail_btn) //check if exists
+                    detail_btn.remove();
+            })
+            .catch( error => console.error(error) );// If there is any error you will catch them here
+        }
+}
 
 /**
  * This function refresh the list of posts
@@ -107,12 +185,12 @@ function loadPosts() {
             if (!data.message) 
                 console.log('no data');
             if (!Array.isArray(data.message)) 
-                console.log('results are not an array');
+                console.log('result is not an array');
 
             counter = 0;
             return data.message.map(function(post) { // Map through the results and for each run the code below
                 counter++;
-                postDiv.innerHTML+= createCardPost(post.self,post.title, post.description);
+                postDiv.innerHTML+= createCardPost(post.post_id, post.title, post.description, post.createdBy);
             });
         })
         .catch( error => console.error(error) );// If there is any error you will catch them here

@@ -5,6 +5,6 @@ var Schema = mongoose.Schema;
 module.exports = mongoose.model('Post', new Schema({
 	title: String,
 	description: String,
-	createdBy: String,
-	post_id: Number
+	createdBy: String,	//email of the user
+	post_id: Number 	//id of the post, used by the api because shorter then the one assigned by mongoDB (_id)
 }));
