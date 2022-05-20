@@ -44,9 +44,15 @@ function enNavButtons(){
         document.getElementById("register").hidden = true; 
 }
 
-function createCartPost(self, title, descr){
+function createCardPost(self, title, descr){
     return `<div class='card  mb-3' style='width: 36rem;'> \
-    <img src="https://www.lago.it/wp-content/uploads/2018/05/1_Lanfranchi_Lago-Milano-9.jpg" class="card-img-top rounded"><div class='card-body' ><h5 class='card-title'>${title}</h5><p class='card-text'>${descr}</p><a href='${self}' class='btn btn-primary'>Vai all'annuncio</a></div></div>`;
+            <img src="https://www.lago.it/wp-content/uploads/2018/05/1_Lanfranchi_Lago-Milano-9.jpg" class="card-img-top rounded"> \
+                <div class='card-body' > \
+                    <h5 class='card-title'>${title}</h5> \
+                    <p class='card-text'>${descr}</p> \
+                    <a href='${self}' class='btn btn-primary'>Vai all'annuncio</a> \
+                </div> \
+            </div>`;
 }
 
 
@@ -106,7 +112,7 @@ function loadPosts() {
             counter = 0;
             return data.message.map(function(post) { // Map through the results and for each run the code below
                 counter++;
-                postDiv.innerHTML+= createCartPost(post.self,post.title, post.description);
+                postDiv.innerHTML+= createCardPost(post.self,post.title, post.description);
             });
         })
         .catch( error => console.error(error) );// If there is any error you will catch them here
