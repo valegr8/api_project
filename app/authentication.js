@@ -29,6 +29,7 @@ router.post('', async function(req, res) {
 	// check if password matches
 	if ( user != null && user.password != req.body.password) {
 		res.json({ success: false, message: 'Authentication failed. Wrong password.' });
+		return;
 	}
 	
 	// if user is found and password is right create a token
