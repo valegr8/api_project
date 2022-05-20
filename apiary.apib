@@ -8,11 +8,15 @@ HouseMate is a web API that allows users to view and create posts for renting ho
 ##  Posts Collection [/posts]
 
 ### List All Posts [GET]
-
+Dascription:
 This method returns a JSON containing the whole collection of posts.
 The field post_id represents the unique identifier for each post.
 The field self provides helpful information to the client so that
 it can fetch easily a specific post.
+
+Responses:
+The status code 200 is returned when the web service fetches successfully
+the whole collection of posts from the database.
 
 + Response 200 (application/json)
 
@@ -59,11 +63,19 @@ Clearing the list is not allowed. This api returns a 405 status code: Method not
             }
 
 ### Create a New Post [POST]
+Description:
 This post request allows to create a new post and add the data in the database. Each post has an owner
 that is identified by the email, that is unique.
+
+Response:
+The status code 201 is returned when a post has been created successfully.
 The response header contains a field called Location which provides the URL of the newly created post.
 Its body contains the status code together with its human-friendly description.
 
+The status code 400 is returned when the email address provided by the request does not belong to any
+signed-up user.
+
+The status code 404 is returned when the web service fails to save the post in the database.
 
 + Request (application/json)
 
@@ -72,6 +84,7 @@ Its body contains the status code together with its human-friendly description.
             "description": "Vicino a tutto",
             "email": "BenedettoBenedetti@email.com"
         }
+        
 + Response 201 (application/json)
 
     + Headers
@@ -86,7 +99,16 @@ Its body contains the status code together with its human-friendly description.
                 "message": "Created"
 
             }
+            
++ Response 400 (application/json)
+   
+            {
+                    
+                "status": 404,
+                "message": "Bad Request"
 
+            }
+            
 + Response 404 (application/json)
    
             {
@@ -98,7 +120,13 @@ Its body contains the status code together with its human-friendly description.
 ## Single Post [/posts/{post_id}]
 
 ### Fetch one post [GET]
+Description:
 This method fetches a post by its post_id.
+
+Responses:
+The status code 400 is returned when an invalid id value has been provided by the request.
+
+The status code 404 is returned when the post is not in the database.
 + Response 200 (application/json)
 
         {
