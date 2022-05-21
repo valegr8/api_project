@@ -13,28 +13,8 @@ const { printd } = require('../utils/utils.js');
  * Get posts collection
  */
 router.get('', async (req, res) => {
-    let posts = await Post.find({});	
-    posts = posts.map( (post) => {		
-		//toObject() è necessario affinché
-		//undefined non venga concatenato
-		//il motivo è un'intricatezza di mongoose
-		let path = '/api/v1/posts/' + post.toObject().post_id;
-		//con questa funzione aggiungo
-		//una nuova proprietà all'oggetto post
-		//in modo tale da avere la conversione in JSON
-		//che ci si asppetterebbe. La stanezza del codice
-		//di implementazione è dovuta alle inticatezze delle
-		//conversioni in JSON; sto usando un trucco che
-		//ho trovato su stackOverFlow.
-		//Potete trovare ulteriori dettagli in utils.js
-		post = utils.addProp(post,'self',path);
-		return post;
-    });
+    let posts = await Post.find({}).exec();	
     utils.setResponseStatus(posts,res);
-	//Se volete modificare le get è bene parlarne con me
-	//perché errori difficili da sistemare potrebbero
-	//insinuarsi nel codice a causa delle intricatezze
-	//di sopra.
 });
 
 /**
