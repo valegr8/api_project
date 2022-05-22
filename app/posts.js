@@ -37,11 +37,10 @@ router.put('', async (req, res) => {
  */
 router.get('/:id', async (req, res) => {
 	printd('[GET/:id]ID: ' + req.params.id);
-	if(!utils.isIdValid(req.params.id)){
+	if(!utils.isValid(req.params.id)){
 		utils.badRequest(res);
 	}else{		
-		let query = { _id : req.params.id };
-		Post.findOne(query).exec().then((post)=>{
+		Post.findOne({ _id : req.params.id }).exec().then((post)=>{
 			utils.setResponseStatus(post,res);
 		}).catch((e) => {
 			printd('Error: ' + e);
@@ -57,7 +56,7 @@ router.post('', async (req, res) => {
 	printd('Request email: ' + req.body.email);
 	printd('Title: ' + req.body.title);
 	//check if the request email is not null otherwise returns 400
-	if(req.body.email == NaN || req.body.email == undefined) {
+	if(!isValid(req.body.email)) {
 		printd('User email not correct!');
 		utils.badRequest(res);	//return 400;
 		return;
@@ -76,7 +75,7 @@ router.post('', async (req, res) => {
 	}
 
 	//check if the request title is not null
-	if(req.body.title == NaN || req.body.title == undefined) {
+	if(!isValid(req.body.title)) {
 		printd('User title not correct!');
 		utils.badRequest(res);	//return 400;
 		return;
@@ -92,8 +91,7 @@ router.post('', async (req, res) => {
 	post = post.save().then((savedPost) =>{
 		// printd(savedPost._id);
 		let postId = savedPost._id;
-		if(postId==undefined) {
-			printd('Post Id undefined');
+		if(!isValid(postId)) {
 			utils.notFound(res);
 		}
 		else {

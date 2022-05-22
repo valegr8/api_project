@@ -4,6 +4,7 @@
 
 const utils = {}; 
 
+// enables the debug print when is setted to 1
 const debug = 1;
 
 /**
@@ -15,14 +16,14 @@ utils.printd = (string) => {
 };
 
 /**
- * Verifies validity of an id
+ * Verifies validity of an variable, if its not undefined or null
  */
-utils.isIdValid = (id) => {	
+utils.isValid = (variable) => {	
 	let res = true;
-	if(id == undefined || id == null || id <= 0)
+	if(variable == undefined || variable == null || variable == NaN)
 	{
 		res = false;
-		utils.printd('Id not valid');
+		utils.printd(variable +' not valid');
 	}
 	return res;
 }
