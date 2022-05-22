@@ -93,7 +93,7 @@ router.post('', async (req, res) => {
 	post = post.save().then((savedPost) =>{
 		// printd(savedPost._id);
 		let postId = savedPost._id;
-		if(!utils.isValid(postId)) {
+		if(!ObjectID.isValid(postId)) {
 			utils.notFound(res);
 		}
 		else {
