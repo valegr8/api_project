@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+var ObjectID = require("mongodb").ObjectID;
+
 /**
  * Get post model
  */
@@ -36,8 +38,8 @@ router.put('', async (req, res) => {
  * Get a single post by its id
  */
 router.get('/:id', async (req, res) => {
-	printd('[GET/:id]ID: ' + req.params.id);
-	if(!utils.isValid(req.params.id)){
+	printd('[GET/:id]ID: ' + req.params.id);	
+	if(!ObjectID.isValid(req.params.id)){
 		utils.badRequest(res);
 	}else{		
 		Post.findOne({ _id : req.params.id }).exec().then((post)=>{
