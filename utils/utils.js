@@ -20,11 +20,12 @@ utils.printd = (string) => {
  */
 utils.isValid = (variable) => {	
 	let res = true;
-	if(variable == undefined || variable == null || variable == NaN)
+	if(variable == undefined || variable == null || variable == NaN || variable == "")
 	{
 		res = false;
-		utils.printd(variable +' not valid');
+		utils.printd(variable +' is not valid');
 	}
+	utils.printd(variable +' is valid');
 	return res;
 }
 
