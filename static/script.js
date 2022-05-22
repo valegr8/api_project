@@ -258,7 +258,6 @@ function login()
             loggedUser.token = data.token;
             loggedUser.email = data.email;
             loggedUser.id = data.id;
-            loggedUser.self = data.self;
             loggedUser.username = data.username;
 
             enNavButtons();
@@ -321,7 +320,6 @@ function register(){
             loggedUser.token = data.token;
             loggedUser.email = data.email;
             loggedUser.id = data.id;
-            loggedUser.self = data.self;
             loggedUser.username = data.username;
 
             enNavButtons();
