@@ -26,7 +26,10 @@ utils.isValid = (variable) => {
 		res = false;
 		utils.printd(variable +' is not valid');
 	}
-	utils.printd(variable +' is valid');
+	else 
+	{
+		utils.printd(variable +' is valid');
+	}
 	return res;
 }
 
