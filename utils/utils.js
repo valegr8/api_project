@@ -2,6 +2,7 @@
  *  UTILITY FUNCTIONS 
  ******************** */
 
+
 const utils = {}; 
 
 // enables the debug print when is setted to 1
@@ -15,6 +16,7 @@ utils.printd = (string) => {
 		console.log(string);
 };
 
+<<<<<<< Updated upstream
 /**
  * Verifies validity of an variable, if its not undefined or null
  */
@@ -28,6 +30,9 @@ utils.isValid = (variable) => {
 	utils.printd(variable +' is valid');
 	return res;
 }
+=======
+
+>>>>>>> Stashed changes
 
 /** ***************
  *  STATUS CODES  
