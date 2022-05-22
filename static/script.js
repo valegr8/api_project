@@ -60,7 +60,7 @@ function createCardPost(id, title, descr,createdBy){
                 <div class='card-body' > \
                     <h5 class='card-title'>${title}</h5> \
                     <p class='card-text'>${descr}</p> \
-                    <button id='detail_btn' onclick='loadDetails(${id})' class='btn btn-primary'>Vai all'annuncio</button> \
+                    <button id='detail_btn' onclick='loadDetails("${id}")' class='btn btn-primary'>Vai all'annuncio</button> \
                 </div> \
             </div>`;
 }
@@ -115,18 +115,18 @@ function loadDetails(id) {
             fetch('../api/v1/posts/' + id)
             .then((resp) => resp.json()) // Transform the data into json
             .then(function(data) { // Here you get the data to modify
-                console.log(data);
+                // console.log(data);
                 var first = 0;
                 postDiv.innerHTML = "";
                 
                 if (!data.message) 
                     console.log('no data');
-                if (!Array.isArray(data.message)) 
-                    console.log('result is not an array');
+                if (Array.isArray(data.message)) 
+                    console.log('result is an array');
 
                 post = data.message;
                 postDiv.innerHTML+= "<h2>" +post.title+"</h2>"
-                postDiv.innerHTML+= createCardPost(post.post_id, post.title, post.description, post.createdBy);
+                postDiv.innerHTML+= createCardPost(post._id, post.title, post.description, post.createdBy);
 
                 //remove button at the end of the post
                 const detail_btn = document.getElementById('detail_btn');
@@ -181,10 +181,6 @@ function loadPosts() {
         fetch('../api/v1/posts')
         .then((resp) => resp.json()) // Transform the data into json
         .then(function(data) { // Here you get the data to modify
-            // console.log(data);
-            var first = 0;
-            postDiv.innerHTML = "";
-            
             if (!data.message) 
                 console.log('no data');
             if (!Array.isArray(data.message)) 
@@ -193,7 +189,7 @@ function loadPosts() {
             counter = 0;
             return data.message.map(function(post) { // Map through the results and for each run the code below
                 counter++;
-                postDiv.innerHTML+= createCardPost(post.post_id, post.title, post.description, post.createdBy);
+                postDiv.innerHTML+= createCardPost(post._id, post.title, post.description, post.createdBy);
             });
         })
         .catch( error => console.error(error) );// If there is any error you will catch them here
@@ -674,9 +670,10 @@ function registerPage()
 
 /**
  * This function check if the pattern of an email is correct
+ * https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript
  */
 function checkIfEmailInString(text) {
     // eslint-disable-next-line
-    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(text);
+    var res = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return res.test(text);
 }

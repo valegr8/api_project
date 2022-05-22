@@ -9,7 +9,7 @@ const User = require('./models/user');
 /**
  * function for creating a new user
  */
- router.post('', async function(req,res) {
+router.post('', async function(req,res) {
 
     let uEmail = req.body.email;
     let uPassword = req.body.password;
@@ -50,24 +50,7 @@ const User = require('./models/user');
 		email: user.email,
         username: user.username,
 		id: user._id,
-		self: "api/v1/" + user._id
 	});
-
-
 });
-
-// https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript
-/**
- * this function checks if the email
- * provided is of the correct format.
- * It basically checks if a string composed
- * of the specified characters is present 
- * in the email
- */
-function checkIfEmailInString(text) {
-    // eslint-disable-next-line
-    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(text);
-}
 
 module.exports = router;

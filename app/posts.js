@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+var ObjectID = require("mongodb").ObjectID;
+
 /**
  * Get post model
  */
@@ -13,6 +15,7 @@ const { printd } = require('../utils/utils.js');
  * Get posts collection
  */
 router.get('', async (req, res) => {
+	// gets all posts
     let posts = await Post.find({}).exec();	
     utils.setResponseStatus(posts,res);
 });
@@ -24,6 +27,9 @@ router.delete('', async (req, res) => {
 	utils.notAllowed(res);
 });
 
+/**
+ * Put not allowed
+ */
 router.put('', async (req, res) => {
 	utils.notAllowed(res);
 });
@@ -32,14 +38,14 @@ router.put('', async (req, res) => {
  * Get a single post by its id
  */
 router.get('/:id', async (req, res) => {
-	let condizione = utils.isIdValid(req.params.id);
-	if(!condizione){
+	printd('[GET/:id]ID: ' + req.params.id);	
+	if(!ObjectID.isValid(req.params.id)){
 		utils.badRequest(res);
 	}else{		
-		let query = {post_id : req.params.id};
-		let post = Post.findOne(query).where('post_id').equals(query.post_id).exec().then((post)=>{
+		Post.findOne({ _id : req.params.id }).exec().then((post)=>{
 			utils.setResponseStatus(post,res);
 		}).catch((e) => {
+			printd('Error: ' + e);
 			utils.notFound(res);
 		});
 	}
@@ -49,48 +55,57 @@ router.get('/:id', async (req, res) => {
  * Create a new post
  */
 router.post('', async (req, res) => {
-	//Now, a post can uploaded by someone
-	//as long as they are a signed-up user.
-	let user_email = req.body.email;
-	let user = null;
-	let query = {
-		email : user_email
-	};
-	//checks whether the user is already signed up.
-	user = await User.findOne(query).exec();
-	
-	if(user == null){
-		//400
-		printd('User does not exist');
-		utils.badRequest(res);
-		return;//the run ends here.
+	printd('Request email: ' + req.body.email);
+	printd('Title: ' + req.body.title);
+	//check if the request email is not null otherwise returns 400
+	if(!utils.isValid(req.body.email)) {
+		printd('User email not correct!');
+		utils.badRequest(res);	//return 400;
+		return;
+	}
+	else {
+		//A post can uploaded only by signed-up user.
+		//Checks whether the user is already signed up.
+		//'await' is used to stop the execution until the promise is fullfilled or rejected
+		// find a user with the email in the request otherwise null
+		let user = await User.findOne({ email : req.body.email }).exec();
+		if(user == null){
+			printd('User does not exist');
+			utils.badRequest(res);	//return 400;
+			return;//the run ends here.
+		}
+	}
+
+	//check if the request title is not null
+	if(!utils.isValid(req.body.title)) {
+		printd('User title not correct!');
+		utils.badRequest(res);	//return 400;
+		return;
 	}
 		
-	
 	let post = new Post({
         title: req.body.title,
 		description: req.body.description,
-		createdBy: user.email,
-		post_id: utils.generatePostId()
+		createdBy: req.body.email
     });
-    
-	//Ho spostato il codice nella gestione
-	//della promise. Await è stato rimosso
-	//perché adesso sarebbe ridondante.
+
+	//save a new post
 	post = post.save().then((savedPost) =>{
-		let postId = post.post_id;
-		printd('Post saved successfully');
-		res.location("/api/v1/posts/" + postId);
-		utils.created(post, res);
+		// printd(savedPost._id);
+		let postId = savedPost._id;
+		if(!utils.isValid(postId)) {
+			utils.notFound(res);
+		}
+		else {
+			printd('Post saved successfully');
+			res.location("/api/v1/posts/" + postId);
+			utils.created(res);
+		}
 	}).catch((e) => {		
-		//Gestiamo il fallimento di una post
-		//rispondendo 404, come nel tutorial
-		//alle API RESTful suggerito da Robol.
+		// If the post fails we return 404 status code
 		printd('Post saving failed');
 		utils.notFound(res);
 	});
-    
-	
 });
 
 module.exports = router;
