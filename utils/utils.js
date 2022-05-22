@@ -16,7 +16,6 @@ utils.printd = (string) => {
 		console.log(string);
 };
 
-<<<<<<< Updated upstream
 /**
  * Verifies validity of an variable, if its not undefined or null
  */
@@ -30,9 +29,6 @@ utils.isValid = (variable) => {
 	utils.printd(variable +' is valid');
 	return res;
 }
-=======
-
->>>>>>> Stashed changes
 
 /** ***************
  *  STATUS CODES  
@@ -81,5 +77,14 @@ utils.created = (res) => {
 	utils.printd('Created');
 	res.status(201).json({status: 201, message: 'Created'});
 };
+
+/**
+ * Sets a 409 status code, the resource already exists
+ */
+utils.alreadyExists = (res) => {
+	utils.printd('Already Exists');
+	res.status(409).json({status: 409, message: 'Already Exists'});
+};
+
 
 module.exports = utils;

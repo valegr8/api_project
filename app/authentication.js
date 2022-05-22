@@ -50,7 +50,6 @@ router.post('', async function(req, res) {
 		email: user.email,
 		username: user.username,
 		id: user._id,
-		self: "api/v1/" + user._id
 	});
 
 });
