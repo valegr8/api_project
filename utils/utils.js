@@ -62,6 +62,16 @@ utils.notFound = (res) => {
 };
 
 /**
+ * 
+ * Sets a 402 http response status, wrong password
+ */
+
+utils.wrongPassword = (res) => {
+	utils.printd('Wrong Password');
+	res.status(402).json({status: 402, message: 'Wrong Password'});
+}
+
+/**
  * Sets a status, 200 ok or 404 Not found
  */
 utils.setResponseStatus = (param,res) => {

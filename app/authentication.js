@@ -8,6 +8,7 @@ const User = require('./models/user');
  * used to create, sign, and verify tokens
  */
 const jwt = require('jsonwebtoken'); 
+const utils = require('../utils/utils');
 
 /**
  * route to authenticate and get a new token
@@ -21,14 +22,16 @@ router.post('', async function(req, res) {
 	
 	// user not found
 	if (!user) {
-		res.json({ success: false, message: 'Authentication failed. User not found.' });
+		//res.json({ success: false, message: 'Authentication failed. User not found.' });
+		utils.notFound(res);
 		console.log("utente non trovato");
 		return;
 	}
 	
 	// check if password matches
 	if ( user != null && user.password != req.body.password) {
-		res.json({ success: false, message: 'Authentication failed. Wrong password.' });
+		//res.json({ success: false, message: 'Authentication failed. Wrong password.' });
+		utils.wrongPassword(res);
 		return;
 	}
 	
