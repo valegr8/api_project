@@ -74,28 +74,28 @@ function loadDetails(id) {
         if(posts_div) 
         {
             posts_div.remove();
-            console.log("removing posts");
+            // console.log("removing posts");
         }
         //remove form login
         const login_form = document.getElementById("loginform");
         if(login_form) 
         {
             login_form.remove();
-            console.log("removing login form");
+            // console.log("removing login form");
         }
         //remove form register
         const form_register = document.getElementById("registerform");
         if(form_register) 
         {
             form_register.remove();
-            console.log("removing register form");
+            // console.log("removing register form");
         }
         //remove form create
         const create_form = document.getElementById("createform");
         if(create_form) 
         {
             create_form.remove();
-            console.log("removing create form");
+            // console.log("removing create form");
         }
         //check if the create form already exists
         if(!document.getElementById("posts_div")) 
@@ -146,21 +146,21 @@ function loadPosts() {
     if(login_form) 
     {
         login_form.remove();
-        console.log("removing login form");
+        // console.log("removing login form");
     }
     //remove form register
     const form_register = document.getElementById("registerform");
     if(form_register) 
     {
         form_register.remove();
-        console.log("removing register form");
+        // console.log("removing register form");
     }
     //remove form create
     const create_form = document.getElementById("createform");
     if(create_form) 
     {
         create_form.remove();
-        console.log("removing create form");
+        // console.log("removing create form");
     }
     //check if the create form already exists
     if(!document.getElementById("posts_div")) 
@@ -207,7 +207,7 @@ function insertPost()
     var postTitle = document.getElementById("postTitle").value;
     var postDesc = document.getElementById("postDesc").value;
     
-    console.log(postTitle);
+    // console.log(postTitle);
 
     fetch('../api/v1/posts', {
         method: 'POST',
@@ -215,8 +215,15 @@ function insertPost()
         body: JSON.stringify( { title: postTitle , description: postDesc , email: loggedUser.email} ),
     })
     .then((resp) => {
-        console.log(resp);
-        loadPosts();
+        // console.log(resp);
+        // console.log(resp.status);
+        if(resp.status != 201){
+            showAlert("Errore nella creazione dell'annuncio, riprova! Devi aver fatto il login e inserito un titolo", "danger")
+        }
+        else {
+            showAlert('Post creato con successo!', "success");
+            loadPosts();
+        }
         return;
     })
     .catch( error => console.error(error) ); // If there is any error you will catch them here
@@ -313,7 +320,7 @@ function register(){
     })
     .then((resp) => resp.json()) // Transform the data into json
     .then(function(data){
-        console.log(data);
+        // console.log(data);
         if(data.email == undefined){
             showAlert("Email gia' in uso", "danger");
         }else{
@@ -346,21 +353,21 @@ function newPostPage()
     if(form_register) 
     {
         form_register.remove();
-        console.log("removing register form");
+        // console.log("removing register form");
     }
     //remove posts
     const posts_div = document.getElementById("posts_div");
     if(posts_div) 
     {
         posts_div.remove();
-        console.log("removing posts");
+        // console.log("removing posts");
     }
     //remove form login
     const form_ = document.getElementById("loginform");
     if(form_) 
     {
         form_.remove();
-        console.log("removing login form");
+        // console.log("removing login form");
     }
     //check if the create form already exists
     if(!document.getElementById("createform")) 
@@ -447,26 +454,26 @@ function loginPage()
     if(form_register) 
     {
         form_register.remove();
-        console.log("removing register form");
+        // console.log("removing register form");
     }
     //remove form create
     const form_ = document.getElementById("createform");
     if(form_) 
     {
         form_.remove();
-        console.log("removing create form");
+        // console.log("removing create form");
     }
     //remove posts
     const posts_div = document.getElementById("posts_div");
     if(posts_div) 
     {
         posts_div.remove();
-        console.log("removing posts");
+        // console.log("removing posts");
     }
     //check if the login form already exists
     if(!document.getElementById("loginform")) 
     {
-        console.log("creating login form");      
+        // console.log("creating login form");      
         //create form
         const form = document.createElement("form");
         form.setAttribute('method', "post");
@@ -541,26 +548,26 @@ function registerPage()
     if(form_login) 
     {
         form_login.remove();
-        console.log("removing login form");
+        // console.log("removing login form");
     }
     //remove form create
     const form_ = document.getElementById("createform");
     if(form_) 
     {
         form_.remove();
-        console.log("removing create form");
+        // console.log("removing create form");
     }
     //remove posts
     const posts_div = document.getElementById("posts_div");
     if(posts_div) 
     {
         posts_div.remove();
-        console.log("removing posts");
+        // console.log("removing posts");
     }
     //check if the register form already exists
     if(!document.getElementById("registerform")) 
     {
-        console.log("creating register form");      
+        // console.log("creating register form");      
         //create form
         const form = document.createElement("form");
         form.setAttribute('method', "post");
