@@ -7,82 +7,120 @@ HouseMate is a web API that allows users to view and create posts for renting ho
 
 ##  Posts Collection [/posts]
 
-### List All Posts [GET]
-Dascription:
-This method returns a JSON containing the whole collection of posts.
-The field post_id represents the unique identifier for each post.
-The field self provides helpful information to the client so that
-it can fetch easily a specific post.
+This collection contains all the API RESTful regarding the posts. A post is an appartment listing.
 
-Responses:
-The status code 200 is returned when the web service fetches successfully
-the whole collection of posts from the database.
+### List All Posts [GET]
+
+**Dascription**:
+
+This method returns a JSON containing the whole collection of posts. The field message contains
+an array of posts.
+
+**Responses**:
+
+* The status code `200` is returned when the web service fetches successfully the whole collection of posts from the database
+* Otherwise returns a `404`, "not found" status code.
 
 + Response 200 (application/json)
-
-        {
-            "message": [
-                {
-                    "_id": "62866283f3ff1e92d70116ef",
-                    "title": "postato",
-                    "description": "tugurio",
-                    "createdBy": "miFidoSullaParola@amogus.com",
-                    "__v": 0
-                },
-                {
-                    "_id": "628662fbf3ff1e92d70116f2",
-                    "title": "Appartamento bellissimo",
-                    "description": "Vicino a tutto",
-                    "createdBy": "BenedettoBenedetti@email.com",
-                    "__v": 0 
-                }
-            ]
-        }
-
-### Put Post [PUT]
-This method is not allowed.
-The list is already updated by the insertions and deletions
-performed by the users.
-
-+ Response 405 (application/json)
+    
+    Successful response.
+    
+    + Body
 
             {
-                "Method Not Allowed"
+                "message": [
+                    {
+                        "_id": "62866283f3ff1e92d70116ef",
+                        "title": "postato",
+                        "description": "tugurio",
+                        "createdBy": "miFidoSullaParola@amogus.com",
+                        "__v": 0
+                    },
+                    {
+                        "_id": "628662fbf3ff1e92d70116f2",
+                        "title": "Appartamento bellissimo",
+                        "description": "Vicino a tutto",
+                        "createdBy": "BenedettoBenedetti@email.com",
+                        "__v": 0 
+                    }
+                ]
+            }
+        
++ Response 404 (application/json)
+    
+    Returned if the web service could not get the data correctly.
+    
+    + Body
+    
+            {
+                "status": 404,
+                "message": "Not found"
+            }
+        
+
+### Put Post [PUT]
+
+This method is not allowed yet. 
+
+* This api returns a `405` status code: Method not allowed.
+
++ Response 405 (application/json)
+    
+    + Body
+
+            {
+                "status": 405,
+                "message": "Method Not Allowed"
             }
             
 ### Delete All Posts [DELETE]
-Clearing the list is not allowed. This api returns a 405 status code: Method not allowed.
+
+Clearing the list is not allowed. 
+
+* This api returns a `405` status code: Method not allowed.
+
 + Response 405 (application/json)
 
+    + Body
+
             {
-                "Method Not Allowed"
+                "status": 405,
+                "message": "Method Not Allowed"
             }
 
 ### Create a New Post [POST]
-Description:
+
+**Description**:
+
 This post request allows to create a new post and add the data in the database. Each post has an owner
 that is identified by the email, that is unique.
 
-Response:
-The status code 201 is returned when a post has been created successfully.
+**Responses**:
+
+* The status code `201` is returned when a post has been created successfully.
 The response header contains a field called Location which provides the URL of the newly created post.
-Its body contains the status code together with its human-friendly description.
+Its body contains the status code together with a message.
 
-The status code 400 is returned when the email address provided by the request does not belong to any
-signed-up user.
+* The status code `400` is returned when the email, the user or the title are invalid.
 
-The status code 404 is returned when the web service fails to save the post in the database.
+* The status code `404` is returned when the web service fails to save the post in the database.
 
 + Request (application/json)
+    
+    + Body
 
-        {
-            "title": "Appartamento bellissimo",
-            "description": "Vicino a tutto",
-            "email": "BenedettoBenedetti@email.com"
-        }
+            {
+                "title": "Appartamento bellissimo",
+                "description": "Vicino a tutto",
+                "email": "BenedettoBenedetti@email.com"
+            }
         
 + Response 201 (application/json)
 
+    The status code `201` is returned when a post has been created successfully.
+    The response header contains a field called Location which provides the URL of the newly created post.
+    Its body contains the status code together with a message.
+    
     + Headers
     
             Location: /api/v1/posts/2
@@ -92,51 +130,78 @@ The status code 404 is returned when the web service fails to save the post in t
             {
                     
                 "status": 201,
-                "message": "Created"
+                "message": "Post saved successfully"
 
             }
             
 + Response 400 (application/json)
-   
-            {
-                    
-                "status": 404,
-                "message": "Bad Request"
 
+    The `400` status code is returned in different cases, and the message returned changes depending on each case:
+    * When the email is not correct, for example has not been defined. `message: User email not valid`
+    * When the user (the email) is not present in the database, so the owner of the post is invalid. `message: User does not exist`
+    * if the title is invalid (e.g. undefined). `message: User title not valid`
+    
+    + Body
+    
+            {
+                "status": 400,
+                "message": "..."
             }
-            
+
 + Response 404 (application/json)
-   
-            {
-                    
-                "status": 404,
-                "message": "Not Found"
 
-            }
-## Single Post [/posts/{post_id}]
+    This is returned when the post has not been saved and the resource has not been created in the database, the message returned is: `message: Post saving failed`.
+    The response is also given if the id of the new post is not valid and the message is: `message: Post id not valid` . 
+    
+    + Body
+    
+            {
+                "status": 404,
+                "message": "..."
+            }       
+            
+
+            
+## Single Post [/posts/{id}]
+
+This route is used to get access to a single post, identified bu its ID.
 
 ### Fetch one post [GET]
-Description:
-This method fetches a post by its post_id.
 
-Responses:
-The status code 400 is returned when an invalid id value has been provided by the request.
+**Description**:
 
-The status code 404 is returned when the post is not in the database.
+This method fetches a post by its id.
+
+**Responses**:
+
+* The response status code for a successful request is `200`.
+
+* The status code `400` is returned when an invalid id value has been provided by the request.
+
+* The status code `404` is returned when the post is not in the database.
+
 + Response 200 (application/json)
 
-        {
-            "message": {
-                            "_id": "62866283f3ff1e92d70116ef",
-                            "title": "postato",
-                            "description": "tugurio",
-                            "createdBy": "miFidoSullaParola@amogus.com",
-                            "__v": 0
-                }
-        }
+    Successful response.
+    
+    + Body
+    
+            {
+                "message": {
+                                "_id": "62866283f3ff1e92d70116ef",
+                                "title": "postato",
+                                "description": "tugurio",
+                                "createdBy": "miFidoSullaParola@amogus.com",
+                                "__v": 0
+                    }
+            }
          
 + Response 404 (application/json)
-   
+
+    The status code 404 is returned when the post is not in the database.
+    
+    + Body
+    
             {
                     
                 "status": 404,
@@ -144,59 +209,155 @@ The status code 404 is returned when the post is not in the database.
 
             }  
 + Response 400 (application/json)
+
+    This response is given when the id is not valid.
    
+    + Body
+    
             {
                     
                 "status": 400,
                 "message": "Bad Request"
 
             }
+            
 ##  User Collection [/users]
+
+This collection contains all the API RESTful that refers to the user. 
 
 ### Create a new user [POST]
 
-This method allows to add an user to register in the system. The request is formed by the email 
-and the password for the account. The response returns a status code of "success" (200) and other 
+**Description**:
+
+This method allows to add an user to register in the system. The request is formed by the email, the username 
+and the password for the account. 
+
+**Responses**:
+
+* The response returns a status code of "success", `200`, and other 
 parameters useful for the login, such as the account token and the email.
 
-+ Request (application/json)
+* The response can be also `409` if the user alredy exists or `400`, bad request, if the parameters are not valid.
 
-        {
-            "email": "prova@prova.com"
-            "password": "ASecurePassword"
-        }
++ Request (application/json)
+    
+    + Body
+
+            {
+                "email": "prova@prova.com",
+                "username": "pippo",
+                "password": "ASecurePassword"
+            }
 
 + Response 200 (application/json)
+    
+    Successful response.
+    
+    + Body
 
-        {
-            "success": true
-            "message": "User created!"
-            "token": "628099dc6824bsadefa6e372e2a" 
-            "email": "prova@prova.com"
-            "id": "628240wq213258274ea229984ddee"
-            "self": "api/v1/628240258274ea229984ddee"
-        }
+            {
+                "success": true,
+                "message": "User created!",
+                "token": "628099dc6824bsadefa6e372e2a",
+                "email": "prova@prova.com",
+                "username": "pippo",
+                "id": "628240wq213258274ea229984ddee"
+            }
         
++ Response 409 (application/json)
+
+    The response is given if the user alredy exists.
+    
+    + Body
         
+            {
+                "status": 404,
+                "message": "User already exists"
+            }
+            
+            
++ Response 400 (application/json)
+
+    The response is given if the username, email or password are not valid.
+    
+    + Body
+        
+            {
+                "status": 400,
+                "message": "Bad request"
+            }
+            
+
+
 ##  Authentication [/authentications]
 
+This route is used for the authentication of a user.
+
 ### Authenticate a user [POST]
+
+**Description**:
 
 This method allows a user to authenticate to the service: first the
 email of the user is fetched, then a user with the same email is searched,
 and, if found, the passwords are compared: if they are the same, a java web token (jwt)
-is returned. If the passwords don't match, a json is returned, displaying the 
-message error. Also if a user with the same email provided is not found, another
-json is returned, informing of the error. 
+is returned. 
+
+
+**Responses**:
+
+* The response status code for a successful request is `200`.
+
+* If the email or the password are not valid a `400` status code is returned and a message informs the user of the error.
+
+* If the passwords don't match, a `402` status code is returned, with a message error. 
+
+* Also if a user with the same email provided is not found, a 404 status code is returned, informing of the error.
+
+
 
 + Response 200 (application/json)
 
-        {
-            "success": true,
-            "message": "Enjoy your token!",
-            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBpcHBvQGVtYWlsLmNvbSIsImlkIjoiNjI4N2FiY2RmMGE5NmJkOTc1YTNhODRlIiwiaWF0IjoxNjUzMDYwNTAzLCJleHAiOjE2NTMxNDY5MDN9.SUaMnP1YDdaGTIH-5au7NG7MlLTH_pIkOqUqQ1g0WiQ",
-            "email": "pippo@email.com",
-            "username": "pippo",
-            "id": "6287abcdf0a96bd975a3a84e",
-            "self": "api/v1/6287abcdf0a96bd975a3a84e"
-        }
+    + Body
+
+            {
+                "success": true,
+                "message": "Enjoy your token!",
+                "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBpcHBvQGVtYWlsLmNvbSIsImlkIjoiNjI4N2FiY2RmMGE5NmJkOTc1YTNhODRlIiwiaWF0IjoxNjUzMDYwNTAzLCJleHAiOjE2NTMxNDY5MDN9.SUaMnP1YDdaGTIH-5au7NG7MlLTH_pIkOqUqQ1g0WiQ",
+                "email": "pippo@email.com",
+                "username": "pippo",
+                "id": "6287abcdf0a96bd975a3a84e",
+            }
+            
++ Response 404 (application/json)
+
+    The response is given if the user does not exist in the database.
+    
+    + Body
+        
+            {
+                "status": 404,
+                "message": "User not found"
+            }
+            
+            
++ Response 400 (application/json)
+
+    The response is given if the email or password sent in the request are not valid, for example are undefined.
+    
+    + Body
+        
+            {
+                "status": 400,
+                "message": "Bad request"
+            }
+            
++ Response 402 (application/json)
+
+    The response is given if the password in the request does not match the one in the database.
+    
+    + Body
+        
+            {
+                "status": 402,
+                "message": "Password do not match"
+            }
