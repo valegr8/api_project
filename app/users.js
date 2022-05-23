@@ -3,7 +3,7 @@ const router = express.Router();
 const jwt = require('jsonwebtoken'); 
 
 const utils = require('../utils/utils.js');
-const { printd } = require('../utils/utils.js');
+const { printd, isValid } = require('../utils/utils.js');
 
 /**
  * Get user model
@@ -17,6 +17,11 @@ router.post('', async function(req,res) {
     printd('Email: ' + req.body.email);
     printd('Username: ' + req.body.username);
     printd('Password: ' + req.body.password);
+
+    if(!isValid(req.body.email)) {
+        utils.badRequest(res, "Bad request, email not valid");
+        return;
+    }
 
     //search if there is already a user with the same email
     let user = await User.findOne({ email: req.body.email}).exec();

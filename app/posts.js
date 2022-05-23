@@ -59,7 +59,7 @@ router.post('', async (req, res) => {
 	printd('Title: ' + req.body.title);
 	//check if the request email is not null otherwise returns 400
 	if(!utils.isValid(req.body.email)) {
-		utils.badRequest(res,'User email not correct!');	//return 400;
+		utils.badRequest(res,'User email not valid');	//return 400;
 		return;
 	}
 	else {
@@ -76,7 +76,7 @@ router.post('', async (req, res) => {
 
 	//check if the request title is not null
 	if(!utils.isValid(req.body.title)) {
-		utils.badRequest(res, 'User title not correct!');	//return 400;
+		utils.badRequest(res, 'User title not valid');	//return 400;
 		return;
 	}
 		
@@ -91,7 +91,7 @@ router.post('', async (req, res) => {
 		// printd(savedPost._id);
 		let postId = savedPost._id;
 		if(!isValidObjectId(postId)) {
-			utils.notFound(res);
+			utils.notFound(res, 'Post id not valid');
 		}
 		else {
 			res.location("/api/v1/posts/" + postId);

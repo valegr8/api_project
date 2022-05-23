@@ -43,7 +43,7 @@ router.post('', async function(req, res) {
 
 	// check if password matches
 	if (user != null && user.password != req.body.password) {
-		utils.wrongPassword(res, "Password does not match");
+		utils.wrongPassword(res, "Password do not match");
 		return;
 	}
 	
