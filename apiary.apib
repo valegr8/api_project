@@ -311,7 +311,7 @@ is returned.
 
 * If the passwords don't match, a `402` status code is returned, with a message error. 
 
-* Also if a user with the same email provided is not found, a 404 status code is returned, informing of the error.
+* Also if a user with the same email provided is not found, a `404` status code is returned, informing of the error.
 
 
 
@@ -342,14 +342,21 @@ is returned.
             
 + Response 400 (application/json)
 
-    The response is given if the email or password sent in the request are not valid, for example are undefined.
+    The response is given if the email sent in the request is not valid, for example is undefined.
     
     + Body
-        
-            {
-                "status": 400,
-                "message": "Bad request"
-            }
+            
+                {
+                    "status": 400,
+                    "message": "Bad request, email not valid"
+                }
+                
+                
+                {
+                    "status": 400,
+                    "message": "Bad request, inserted password not valid"
+                }
+            
             
 + Response 402 (application/json)
 
