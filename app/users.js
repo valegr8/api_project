@@ -23,19 +23,19 @@ router.post('', async function(req,res) {
     
     //if user already exist, return error and a 409 status code
     if(user != null) { 		
-        utils.alreadyExists(res);
+        utils.alreadyExists(res, "User already exists");
         return;
     }
 
     //if the email is not a string returns a bed request status code
     if(!checkIfEmailInString(req.body.email)) {
-        utils.badRequest(res);
+        utils.badRequest(res, "Bad request, email not in the correct format");
         return;
     }
 
     //check if the username and the password are valid, if not returns a bad request status code
     if(!utils.isValid(req.body.username) || !utils.isValid(req.body.password)) {
-        utils.badRequest(res);
+        utils.badRequest(res, "Bad request, username or password not valid");
         return;
     }
 

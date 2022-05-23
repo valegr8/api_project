@@ -33,7 +33,9 @@ app.use('/api/v1/authentications', authentication);
 app.use('/api/v1/posts/', posts);
 app.use('/api/v1/users', users);
 
-/* Default 404 handler */
+/**
+ * Default 404 handler 
+ */
 app.use((req, res) => {
     res.status(404);
     res.json({ error: 'Not found' });

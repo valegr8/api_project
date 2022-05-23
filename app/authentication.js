@@ -14,24 +14,36 @@ const utils = require('../utils/utils');
  * route to authenticate and get a new token
  */
 router.post('', async function(req, res) {
-	
+	utils.printd(req.body.email);
+
+	//email not valid
+	if(!utils.isValid(req.body.email)) {
+		utils.badRequest(res, "Bad request, email not valid");
+		return;
+	}
+
 	// find the user
 	let user = await User.findOne({
 		email: req.body.email
 	}).exec();
+
+	utils.printd(user);
 	
 	// user not found
-	if (!user) {
-		//res.json({ success: false, message: 'Authentication failed. User not found.' });
-		utils.notFound(res);
-		console.log("utente non trovato");
+	if (!utils.isValid(user)) {
+		utils.notFound(res, "User not found");
 		return;
 	}
 	
+	//password not valid
+	if(!utils.isValid(req.body.password)) {
+		utils.badRequest(res, "Bad request, inserted password not valid");
+		return;
+	}
+
 	// check if password matches
-	if ( user != null && user.password != req.body.password) {
-		//res.json({ success: false, message: 'Authentication failed. Wrong password.' });
-		utils.wrongPassword(res);
+	if (user != null && user.password != req.body.password) {
+		utils.wrongPassword(res, "Password does not match");
 		return;
 	}
 	
@@ -46,6 +58,7 @@ router.post('', async function(req, res) {
 	}
 	var token = jwt.sign(payload, 'admin1234', options);
 
+	// successful request
 	res.status(200).json({
 		success: true,
 		message: 'Enjoy your token!',

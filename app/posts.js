@@ -10,6 +10,7 @@ const User = require('./models/user');
 
 const utils = require('../utils/utils.js');
 const { printd } = require('../utils/utils.js');
+const { isValidObjectId } = require('mongoose');
 
 /**
  * Get posts collection
@@ -39,7 +40,7 @@ router.put('', async (req, res) => {
  */
 router.get('/:id', async (req, res) => {
 	printd('[GET/:id]ID: ' + req.params.id);	
-	if(!ObjectID.isValid(req.params.id)){
+	if(!isValidObjectId(req.params.id)){
 		utils.badRequest(res);
 	}else{		
 		Post.findOne({ _id : req.params.id }).exec().then((post)=>{
@@ -59,8 +60,7 @@ router.post('', async (req, res) => {
 	printd('Title: ' + req.body.title);
 	//check if the request email is not null otherwise returns 400
 	if(!utils.isValid(req.body.email)) {
-		printd('User email not correct!');
-		utils.badRequest(res);	//return 400;
+		utils.badRequest(res,'User email not correct!');	//return 400;
 		return;
 	}
 	else {
@@ -70,16 +70,14 @@ router.post('', async (req, res) => {
 		// find a user with the email in the request otherwise null
 		let user = await User.findOne({ email : req.body.email }).exec();
 		if(user == null){
-			printd('User does not exist');
-			utils.badRequest(res);	//return 400;
+			utils.badRequest(res, 'User does not exist');	//return 400;
 			return;//the run ends here.
 		}
 	}
 
 	//check if the request title is not null
 	if(!utils.isValid(req.body.title)) {
-		printd('User title not correct!');
-		utils.badRequest(res);	//return 400;
+		utils.badRequest(res, 'User title not correct!');	//return 400;
 		return;
 	}
 		
@@ -93,18 +91,16 @@ router.post('', async (req, res) => {
 	post = post.save().then((savedPost) =>{
 		// printd(savedPost._id);
 		let postId = savedPost._id;
-		if(!ObjectID.isValid(postId)) {
+		if(!isValidObjectId(postId)) {
 			utils.notFound(res);
 		}
 		else {
-			printd('Post saved successfully');
 			res.location("/api/v1/posts/" + postId);
-			utils.created(res);
+			utils.created(res, 'Post saved successfully');
 		}
 	}).catch((e) => {		
 		// If the post fails we return 404 status code
-		printd('Post saving failed');
-		utils.notFound(res);
+		utils.notFound(res,'Post saving failed');
 	});
 });
 

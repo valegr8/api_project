@@ -19,16 +19,16 @@ utils.printd = (string) => {
 /**
  * Verifies validity of an variable, if its not undefined or null
  */
-utils.isValid = (variable) => {	
+utils.isValid = (value) => {	
 	let res = true;
-	if(variable == undefined || variable == null || variable == NaN || variable == "")
+	if(value == undefined || value == null || value == NaN || value == "")
 	{
 		res = false;
-		utils.printd(variable +' is not valid');
+		utils.printd('The value "' + value +'" is not valid');
 	}
 	else 
 	{
-		utils.printd(variable +' is valid');
+		utils.printd('The value "' + value +'" is valid');
 	}
 	return res;
 }
@@ -40,25 +40,31 @@ utils.isValid = (variable) => {
 /**
  * Sets a 405 http response status, method not allowed
  */
- utils.notAllowed = (res) => {
-	utils.printd('Method Not Allowed');
-	res.status(405).json({status: 405, message: 'Method Not Allowed'});
+ utils.notAllowed = (res, message) => {
+	if(!utils.isValid(message)) 
+		message = 'Method Not Allowed';
+	utils.printd(message);
+	res.status(405).json({status: 405, message: message});
 };
 
 /**
  * Sets a 400 http response status, bad request
  */
- utils.badRequest = (res) => {
-	utils.printd('Bad Request');
-	res.status(400).json({status: 400, message: 'Bad Request'});
+ utils.badRequest = (res, message) => {
+	if(!utils.isValid(message)) 
+		message = 'Bad Request';
+	utils.printd(message);
+	res.status(400).json({status: 400, message: message});
 };
 
 /**
  * Sets a 404 http response status, not found
  */
-utils.notFound = (res) => {
-	utils.printd('Not Found');
-	res.status(404).json({status: 404, message: 'Not Found'});
+utils.notFound = (res, message) => {
+	if(!utils.isValid(message)) 
+		message = 'Not Found';
+	utils.printd(message);
+	res.status(404).json({status: 404, message: message});
 };
 
 /**
@@ -67,8 +73,10 @@ utils.notFound = (res) => {
  */
 
 utils.wrongPassword = (res) => {
-	utils.printd('Wrong Password');
-	res.status(402).json({status: 402, message: 'Wrong Password'});
+	if(!utils.isValid(message)) 
+		message = 'Wrong Password';
+	utils.printd(message);
+	res.status(402).json({status: 402, message: message});
 }
 
 /**
@@ -76,7 +84,7 @@ utils.wrongPassword = (res) => {
  */
 utils.setResponseStatus = (param,res) => {
 	if(param) {
-		utils.printd('Success');
+		utils.printd('Successful request');
 		res.status(200).json({message: param});
 	}
 	else
@@ -84,19 +92,23 @@ utils.setResponseStatus = (param,res) => {
 };
 
 /**
- * Sets a 201 status code resource created
+ * Sets a 201 status code, resource created
  */
-utils.created = (res) => {
-	utils.printd('Created');
-	res.status(201).json({status: 201, message: 'Created'});
+utils.created = (res, message) => {
+	if(!utils.isValid(message)) 
+		message = 'Created';
+	utils.printd(message);
+	res.status(201).json({status: 201, message: message});
 };
 
 /**
  * Sets a 409 status code, the resource already exists
  */
-utils.alreadyExists = (res) => {
-	utils.printd('Already Exists');
-	res.status(409).json({status: 409, message: 'Already Exists'});
+utils.alreadyExists = (res, message) => {
+	if(!utils.isValid(message)) 
+		message = 'The resource already exists';
+	utils.printd(message);
+	res.status(409).json({status: 409, message: message});
 };
 
 
