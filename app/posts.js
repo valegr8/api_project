@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-var ObjectID = require("mongodb").ObjectID;
 
 /**
  * Get post model
