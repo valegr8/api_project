@@ -22,6 +22,12 @@ router.post('', async function(req, res) {
 		return;
 	}
 
+	//password not valid
+	if(!utils.isValid(req.body.password)) {
+		utils.badRequest(res, "Bad request, inserted password not valid");
+		return;
+	}
+
 	// find the user
 	let user = await User.findOne({
 		email: req.body.email
@@ -35,12 +41,6 @@ router.post('', async function(req, res) {
 		return;
 	}
 	
-	//password not valid
-	if(!utils.isValid(req.body.password)) {
-		utils.badRequest(res, "Bad request, inserted password not valid");
-		return;
-	}
-
 	// check if password matches
 	if (user != null && user.password != req.body.password) {
 		utils.wrongPassword(res, "Password do not match");
