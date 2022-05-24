@@ -26,13 +26,17 @@ function showAlert(message, type){
  * Log out function
  */
 function logout(){
-    document.getElementById("login").hidden = false; 
-    document.getElementById("logout").hidden = true; 
-    document.getElementById("create").disabled = true; 
-    document.getElementById("register").hidden = false;
+    const uNLoggedEl = document.getElementsByClassName("uNLogged");  
+    for (let i = 0; i < uNLoggedEl.length; i++) {
+        uNLoggedEl[i].hidden = false;
+    } 
+    const uLoggedEl = document.getElementsByClassName("uLogged");  
+    for (let i = 0; i < uLoggedEl.length; i++) {
+        uLoggedEl[i].hidden = true;
+    } 
     loggedUser = {}
     loadPosts();
-    document.getElementById("user").innerText ="";
+    document.getElementById("user").innerText ="Utente";
     showAlert("Disconnesso!", "success");
 }
 
@@ -40,28 +44,28 @@ function logout(){
  * Function that enables and disables buttons
  */
 function enNavButtons(){
-        //disable login button
-        document.getElementById("login").hidden = true; 
-        //enable logout button
-        document.getElementById("logout").hidden = false; 
-        //enable create button
-        document.getElementById("create").disabled = false; 
-        //disable register button
-        document.getElementById("register").hidden = true; 
+    const uLoggedEl = document.getElementsByClassName("uLogged");  
+    for (let i = 0; i < uLoggedEl.length; i++) {
+        uLoggedEl[i].hidden = false;
+    } 
+    const uNLoggedEl = document.getElementsByClassName("uNLogged");  
+    for (let i = 0; i < uNLoggedEl.length; i++) {
+        uNLoggedEl[i].hidden = true;
+    } 
 }
 
 /**
  * Create a post with a card user interface (bootstap)
  */
 function createCardPost(id, title, descr,createdBy){
-    return `<div class='card  mb-3' style='width: 36rem;'> \
-                <p class='card-text'>Utente: ${createdBy}</p>
-                <img src="https://www.lago.it/wp-content/uploads/2018/05/1_Lanfranchi_Lago-Milano-9.jpg" class="card-img-top rounded"> \
-                <div class='card-body' > \
-                    <h5 class='card-title'>${title}</h5> \
-                    <p class='card-text'>${descr}</p> \
-                    <button id='detail_btn' onclick='loadDetails("${id}")' class='btn btn-primary'>Vai all'annuncio</button> \
-                </div> \
+    return `<div class='card  mb-3' style='width: 36rem;'> 
+                <div class="card-header"><h5 class='card-title'>${title}</h5></div>
+                <img src="https://www.lago.it/wp-content/uploads/2018/05/1_Lanfranchi_Lago-Milano-9.jpg" class="card-img-top rounded"> 
+                <div class='card-body' > 
+                    <p class='card-text'>${descr}</p> 
+                    <div class="row"><div class="col-md-4">
+                    <button id='detail_btn' onclick='loadDetails("${id}")' class='btn btn-primary'>Vai all'annuncio</button></div><div class="col-md-4 ms-auto"><small>By ${createdBy}</small></div></div>
+                </div> 
             </div>`;
 }
 
@@ -348,6 +352,12 @@ function register(){
  */
 function newPostPage()
 {
+    if(loggedUser.email == null){
+        const modal = new bootstrap.Modal('#modalLoginNeed', {keyboard: false});
+        modal.show();
+        return;
+    }
+
     //remove form register
     const form_register = document.getElementById("registerform");
     if(form_register) 
