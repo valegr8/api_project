@@ -3,12 +3,20 @@
  */
 var loggedUser = {};
 var counter = 0;
+const logMod = new bootstrap.Modal('#modalLogin', {keyboard: false});
 const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
 const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 window.onload = loadPosts();
 
-function showAlert(message, type){
-    var alertPlaceholder = document.getElementById('liveAlertPlaceholder')
+function showToast(message,title, type){
+    const toast = new bootstrap.Toast(document.getElementById('liveToast'));
+    document.getElementById("toastMsg").innerHTML = `<span class="text-${type}">${message}</span>`;
+    document.getElementById("toastTit").innerHTML = `<span class="text-${type}">${title}</span>`;
+    toast.show();
+}
+
+function showAlert(message, type, id = "mainAlertDiv"){
+    var alertPlaceholder = document.getElementById(id);
     var alert = (message, type) => {
         const wrapper = document.createElement('div');
         wrapper.innerHTML = [
@@ -146,12 +154,8 @@ function loadDetails(id) {
  */
 function loadPosts() {
     //remove form login
-    const login_form = document.getElementById("loginform");
-    if(login_form) 
-    {
-        login_form.remove();
-        // console.log("removing login form");
-    }
+    logMod.hide();
+
     //remove form register
     const form_register = document.getElementById("registerform");
     if(form_register) 
@@ -225,7 +229,7 @@ function insertPost()
             showAlert("Errore nella creazione dell'annuncio, riprova! Devi aver fatto il login e inserito un titolo", "danger")
         }
         else {
-            showAlert('Post creato con successo!', "success");
+            showToast('Post creato con successo!',"Successo", "success");
             loadPosts();
         }
         return;
@@ -245,11 +249,11 @@ function login()
     var email = document.getElementById("loginEmail").value;
     var password = document.getElementById("loginPassword").value;
     if(email == ""){
-        showAlert("Inserisci Email", "danger");
+        showAlert("Inserisci Email", "danger","loginAlertDiv");
         return;
     }
     if(password == ""){
-        showAlert("Inserisci password", "danger");
+        showAlert("Inserisci password", "danger","loginAlertDiv");
         return;
     }
 
@@ -263,7 +267,7 @@ function login()
         //check if the login is correct
         if (data.email == undefined) 
         {
-            showAlert("Email o password non validi", "danger");
+            showAlert("Email o password non validi", "danger","loginAlertDiv");
 
         } else{
             loggedUser.token = data.token;
@@ -271,7 +275,12 @@ function login()
             loggedUser.id = data.id;
             loggedUser.username = data.username;
 
+            document.getElementById("loginEmail").value = '';
+            document.getElementById("loginPassword").value = '';
+            logMod.hide();
+
             enNavButtons();
+            
 
             //show username on top of the page
             document.getElementById("user").innerText = loggedUser.username;
@@ -473,78 +482,9 @@ function loginPage()
         form_.remove();
         // console.log("removing create form");
     }
-    //remove posts
-    const posts_div = document.getElementById("posts_div");
-    if(posts_div) 
-    {
-        posts_div.remove();
-        // console.log("removing posts");
-    }
-    //check if the login form already exists
-    if(!document.getElementById("loginform")) 
-    {
-        // console.log("creating login form");      
-        //create form
-        const form = document.createElement("form");
-        form.setAttribute('method', "post");
-        form.setAttribute('action', "api/v1/users");
-        form.setAttribute('name', 'loginform');
-        form.setAttribute('id', 'loginform');
-        form.innerHTML = "<h2>Login:</h2>";
-
-        const div_email = document.createElement("div");
-        div_email.setAttribute('class', "form-floating mb-3");
-        div_email.setAttribute('id', "emailDiv");
-
-        
-        // create an input elemet for the email
-        const email = document.createElement("input");
-        email.setAttribute('id', "loginEmail");
-        email.setAttribute('name', "email");
-        email.setAttribute('class', "form-control");
-        email.setAttribute('placeholder', "Email");
-
-        const email_lbl = document.createElement("label");
-        email_lbl.setAttribute("for", "loginEmail");
-        email_lbl.innerHTML = "Email";
-
-        const div_pwd = document.createElement("div");
-        div_pwd.setAttribute('class', "form-floating mb-3");
-        div_pwd.setAttribute('id', "pwdDiv");
-
-        // create an input elemet for the password
-        const pwd = document.createElement("input");
-        pwd.setAttribute('id', "loginPassword");
-        pwd.setAttribute('name', "password");
-        pwd.setAttribute('class', "form-control");
-        pwd.setAttribute('placeholder', "Password");
-        pwd.setAttribute('type', 'password');
-
-        const pwd_lbl = document.createElement("label");
-        pwd_lbl.setAttribute("for", "loginPassword");
-        pwd_lbl.innerHTML = "Password";
-
-        // create a button
-        const button = document.createElement("button");
-        button.setAttribute('type', "button");
-        button.setAttribute('class', "btn btn-primary");
-        button.setAttribute('onclick', "login()");
-        button.setAttribute('class', "btn btn-primary");
-        button.innerText = "Log in";
-
-        div_email.appendChild(email);
-        div_email.appendChild(email_lbl);
-        div_pwd.appendChild(pwd);
-        div_pwd.appendChild(pwd_lbl);
-
-        form.appendChild(div_email);
-        form.appendChild(div_pwd);
-        form.appendChild(button);
 
 
-        const main_div = document.getElementById("main_div");
-        main_div.appendChild(form);
-    }
+    logMod.show();
 }
 
 /**

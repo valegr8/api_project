@@ -24,7 +24,7 @@
             </a>
             <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
               <li>
-                <a href="#" class="nav-link text-secondary">
+                <a href="#" class="nav-link text-secondary" onclick="loadPosts()">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-house-door d-block mx-auto mb-1" viewBox="0 0 16 16">
                     <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146zM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4H2.5z"/>
                   </svg>
@@ -50,15 +50,15 @@
                     <span id="user">Utente</span>
                   </a>
                   <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1">
-                    <li><a class="dropdown-item uLogged" href="#"  onclick="newPostPage()" hidden id="create" >Nuovo annuncio</a></li>
-                    <li><a class="dropdown-item uLogged" href="#" hidden>Annunci creati</a></li>
-                    <li><a class="dropdown-item uLogged" href="#" hidden>Preferiti</a></li>
-                    <li><a class="dropdown-item uLogged" href="#" hidden>Profilo</a></li>
+                    <li><a class="dropdown-item uLogged" href="#"  onclick="newPostPage()" hidden id="create" ><i class="bi bi-plus-lg"></i> Nuovo annuncio</a></li>
+                    <li><a class="dropdown-item uLogged" href="#" hidden><i class="bi bi-list"></i> Annunci creati</a></li>
+                    <li><a class="dropdown-item uLogged" href="#" hidden><i class="bi bi-star"></i> Preferiti</a></li>
+                    <li><a class="dropdown-item uLogged" href="#" hidden><i class="bi bi-person-circle"></i> Profilo</a></li>
 
-                    <li><a class="dropdown-item uNLogged" href="#" onclick="loginPage()">Login</a></li>
-                    <li><a class="dropdown-item uNLogged" href="#" onclick="registerPage()">Registrati</a></li>
+                    <li><a class="dropdown-item uNLogged" href="#" onclick="loginPage()"><i class="bi bi-box-arrow-in-right"></i> Login</a></li>
+                    <li><a class="dropdown-item uNLogged" href="#" onclick="registerPage()"><i class="bi bi-at"></i> Registrati</a></li>
                     <li><hr class="dropdown-divider uLogged" hidden></li>
-                    <li><a class="dropdown-item uLogged" href="#" onclick="logout()" hidden>Logout</a></li>
+                    <li><a class="dropdown-item uLogged" href="#" onclick="logout()" hidden><i class="bi bi-box-arrow-right"></i> Logout</a></li>
                   </ul>
                 </div>
               </li>
@@ -67,10 +67,8 @@
         </div>
       </div>
     </header>
-    <div id="liveAlertPlaceholder" class="container"></div>
+    <div id="mainAlertDiv" class="container mt-3"></div>
     <div id="main_div" class="container mt-3" style="width: 36rem;"></div>
-        <!-- Button trigger modal -->
-
     <div class="modal fade" id="modalLoginNeed" tabindex="-1" aria-labelledby="modalLoginNeed" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content rounded-3 shadow">
@@ -83,6 +81,40 @@
             <button type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0 text-danger" data-bs-dismiss="modal">Chiudi</button>
           </div>
         </div>
+      </div>
+    </div>
+    <div class="modal fade" id="modalLogin" tabindex="-1" aria-labelledby="modalLogin" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content rounded-4 shadow">
+          <div class="modal-header p-5 pb-4 border-bottom-0">
+            <h2 class="fw-bold mb-0">Login</h2>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="loadPosts()"></button>
+          </div>
+          <div class="modal-body p-5 pt-0">
+            <form class="">
+              <div class="form-floating mb-3">
+                <input type="email" class="form-control rounded-3" id="loginEmail" placeholder="name@example.com">
+                <label for="floatingInput">Email</label>
+              </div>
+              <div class="form-floating mb-3">
+                <input type="password" class="form-control rounded-3" id="loginPassword" placeholder="Password">
+                <label for="floatingPassword">Password</label>
+              </div>
+              <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit" onclick="login()">Login</button>
+              <small class="text-muted">Non ancora registrato? <a  href="#" class="link-dark" onclick="registerPage()" data-bs-dismiss="modal">Registrati</a></small>
+              <div id="loginAlertDiv" class="container"></div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+      <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+          <strong class="me-auto" id="toastTit">HouseMate</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="toastMsg"></div>
       </div>
     </div>
     <script src="script.js"></script>
