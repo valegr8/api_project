@@ -65,16 +65,76 @@ function enNavButtons(){
 /**
  * Create a post with a card user interface (bootstap)
  */
-function createCardPost(id, title, descr,createdBy){
-    return `<div class='card  mb-3' style='width: 36rem;'> 
-                <div class="card-header"><h5 class='card-title'>${title}</h5></div>
-                <img src="https://www.lago.it/wp-content/uploads/2018/05/1_Lanfranchi_Lago-Milano-9.jpg" class="card-img-top rounded"> 
-                <div class='card-body' > 
-                    <p class='card-text'>${descr}</p> 
-                    <div class="row"><div class="col-md-4">
-                    <button id='detail_btn' onclick='loadDetails("${id}")' class='btn btn-primary'>Vai all'annuncio</button></div><div class="col-md-4 ms-auto"><small>By ${createdBy}</small></div></div>
-                </div> 
-            </div>`;
+function createCardPost(id, title){
+    return `    <div class='card mb-3 float-center' style='width: 40rem;'> <div class="card-header clearfix">
+    <div class="hstack gap-3"><h5>${title}</h5 ><a href="#" class="ms-auto h4"><i class="bi bi-star"></i></a></div></div>
+  <div class='card-body grid'>
+    <a href="#" onclick='loadDetails("${id}")' class="text-decoration-none text-dark">
+    <div class="g-col-6"><img src="https://www.agenziazaramella.it/wp-content/uploads/2019/05/14-Larredo-per-un-mini-appartamento-di-50-mq.jpg" class="rounded float-start w-50" ></div>
+    <div class='g-col-6 card-text' >
+      <dl class="row"><dt class="col-sm-6 text-start">Stanze</dt><dd class="col-sm-6 text-start">3</dd>
+        <dt class="col-sm-6 text-start">Contratto</dt><dd class="col-sm-6 text-start">Annuale</dd><dt class="col-sm-6 text-start">Tipo</dt>
+        <dd class="col-sm-6 text-start">Monolocale</dd></dl>
+      <p><i class="bi bi-geo-alt-fill"> Via Gino,32 - Trento(TN)</i></p> <h2>320€</h2></div></a></div></div>`;
+}
+
+function createDetailPost(title, descr,createdBy){
+    return `
+    <div class='card mb-3 float-center' style='width: 40rem;'> 
+    <div class="card-header clearfix"><div class="hstack gap-3"><h5>${title}</h5 ><a href="#" class="ms-auto h4"><i class="bi bi-star"></i></a></div></div>
+    <div class='card-body '><div class="grid"><div class="g-col-6">
+          <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel"><div class="carousel-inner">
+            <div class="carousel-item active"><img src="https://www.agenziazaramella.it/wp-content/uploads/2019/05/14-Larredo-per-un-mini-appartamento-di-50-mq.jpg" class="d-block w-100"></div>
+            <div class="carousel-item"><img src="https://www.hotelpiazzabellini.com/images/background/appartamenti-04.jpg" class="d-block w-100"></div></div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="visually-hidden">Precedente</span></button>
+          <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span><span class="visually-hidden">Successiva</span></button></div>
+      </div><hr><div class='g-col-6 card-text' ><dl class="row">
+            <dt class="col-sm-6 text-start">Stanze</dt>
+            <dd class="col-sm-6 text-start">3</dd>
+            <dt class="col-sm-6 text-start">Contratto</dt>
+            <dd class="col-sm-6 text-start">Annuale</dd>
+            <dt class="col-sm-6 text-start">Tipo</dt>
+            <dd class="col-sm-6 text-start">Monolocale</dd></dl>
+          </dl></div></div><hr>
+      <p><i class="bi bi-geo-alt-fill"> Via Gino, 32 - Trento(TN)</i></p><hr>
+      <div class="text-start"><dl class="row">
+          <dt class="col-sm-6 text-start">Telefono</dt>
+          <dd class="col-sm-6 text-start">321 1234567</dd>
+          <dt class="col-sm-6 text-start">Email</dt>
+          <dd class="col-sm-6 text-start">${createdBy}</dd></dl>
+      </div><hr><div class="text-start">${descr}</div><hr><div class="mt-3">
+        <h5>Stanze disponibili:</h5>
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+          <div class="col">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Singola 1</h5>
+                <h2 class="card-text">320€</h2>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Singola 2</h5>
+                <h2 class="card-text">320€</h2>
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Doppia</h5>
+                <h2 class="card-text">280 €</h2>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
 }
 
 /**
@@ -137,13 +197,8 @@ function loadDetails(id) {
                     console.log('result is an array');
 
                 post = data.message;
-                postDiv.innerHTML+= "<h2>" +post.title+"</h2>"
-                postDiv.innerHTML+= createCardPost(post._id, post.title, post.description, post.createdBy);
-
-                //remove button at the end of the post
-                const detail_btn = document.getElementById('detail_btn');
-                if(detail_btn) //check if exists
-                    detail_btn.remove();
+                postDiv.innerHTML+= "<a href='#' onclick='loadPosts()' class='text-muted text-decoration-none float-start'><i class='bi bi-arrow-left-short'></i> indietro</a>";
+                postDiv.innerHTML+= createDetailPost(post.title, post.description, post.createdBy);
             })
             .catch( error => console.error(error) );// If there is any error you will catch them here
         }
@@ -170,6 +225,13 @@ function loadPosts() {
         create_form.remove();
         // console.log("removing create form");
     }
+    const posts_div = document.getElementById("posts_div");
+    if(posts_div) 
+    {
+        posts_div.remove();
+        // console.log("removing create form");
+    }
+
     //check if the create form already exists
     if(!document.getElementById("posts_div")) 
     {       
@@ -183,6 +245,7 @@ function loadPosts() {
         main_div.appendChild(div);
     }
 
+        
     const postDiv = document.getElementById('posts'); // Get the list where we will place our posts
     if(postDiv)
     {    
