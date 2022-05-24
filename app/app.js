@@ -7,6 +7,7 @@ const app = express();
 app.use(express.static(__dirname+'../../public'));
 
 const users = require('./users.js');
+const usersV2 = require('./users_v2.js');
 const posts = require('./posts.js');
 const authentication = require('./authentication.js');
 const tokenChecker = require('./tokenChecker.js');
@@ -36,7 +37,7 @@ app.use('/api/v1/users', users);
 
 //version 2
 app.use('/api/v2/posts/', posts);
-app.use('/api/v2/users', users);
+app.use('/api/v2/users', usersV2);
 
 /**
  * Default 404 handler 

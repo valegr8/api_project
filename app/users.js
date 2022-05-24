@@ -4,11 +4,17 @@ const jwt = require('jsonwebtoken');
 
 const utils = require('../utils/utils.js');
 const { printd, isValid } = require('../utils/utils.js');
+const { isValidObjectId } = require('mongoose');
 
 /**
  * Get user model
  */
-const User = require('./models/user'); 
+const User = require('./models/user');
+
+/**
+ * Get post model
+ */
+const Post = require('./models/post'); 
 
 /**
  * function for creating a new user
