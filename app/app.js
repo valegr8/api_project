@@ -30,8 +30,13 @@ app.use('/api/v1/authentications', authentication);
 /**
  * Resource routing
  */
+ //version 1
 app.use('/api/v1/posts/', posts);
 app.use('/api/v1/users', users);
+
+//version 2
+app.use('/api/v2/posts/', posts);
+app.use('/api/v2/users', users);
 
 /**
  * Default 404 handler 
