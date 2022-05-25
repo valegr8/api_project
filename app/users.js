@@ -82,6 +82,31 @@ router.post('', async function(req,res) {
 	});
 });
 
+
+/**
+ * This function updates a specific username
+ */
+ router.post('/updateUsername', async function(req,res) {
+	const email = req.body.email;
+    const username = req.body.username;
+    if(!isValid(req.body.email)) {utils.badRequest(res, "Bad request, email not valid");return;}
+    if(!isValid(req.body.username)) {utils.badRequest(res, "Bad request, username not valid");return;}
+	const user = await User.findOne({ email: email}).exec();
+    if(user == null) {utils.notFound(res,"Utente non trovato"); return;}
+    
+	await User.updateOne({ email: email}, {
+		username: username
+	});
+	res.status(200).json({
+		success: true,
+		message: 'username changed',
+		email: user.email,
+		username: user.username
+	});
+	return;
+ });
+
+
 /**
  * This function sets a specific post as "favorite"
  */
