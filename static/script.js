@@ -381,7 +381,7 @@ function register(){
 
 
 /**
- *
+ *this function set a particular post as favorite
  */
 function setFavorite(id){
     if(loggedUser.email == null){
