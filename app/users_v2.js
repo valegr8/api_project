@@ -54,7 +54,8 @@ router.post('', async function(req,res) {
     user = new User({
         email: req.body.email,
         password: req.body.password,
-        username: req.body.username
+        username: req.body.username,
+		favorite: {},
     });
     user.save(function(err){});
 

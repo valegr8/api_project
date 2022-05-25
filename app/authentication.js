@@ -66,6 +66,7 @@ router.post('', async function(req, res) {
 		email: user.email,
 		username: user.username,
 		id: user._id,
+		favorite: user.favorite
 	});
 
 });

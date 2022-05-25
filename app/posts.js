@@ -85,7 +85,7 @@ router.post('', async (req, res) => {
 		description: req.body.description,
 		createdBy: req.body.email
     });
-
+	
 	//save a new post
 	post = post.save().then((savedPost) =>{
 		// printd(savedPost._id);

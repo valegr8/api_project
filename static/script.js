@@ -60,28 +60,35 @@ function enNavButtons(){
     for (let i = 0; i < uNLoggedEl.length; i++) {
         uNLoggedEl[i].hidden = true;
     } 
+
 }
 
+
+const empStar = '<i class="bi bi-star"></i>';
+const fullStar = '<i class="bi bi-star-fill"></i>';
 /**
  * Create a post with a card user interface (bootstap)
  */
+function addStar(fav,id){ return fav ? `<a href="#" id="Fav${id}" onclick="remFavorite('${id}')" class="text-decoration-none text-warning">${fullStar}</a>` : `<a href="#" id="notFav${id}" onclick="setFavorite('${id}')" class="text-decoration-none text-warning">${empStar}</a>`}
+
+
 function createCardPost(id, title){
     return `    <div class='card mb-3 float-center' style='width: 40rem;'> <div class="card-header clearfix">
-    <div class="hstack gap-3"><h5>${title}</h5 ><a href="#" class="ms-auto h4"><i class="bi bi-star"></i></a></div></div>
+    <div class="hstack gap-3"><h5>${title}</h5><span class="ms-auto h4 fav" id="starAtt${id}"></span></div></div>
   <div class='card-body grid'>
     <a href="#" onclick='loadDetails("${id}")' class="text-decoration-none text-dark">
     <div class="g-col-6"><img src="https://www.agenziazaramella.it/wp-content/uploads/2019/05/14-Larredo-per-un-mini-appartamento-di-50-mq.jpg" class="rounded float-start w-50" ></div>
     <div class='g-col-6 card-text' >
-      <dl class="row"><dt class="col-sm-6 text-start">Stanze</dt><dd class="col-sm-6 text-start">3</dd>
-        <dt class="col-sm-6 text-start">Contratto</dt><dd class="col-sm-6 text-start">Annuale</dd><dt class="col-sm-6 text-start">Tipo</dt>
+      <dl class="row"><dt class="col-sm-6 text-start">Numero Camere</dt><dd class="col-sm-6 text-start">3</dd>
+        <dt class="col-sm-6 text-start">Tipologia Contratto</dt><dd class="col-sm-6 text-start">Annuale</dd><dt class="col-sm-6 text-start">Tipologia Locale</dt>
         <dd class="col-sm-6 text-start">Monolocale</dd></dl>
       <p><i class="bi bi-geo-alt-fill"> Via Gino,32 - Trento(TN)</i></p> <h2>320€</h2></div></a></div></div>`;
 }
 
-function createDetailPost(title, descr,createdBy){
+function createDetailPost(id,title, descr,createdBy){
     return `
     <div class='card mb-3 float-center' style='width: 40rem;'> 
-    <div class="card-header clearfix"><div class="hstack gap-3"><h5>${title}</h5 ><a href="#" class="ms-auto h4"><i class="bi bi-star"></i></a></div></div>
+    <div class="card-header clearfix"><div class="hstack gap-3"><h5>${title}</h5><span class="ms-auto h4" id="starAtt${id}"></span></div></div>
     <div class='card-body '><div class="grid"><div class="g-col-6">
           <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel"><div class="carousel-inner">
             <div class="carousel-item active"><img src="https://www.agenziazaramella.it/wp-content/uploads/2019/05/14-Larredo-per-un-mini-appartamento-di-50-mq.jpg" class="d-block w-100"></div>
@@ -91,11 +98,11 @@ function createDetailPost(title, descr,createdBy){
           <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
             <span class="carousel-control-next-icon" aria-hidden="true"></span><span class="visually-hidden">Successiva</span></button></div>
       </div><hr><div class='g-col-6 card-text' ><dl class="row">
-            <dt class="col-sm-6 text-start">Stanze</dt>
+            <dt class="col-sm-6 text-start">Numero Camere</dt>
             <dd class="col-sm-6 text-start">3</dd>
-            <dt class="col-sm-6 text-start">Contratto</dt>
+            <dt class="col-sm-6 text-start">Tipologia Contratto</dt>
             <dd class="col-sm-6 text-start">Annuale</dd>
-            <dt class="col-sm-6 text-start">Tipo</dt>
+            <dt class="col-sm-6 text-start">Tipologia Locale</dt>
             <dd class="col-sm-6 text-start">Monolocale</dd></dl>
           </dl></div></div><hr>
       <p><i class="bi bi-geo-alt-fill"> Via Gino, 32 - Trento(TN)</i></p><hr>
@@ -105,7 +112,7 @@ function createDetailPost(title, descr,createdBy){
           <dt class="col-sm-6 text-start">Email</dt>
           <dd class="col-sm-6 text-start">${createdBy}</dd></dl>
       </div><hr><div class="text-start">${descr}</div><hr><div class="mt-3">
-        <h5>Stanze disponibili:</h5>
+        <h5>Camere disponibili:</h5>
         <div class="row row-cols-1 row-cols-md-2 g-4">
           <div class="col">
             <div class="card">
@@ -197,8 +204,13 @@ function loadDetails(id) {
                     console.log('result is an array');
 
                 post = data.message;
-                postDiv.innerHTML+= "<a href='#' onclick='loadPosts()' class='text-muted text-decoration-none float-start'><i class='bi bi-arrow-left-short'></i> indietro</a>";
-                postDiv.innerHTML+= createDetailPost(post.title, post.description, post.createdBy);
+
+                var star = false;
+                if(loggedUser.favorite != null){loggedUser.favorite.forEach(fav => {if(post._id == fav) star = true;});}
+                postDiv.innerHTML+= "<a href='#' onclick='loadPosts()' class='text-muted text-decoration-none float-start mb-3'><i class='bi bi-arrow-left-short'></i> indietro</a>";
+                postDiv.innerHTML+= createDetailPost(id,post.title, post.description, post.createdBy);
+                let postIn = document.getElementById("starAtt"+post._id);
+                postIn.innerHTML=addStar(star, post._id);
             })
             .catch( error => console.error(error) );// If there is any error you will catch them here
         }
@@ -252,15 +264,21 @@ function loadPosts() {
         fetch('../api/v1/posts')
         .then((resp) => resp.json()) // Transform the data into json
         .then(function(data) { // Here you get the data to modify
-            if (!data.message) 
+            if (!data.message){
+                postDiv.innerHTML += "<h3>Nessun annuncio...</h3><br><h4>Sii il primo a pubblicare qualcosa!</h4>";
                 console.log('no data');
+            }
             if (!Array.isArray(data.message)) 
-                console.log('result is not an array');
+                showAlert("Errore nel caricare gli annunci", "danger");
 
             counter = 0;
             return data.message.map(function(post) { // Map through the results and for each run the code below
                 counter++;
-                postDiv.innerHTML+= createCardPost(post._id, post.title, post.description, post.createdBy);
+                var star = false;
+                if(loggedUser.favorite != null){loggedUser.favorite.forEach(fav => {if(post._id == fav) star = true;});}
+                postDiv.innerHTML+= createCardPost(post._id, post.title, star);
+                let postIn = document.getElementById("starAtt"+post._id);
+                postIn.innerHTML=addStar(star, post._id);
             });
         })
         .catch( error => console.error(error) );// If there is any error you will catch them here
@@ -337,6 +355,7 @@ function login()
             loggedUser.email = data.email;
             loggedUser.id = data.id;
             loggedUser.username = data.username;
+            loggedUser.favorite = data.favorite;
 
             document.getElementById("loginEmail").value = '';
             document.getElementById("loginPassword").value = '';
@@ -404,6 +423,7 @@ function register(){
             loggedUser.email = data.email;
             loggedUser.id = data.id;
             loggedUser.username = data.username;
+            loggedUser.favorite = data.favorite;
 
             enNavButtons();
             //show username on top of the page
@@ -417,6 +437,64 @@ function register(){
     .catch( error => console.error(error) ); // If there is any error you will catch them here
     
 }
+
+
+/**
+ *
+ */
+function setFavorite(id){
+    if(loggedUser.email == null){
+        const modal = new bootstrap.Modal('#modalLoginNeed', {keyboard: false});
+        modal.show();
+        return;
+    }
+    fetch('../api/v1/users/setFavorite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify( { email: loggedUser.email, id: id }  ),
+    })
+    .then((resp) => resp.json() ) // Transform the data into json
+    .then(function(data){
+        // console.log(data);
+        if(data.id == undefined){
+            console.log("Errore nell'aggiunta ai preferiti");
+        }else{
+            loggedUser.favorite = data.favorite;
+            document.getElementById("starAtt"+data.id).innerHTML=addStar(true, data.id);
+        }
+        return;
+    })
+    .catch( error => console.error(error) ); // If there is any error you will catch them here
+}
+
+function remFavorite(id){
+    if(loggedUser.email == null){
+        const modal = new bootstrap.Modal('#modalLoginNeed', {keyboard: false});
+        modal.show();
+        return;
+    }
+    fetch('../api/v1/users/remFavorite', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify( { email: loggedUser.email, id: id }  ),
+    })
+    .then((resp) => resp.json() ) // Transform the data into json
+    .then(function(data){
+        // console.log(data);
+        if(data.id == undefined){
+            console.log("Errore rimozione preferiti");
+        }else{
+            loggedUser.favorite = data.favorite;
+            console.log(loggedUser.favorite);
+            document.getElementById("starAtt"+data.id).innerHTML=addStar(false, data.id);
+            
+        }
+        return;
+    })
+    .catch( error => console.error(error) ); // If there is any error you will catch them here
+}
+
+
  
 /**
  * This function is called by clicking on the "add new post" button.

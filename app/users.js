@@ -54,7 +54,8 @@ router.post('', async function(req,res) {
     user = new User({
         email: req.body.email,
         password: req.body.password,
-        username: req.body.username
+        username: req.body.username,
+        favorite: {}
     });
     user.save(function(err){});
 
@@ -77,8 +78,67 @@ router.post('', async function(req,res) {
 		email: user.email,
         username: user.username,
 		id: user._id,
+        favorite: favorite
 	});
 });
+
+/**
+ * This function sets a specific post as "favorite"
+ */
+ router.post('/setFavorite', async function(req,res) {
+	const postId = req.body.id;
+	const email = req.body.email;
+	const user = await User.findOne({ email: email}).exec();
+	let favList = user.favorite;
+
+    if (favList.indexOf(postId) !== -1) {
+        utils.alreadyExists(res, `Post ${postId} already on Favorite List`); return;
+    }
+    favList.push(postId);
+	await User.updateOne({ email: email}, {
+		favorite: favList
+	});
+	res.status(200).json({
+		success: true,
+		message: 'Post addedd to your favorites!',
+		email: user.email,
+		id: postId,
+        favorite: favList
+	});
+    printd("Fav added. Post id: " + postId);
+	return;
+ });
+
+ /**
+ * This function remove a specific post as "favorite"
+ */
+  router.post('/remFavorite', async function(req,res) {
+	const postId = req.body.id;
+	printd("Post id: " + postId);
+	const email = req.body.email;
+	printd("Email: " + email);
+	const user = await User.findOne({ email: email}).exec();
+	var favList = user.favorite;
+    var index = favList.indexOf(postId);
+    if (index !== -1) {
+        favList.splice(index, 1);
+    }
+    else{
+        utils.notFound(res, `Post ${postId} not found on Favorite List`); return;
+    }	
+	await User.updateOne({ email: email}, {
+		favorite: favList
+	});
+	res.status(200).json({
+		success: true,
+		message: 'Post removed from your favorites!',
+		email: user.email,
+		id: postId,
+        favorite: favList
+	});
+    printd("Fav removed. Post id: " + postId);
+	return;
+ });
 
 /**
  * This function check if the pattern of an email is correct
