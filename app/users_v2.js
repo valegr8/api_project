@@ -14,7 +14,8 @@ const User = require('./models/user');
 /**
  * Get post model
  */
-const Post = require('./models/post'); 
+//I need this
+const Post = require('./models/post_v2'); //the new version
 
 /**
  * function for creating a new user
@@ -54,8 +55,7 @@ router.post('', async function(req,res) {
     user = new User({
         email: req.body.email,
         password: req.body.password,
-        username: req.body.username,
-		favorite: {},
+        username: req.body.username
     });
     user.save(function(err){});
 
@@ -111,7 +111,12 @@ router.post('/:email/posts/', async function(req,res) {
 	let post = new Post({
         title: req.body.title,
 		description: req.body.description,
-		createdBy: req.body.email
+		createdBy: req.body.email,
+		contract: req.body.contract,
+		phone: req.body.phone,
+		rooms: req.body.rooms,
+		available: req.body.available,
+		where: req.body.where
     });
 
 	//save a new post
