@@ -49,11 +49,10 @@
                     <span id="user">Utente</span>
                   </a>
                   <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1">
-                    <li><a class="dropdown-item uLogged" href="#"  onclick="newPostPage()" hidden id="create" ><i class="bi bi-plus-lg"></i> Nuovo annuncio</a></li>
+                    <li><a class="dropdown-item uLogged" href="#" onclick="newPostPage()" hidden id="create" ><i class="bi bi-plus-lg"></i> Nuovo annuncio</a></li>
                     <li><a class="dropdown-item uLogged" href="#" hidden><i class="bi bi-list"></i> Annunci creati</a></li>
-                    <li><a class="dropdown-item uLogged" href="#" hidden><i class="bi bi-star"></i> Preferiti</a></li>
-                    <li><a class="dropdown-item uLogged" href="#" hidden><i class="bi bi-person-circle"></i> Profilo</a></li>
-
+                    <li><a class="dropdown-item uLogged" href="#" onclick="favPage()" hidden><i class="bi bi-star"></i> Preferiti</a></li>
+                    <li><a class="dropdown-item uLogged" href="#" onclick="userPage()" hidden><i class="bi bi-person-circle"></i> Profilo</a></li>
                     <li><a class="dropdown-item uNLogged" href="#" onclick="loginPage()"><i class="bi bi-box-arrow-in-right"></i> Login</a></li>
                     <li><a class="dropdown-item uNLogged" href="#" onclick="registerPage()"><i class="bi bi-at"></i> Registrati</a></li>
                     <li><hr class="dropdown-divider uLogged" hidden></li>
@@ -68,6 +67,9 @@
     </header>
     <div id="mainAlertDiv" class="container mt-3"></div>
     <div id="main_div" class="container mt-3" style="width: 40rem;">
+    <!-------------------------------------------------------------->
+
+    <!-------------------------------------------------------------->
     </div>
     <div class="modal fade" id="modalLoginNeed" tabindex="-1" aria-labelledby="modalLoginNeed" aria-hidden="true">
       <div class="modal-dialog" role="document">
@@ -83,8 +85,16 @@
         </div>
       </div>
     </div>
+    <div class="modal fade"  id="postDetailModal"  aria-hidden="true" tabindex="-1" aria-labelledby="postModal" >
+      <div class="modal-dialog modal-dialog-centered" role="document" style="width: 40rem;">
+        <div class="modal-content" id="detailModal">
+
+        </div>
+      </div>
+    </div>
+
     <div class="modal fade" id="modalLogin" tabindex="-1" aria-labelledby="modalLogin" aria-hidden="true">
-      <div class="modal-dialog" role="document">
+      <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content rounded-4 shadow">
           <div class="modal-header p-5 pb-4 border-bottom-0">
             <h2 class="fw-bold mb-0">Login</h2>

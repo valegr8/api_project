@@ -4,6 +4,7 @@
 var loggedUser = {};
 var counter = 0;
 const logMod = new bootstrap.Modal('#modalLogin', {keyboard: false});
+const postDetailMod = new bootstrap.Modal('#postDetailModal', {});
 const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
 const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 window.onload = loadPosts();
@@ -87,7 +88,7 @@ function createCardPost(id, title){
 
 function createDetailPost(id,title, descr,createdBy){
     return `
-    <div class='card mb-3 float-center' style='width: 40rem;'> 
+    <div class='card mb-3 float-center'> 
     <div class="card-header clearfix"><div class="hstack gap-3"><h5>${title}</h5><span class="ms-auto h4" id="starAtt${id}"></span></div></div>
     <div class='card-body '><div class="grid"><div class="g-col-6">
           <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel"><div class="carousel-inner">
@@ -149,71 +150,42 @@ function createDetailPost(id,title, descr,createdBy){
  */
 function loadDetails(id) {
         //remove posts
-        const posts_div = document.getElementById("posts_div");
-        if(posts_div) 
-        {
-            posts_div.remove();
-            // console.log("removing posts");
-        }
-        //remove form login
-        const login_form = document.getElementById("loginform");
-        if(login_form) 
-        {
-            login_form.remove();
-            // console.log("removing login form");
-        }
-        //remove form register
-        const form_register = document.getElementById("registerform");
-        if(form_register) 
-        {
-            form_register.remove();
-            // console.log("removing register form");
-        }
-        //remove form create
-        const create_form = document.getElementById("createform");
-        if(create_form) 
-        {
-            create_form.remove();
-            // console.log("removing create form");
-        }
-        //check if the create form already exists
-        if(!document.getElementById("posts_div")) 
-        {       
-            const div = document.createElement("div");
-            div.setAttribute('class', "form-group");
-            div.setAttribute('id', "posts_div");
-    
-            div.innerHTML = "<div id='posts'></div>";
-            const main_div = document.getElementById("main_div");
-            main_div.appendChild(div);
-        }
-    
-        const postDiv = document.getElementById('posts'); // Get the list where we will place our posts
-        if(postDiv)
-        {   
-            fetch('../api/v1/posts/' + id)
-            .then((resp) => resp.json()) // Transform the data into json
-            .then(function(data) { // Here you get the data to modify
-                // console.log(data);
-                var first = 0;
-                postDiv.innerHTML = "";
-                
-                if (!data.message) 
-                    console.log('no data');
-                if (Array.isArray(data.message)) 
-                    console.log('result is an array');
+        const main_div = document.getElementById("main_div");
+        //main_div.innerHTML = "";
 
-                post = data.message;
+ 
+        const div = document.createElement("div");
+        div.setAttribute('class', "form-group");
+        div.setAttribute('id', "posts_div");
 
-                var star = false;
-                if(loggedUser.favorite != null){loggedUser.favorite.forEach(fav => {if(post._id == fav) star = true;});}
-                postDiv.innerHTML+= "<a href='#' onclick='loadPosts()' class='text-muted text-decoration-none float-start mb-3'><i class='bi bi-arrow-left-short'></i> indietro</a>";
-                postDiv.innerHTML+= createDetailPost(id,post.title, post.description, post.createdBy);
-                let postIn = document.getElementById("starAtt"+post._id);
-                postIn.innerHTML=addStar(star, post._id);
-            })
-            .catch( error => console.error(error) );// If there is any error you will catch them here
-        }
+        div.innerHTML = "<div id='posts'></div>";
+        main_div.appendChild(div);
+
+        fetch('../api/v1/posts/' + id)
+        .then((resp) => resp.json()) // Transform the data into json
+        .then(function(data) { // Here you get the data to modify
+            // console.log(data);
+            
+            if (!data.message) 
+                console.log('no data');
+            if (Array.isArray(data.message)) 
+                console.log('result is an array');
+
+            post = data.message;
+            const post_div = document.getElementById("detailModal");
+            post_div.innerHTML = "";
+
+            var star = false;
+            if(loggedUser.favorite != null){loggedUser.favorite.forEach(fav => {if(id == fav) star = true;});}
+            
+            post_div.innerHTML+= createDetailPost(id,post.title, post.description, post.createdBy);
+            var postIn = document.getElementById("starAtt"+id);
+            postIn.innerHTML=addStar(star, id);
+            post_div.innerHTML+= "<a href='#' class='text-muted text-decoration-none mb-3' data-bs-dismiss='modal'><i class='bi bi-arrow-left-short'></i> indietro</a>";
+            postDetailMod.show();
+        })
+        .catch( error => console.error(error) );// If there is any error you will catch them here
+        
 }
 
 /**
@@ -223,66 +195,35 @@ function loadPosts() {
     //remove form login
     logMod.hide();
 
-    //remove form register
-    const form_register = document.getElementById("registerform");
-    if(form_register) 
-    {
-        form_register.remove();
-        // console.log("removing register form");
-    }
-    //remove form create
-    const create_form = document.getElementById("createform");
-    if(create_form) 
-    {
-        create_form.remove();
-        // console.log("removing create form");
-    }
-    const posts_div = document.getElementById("posts_div");
-    if(posts_div) 
-    {
-        posts_div.remove();
-        // console.log("removing create form");
-    }
+    const main_div = document.getElementById("main_div");
+    main_div.innerHTML = "";
 
-    //check if the create form already exists
-    if(!document.getElementById("posts_div")) 
-    {       
-        const div = document.createElement("div");
-        div.setAttribute('class', "form-group");
-        div.setAttribute('id', "posts_div");
 
-        div.innerHTML = "<h2>Annunci:</h2> \
-                            <div id='posts'></div>";
-        const main_div = document.getElementById("main_div");
-        main_div.appendChild(div);
-    }
+    main_div.innerHTML = "<h2>Annunci:</h2>";
 
-        
-    const postDiv = document.getElementById('posts'); // Get the list where we will place our posts
-    if(postDiv)
-    {    
-        fetch('../api/v1/posts')
-        .then((resp) => resp.json()) // Transform the data into json
-        .then(function(data) { // Here you get the data to modify
-            if (!data.message){
-                postDiv.innerHTML += "<h3>Nessun annuncio...</h3><br><h4>Sii il primo a pubblicare qualcosa!</h4>";
-                console.log('no data');
-            }
-            if (!Array.isArray(data.message)) 
-                showAlert("Errore nel caricare gli annunci", "danger");
 
-            counter = 0;
-            return data.message.map(function(post) { // Map through the results and for each run the code below
-                counter++;
-                var star = false;
-                if(loggedUser.favorite != null){loggedUser.favorite.forEach(fav => {if(post._id == fav) star = true;});}
-                postDiv.innerHTML+= createCardPost(post._id, post.title, star);
-                let postIn = document.getElementById("starAtt"+post._id);
-                postIn.innerHTML=addStar(star, post._id);
-            });
-        })
-        .catch( error => console.error(error) );// If there is any error you will catch them here
-    }
+
+    fetch('../api/v1/posts')
+    .then((resp) => resp.json()) // Transform the data into json
+    .then(function(data) { // Here you get the data to modify
+        if (!data.message){
+            main_div.innerHTML += "<h3>Nessun annuncio...</h3><br><h4>Sii il primo a pubblicare qualcosa!</h4>";
+            console.log('no data');
+        }
+        if (!Array.isArray(data.message)) 
+            showAlert("Errore nel caricare gli annunci", "danger");
+
+        counter = 0;
+        return data.message.map(function(post) { // Map through the results and for each run the code below
+            counter++;
+            var star = false;
+            if(loggedUser.favorite != null){loggedUser.favorite.forEach(fav => {if(post._id == fav) star = true;});}
+            main_div.innerHTML+= createCardPost(post._id, post.title, star);
+            let postIn = document.getElementById("starAtt"+post._id);
+            postIn.innerHTML=addStar(star, post._id);
+        });
+    })
+    .catch( error => console.error(error) );// If there is any error you will catch them here
 }
  
 /**
@@ -506,60 +447,21 @@ function newPostPage()
         modal.show();
         return;
     }
-
-    //remove form register
-    const form_register = document.getElementById("registerform");
-    if(form_register) 
-    {
-        form_register.remove();
-        // console.log("removing register form");
-    }
-    //remove posts
-    const posts_div = document.getElementById("posts_div");
-    if(posts_div) 
-    {
-        posts_div.remove();
-        // console.log("removing posts");
-    }
-    //remove form login
-    const form_ = document.getElementById("loginform");
-    if(form_) 
-    {
-        form_.remove();
-        // console.log("removing login form");
-    }
     //check if the create form already exists
     if(!document.getElementById("createform")) 
     {
         var form= `<form id="createform" method="post" action="api/v1/posts"><h2>Crea nuovo annuncio:</h2><div class="form-floating mb-3" id="usrDiv"><input id="postTitle" name="title" maxlength="30" class="form-control" placeholder="Titolo"><label for="postTitle">Titolo</label><div class="form-text">Lunghezza massima: 30 caratteri</div></div><div class="input-group mb-3" id="usrDiv"><span class="input-group-text">Descrizione</span><textarea id="postDesc" name="postDesc" class="form-control" maxlength="500" placeholder="Descrizione"></textarea></div><button type="button" class="btn btn-primary" onclick="insertPost()">Salva</button></form>`;
-
         const main_div = document.getElementById("main_div");
         main_div.innerHTML=form;
     }
 }
- 
+
  /**
   * This function is called by clicking on the "login" button.
   * It dinamically creates a form to perform a "login" in the website.
   */
 function loginPage()
 {
-    //remove form register
-    const form_register = document.getElementById("registerform");
-    if(form_register) 
-    {
-        form_register.remove();
-        // console.log("removing register form");
-    }
-    //remove form create
-    const form_ = document.getElementById("createform");
-    if(form_) 
-    {
-        form_.remove();
-        // console.log("removing create form");
-    }
-
-
     logMod.show();
 }
 
@@ -569,134 +471,103 @@ function loginPage()
  */
 function registerPage()
 {
-    //remove form login
-    const form_login = document.getElementById("loginform");
-    if(form_login) 
-    {
-        form_login.remove();
-        // console.log("removing login form");
-    }
-    //remove form create
-    const form_ = document.getElementById("createform");
-    if(form_) 
-    {
-        form_.remove();
-        // console.log("removing create form");
-    }
-    //remove posts
-    const posts_div = document.getElementById("posts_div");
-    if(posts_div) 
-    {
-        posts_div.remove();
-        // console.log("removing posts");
-    }
     //check if the register form already exists
     if(!document.getElementById("registerform")) 
     {
-        // console.log("creating register form");      
-        //create form
-        const form = document.createElement("form");
-        form.setAttribute('method', "post");
-        form.setAttribute('action', "api/v1/users"); //metodo da rivedere
-        form.setAttribute('name', 'registerform');
-        form.setAttribute('id', 'registerform');
-        form.innerHTML = "<h2>Registra un nuovo account:</h2>";
-
-        //USERNAME INPUT------------------------------------
-        const div_usr = document.createElement("div");
-        div_usr.setAttribute('class', "form-floating mb-3");
-        div_usr.setAttribute('id', "usrDiv");
-        
-        // create an input elemet for the username
-        const usr = document.createElement("input");
-        usr.setAttribute('id', "registerUsr");
-        usr.setAttribute('name', "username");
-        usr.setAttribute('class', "form-control");
-        usr.setAttribute('placeholder', "Username");
-
-        const usr_lbl = document.createElement("label");
-        usr_lbl.setAttribute("for", "registerUsr");
-        usr_lbl.innerHTML = "Username";
-        //USERNAME INPUT------------------------------------
-
-        //EMAIL INPUT------------------------------------------
-        const div_email = document.createElement("div");
-        div_email.setAttribute('class', "form-floating mb-3");
-        div_email.setAttribute('id', "emailDiv");
-
-        // create an input elemet for the email
-        const email = document.createElement("input");
-        email.setAttribute('id', "registerEmail");
-        email.setAttribute('name', "email");
-        email.setAttribute('class', "form-control");
-        email.setAttribute('placeholder', "Email");
-
-        const email_lbl = document.createElement("label");
-        email_lbl.setAttribute("for", "registerEmail");
-        email_lbl.innerHTML = "Email";
-        //EMAIL INPUT------------------------------------------
-
-        //PASSWORD INPUT---------------------------------------
-        const div_pwd = document.createElement("div");
-        div_pwd.setAttribute('class', "form-floating mb-3");
-        div_pwd.setAttribute('id', "pwdDiv");
-
-
-        // create an input elemet for the password
-        const pwd = document.createElement("input");
-        pwd.setAttribute('id', "registerPassword");
-        pwd.setAttribute('name', "password");
-        pwd.setAttribute('class', "form-control");
-        pwd.setAttribute('placeholder', "Password");
-        pwd.setAttribute('type', 'password');
-
-        const pwd_lbl = document.createElement("label");
-        pwd_lbl.setAttribute("for", "registerPassword");
-        pwd_lbl.innerHTML = "Password";
-        //PASSWORD INPUT---------------------------------------
-
-        //CONF PASSWORD INPUT------------------------------------     
-        const div_pwd_conf = document.createElement("div");
-        div_pwd_conf.setAttribute('class', "form-floating mb-3");
-        div_pwd_conf.setAttribute('id', "pwdDiv");
-
-        // create an input elemet for the password confirmation
-        const pwd_conf = document.createElement("input");
-        pwd_conf.setAttribute('id', "registerPasswordVer");
-        pwd_conf.setAttribute('name', "password");
-        pwd_conf.setAttribute('class', "form-control");
-        pwd_conf.setAttribute('placeholder', "Password");
-        pwd_conf.setAttribute('type', 'password');
-
-        const pwd_conf_lbl = document.createElement("label");
-        pwd_conf_lbl.setAttribute("for", "registerPasswordVer");
-        pwd_conf_lbl.innerHTML = "Confirm Password";
-        //CONF PASSWORD INPUT------------------------------------     
-
-        // create a button
-        const button = document.createElement("button");
-        button.setAttribute('type', "button");
-        button.setAttribute('class', "btn btn-primary");
-        button.setAttribute('onclick', "register()");
-        button.setAttribute('class', "btn btn-primary");
-        button.innerText = "Registrati";
-        div_usr.appendChild(usr);
-        div_usr.appendChild(usr_lbl);
-        div_email.appendChild(email);
-        div_email.appendChild(email_lbl);
-        div_pwd.appendChild(pwd);
-        div_pwd.appendChild(pwd_lbl);
-        div_pwd_conf.appendChild(pwd_conf);
-        div_pwd_conf.appendChild(pwd_conf_lbl);
-        form.appendChild(div_usr);
-        form.appendChild(div_email);
-        form.appendChild(div_pwd);
-        form.appendChild(div_pwd_conf);
-        form.appendChild(button);
+        var form = `<form method="post" action="api/v1/users" name="registerform" id="registerform"><h2>Registra un nuovo account:</h2><div class="form-floating mb-3" id="usrDiv"><input id="registerUsr" name="username" class="form-control" placeholder="Username"><label for="registerUsr">Username</label></div><div class="form-floating mb-3" id="emailDiv"><input id="registerEmail" name="email" class="form-control" placeholder="Email"><label for="registerEmail">Email</label></div><div class="form-floating mb-3" id="pwdDiv"><input id="registerPassword" name="password" class="form-control" placeholder="Password" type="password"><label for="registerPassword">Password</label></div><div class="form-floating mb-3" id="pwdDiv"><input id="registerPasswordVer" name="password" class="form-control" placeholder="Password" type="password"><label for="registerPasswordVer">Confirm Password</label></div><button type="button" class="btn btn-primary" onclick="register()">Registrati</button></form>`;
 
         const main_div = document.getElementById("main_div");
-        main_div.appendChild(form);
+        main_div.innerHTML = form;
     }
+}
+
+/**
+ * @returns a card with some post info
+ */
+function smallFavPost(id,title, price, position){
+    return `<div class="col"><a href="#" class="text-decoration-none text-dark" onclick='loadDetails("${id}")'><div class="card"><div class="card-body">
+            <h5 class="card-title">${title}</h5><small class="card-text text-muted"><i class="bi bi-geo-alt-fill"></i>${position}</small>
+            <h2 class="card-text">${price}€</h2></div></div></a></div>`;
+}
+
+function userPage(){
+    if(loggedUser.email == null){
+        const modal = new bootstrap.Modal('#modalLoginNeed', {keyboard: false});
+        modal.show();
+        return;
+    }
+
+    var page = `    <div class='card mb-3 float-center' style='width: 40rem;'> 
+    <div class="card-header">
+        <h4>Utente</h4>
+    </div>
+    <div class='card-body'>
+        <dl class="row">
+        <dt class="col-sm-6 text-start">Username</dt>
+        <dd class="col-sm-6 text-start">${loggedUser.username} <i class="bi bi-pencil-square"></i></dd>
+        <dt class="col-sm-6 text-start">Email</dt>
+        <dd class="col-sm-6 text-start">${loggedUser.email}</dd>
+        </dl>
+        <hr>
+        <span id="sFt"></span>
+        <div class="mt-3">
+        <div class="row row-cols-1 row-cols-md-2 g-4" id="smallFav">
+        </div>
+        </div>
+    </div>
+    </div>`;
+    const main_div = document.getElementById("main_div");
+    main_div.innerHTML = page;
+
+    const smallFav = document.getElementById("smallFav");
+    const sFt = document.getElementById("sFt");
+    if(loggedUser.favorite.length == 0) {smallFav.innerHTML+= "<h5>Nessun annuncio preferito</h5>"; return;}
+    sFt.innerHTML+= "<h5>Annunci preferiti</h5>"; 
+    loggedUser.favorite.forEach(lid => {
+        fetch('../api/v1/posts/' + lid)
+        .then((resp) => resp.json()) // Transform the data into json
+        .then(function(data) { // Here you get the data to modify
+            if (!data.message) 
+                console.log('no data');
+            if (Array.isArray(data.message)) 
+                console.log('result is an array');
+            post = data.message;
+            smallFav.innerHTML+= smallFavPost(lid,post.title, "350", "Via Gino, 32 - Trento(TN)");
+        })
+        .catch( error => console.error(error) );// If there is any error you will catch them here
+    });
+
+}
+
+
+function favPage(){
+    if(loggedUser.email == null){
+        const modal = new bootstrap.Modal('#modalLoginNeed', {keyboard: false});
+        modal.show();
+        return;
+    }
+    const main_div = document.getElementById("main_div");
+    if(loggedUser.favorite.length == 0) {main_div.innerHTML= "<h3>Nessun annuncio preferito</h3>"; return;}
+    main_div.innerHTML = "<h2>Annunci preferiti:</h2>";
+    loggedUser.favorite.forEach(lid => {
+        fetch('../api/v1/posts/' + lid)
+        .then((resp) => resp.json()) // Transform the data into json
+        .then(function(data) { // Here you get the data to modify
+            if (!data.message) 
+                console.log('no data');
+            if (Array.isArray(data.message)) 
+                console.log('result is an array');
+            post = data.message;
+            var star = false;
+            if(loggedUser.favorite != null){loggedUser.favorite.forEach(fav => {if(lid == fav) star = true;});}
+            main_div.innerHTML+= createCardPost(lid,post.title, post.description, post.createdBy);
+            let postIn = document.getElementById("starAtt"+lid);
+            postIn.innerHTML=addStar(star, lid);
+        })
+        .catch( error => console.error(error) );// If there is any error you will catch them here
+    });
+    
+
 }
 
 /**
