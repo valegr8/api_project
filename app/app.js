@@ -11,6 +11,7 @@ const usersV2 = require('./users_v2.js');
 const posts = require('./posts.js');
 const postsV2 = require('./posts_v2.js');
 const authentication = require('./authentication.js');
+const published = require('./published.js');
 const tokenChecker = require('./tokenChecker.js');
 
 /**
@@ -30,6 +31,10 @@ app.use('/', express.static('static'));
 app.use('/api/v1/authentications', authentication);
 
 /**
+ * Protect endpoints
+ */
+app.use('/api/v2/published', tokenChecker);
+/**
  * Resource routing
  */
  //version 1
@@ -39,6 +44,7 @@ app.use('/api/v1/users', users);
 //version 2
 app.use('/api/v2/posts/', postsV2);
 app.use('/api/v2/users', usersV2);
+app.use('/api/v2/published', published);
 
 /**
  * Default 404 handler 

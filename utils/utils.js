@@ -91,6 +91,16 @@ utils.setResponseStatus = (param,res) => {
 		utils.notFound(res);
 };
 
+utils.setDeleteStatus = (param, res) => {
+	if (param) {
+		utils.printd('Post removed correctly');
+		res.status(200).json({message: param});
+	}
+	else {
+		utils.notFound(res);
+	}
+}
+
 /**
  * Sets a 201 status code, resource created
  */
