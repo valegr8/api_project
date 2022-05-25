@@ -485,7 +485,6 @@ function remFavorite(id){
             console.log("Errore rimozione preferiti");
         }else{
             loggedUser.favorite = data.favorite;
-            console.log(loggedUser.favorite);
             document.getElementById("starAtt"+data.id).innerHTML=addStar(false, data.id);
             
         }
@@ -531,75 +530,11 @@ function newPostPage()
     }
     //check if the create form already exists
     if(!document.getElementById("createform")) 
-    {       
-        // create the form
-        const form = document.createElement("form");
-        form.setAttribute('id', 'createform')
-        form.setAttribute('method', "post");
-        form.setAttribute('action', "api/v1/posts");
-        form.innerHTML = "<h2>Crea nuovo annuncio:</h2>";
-
-        //TITLE INPUT------------------------------------
-        const div_title = document.createElement("div");
-        div_title.setAttribute('class', "form-floating mb-3");
-        div_title.setAttribute('id', "usrDiv");
-        
-        // create an input elemet for the title
-        const ttl = document.createElement("input");
-        ttl.setAttribute('id', "postTitle");
-        ttl.setAttribute('name', "title");
-        ttl.setAttribute('maxlength', "30");
-        ttl.setAttribute('class', "form-control");
-        ttl.setAttribute('placeholder', "Titolo");
-
-        const ttl_info = document.createElement("div");
-        ttl_info.setAttribute("class", "form-text");
-        ttl_info.innerHTML = "Lunghezza massima: 30 caratteri";
-
-        const ttl_lbl = document.createElement("label");
-        ttl_lbl.setAttribute("for", "postTitle");
-        ttl_lbl.innerHTML = "Titolo";
-        //TITLE INPUT------------------------------------
-
-        //DESC INPUT------------------------------------
-        const div_desc = document.createElement("div");
-        div_desc.setAttribute('class', "input-group mb-3");
-        div_desc.setAttribute('id', "usrDiv");
-
-        // create an input elemet for the description
-        const desc = document.createElement("textarea");
-        desc.setAttribute('id', "postDesc");
-        desc.setAttribute('name', "postDesc");
-        desc.setAttribute('class', "form-control");
-        desc.setAttribute('maxlength', "500");
-        desc.setAttribute('placeholder', "Descrizione");
-
-        const desc_lbl = document.createElement("span");
-        desc_lbl.setAttribute("class", "input-group-text");
-        desc_lbl.innerHTML = "Descrizione";
-        //DESC INPUT------------------------------------
-
-        // create a button
-        const button = document.createElement("button");
-        button.setAttribute('type', "button");
-        button.setAttribute('class', "btn btn-primary");
-        button.setAttribute('onclick', "insertPost()");
-        button.setAttribute('class', "btn btn-primary");
-        button.innerText = "Salva";
-
-        div_title.appendChild(ttl);
-        div_title.appendChild(ttl_lbl);
-        div_title.appendChild(ttl_info);
-        
-        div_desc.appendChild(desc_lbl);
-        div_desc.appendChild(desc);
-
-        form.appendChild(div_title);
-        form.appendChild(div_desc);
-        form.appendChild(button);
+    {
+        var form= `<form id="createform" method="post" action="api/v1/posts"><h2>Crea nuovo annuncio:</h2><div class="form-floating mb-3" id="usrDiv"><input id="postTitle" name="title" maxlength="30" class="form-control" placeholder="Titolo"><label for="postTitle">Titolo</label><div class="form-text">Lunghezza massima: 30 caratteri</div></div><div class="input-group mb-3" id="usrDiv"><span class="input-group-text">Descrizione</span><textarea id="postDesc" name="postDesc" class="form-control" maxlength="500" placeholder="Descrizione"></textarea></div><button type="button" class="btn btn-primary" onclick="insertPost()">Salva</button></form>`;
 
         const main_div = document.getElementById("main_div");
-        main_div.appendChild(form);
+        main_div.innerHTML=form;
     }
 }
  
