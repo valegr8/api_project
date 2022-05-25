@@ -93,28 +93,10 @@
       </div>
     </div>
 
-    <div class="modal fade" id="modalLogin" tabindex="-1" aria-labelledby="modalLogin" aria-hidden="true">
+    <div class="modal fade" id="modalInput" tabindex="-1" aria-labelledby="modalInput" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content rounded-4 shadow">
-          <div class="modal-header p-5 pb-4 border-bottom-0">
-            <h2 class="fw-bold mb-0">Login</h2>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="loadPosts()"></button>
-          </div>
-          <div class="modal-body p-5 pt-0">
-            <form class="">
-              <div class="form-floating mb-3">
-                <input type="email" class="form-control rounded-3" id="loginEmail" placeholder="name@example.com">
-                <label for="floatingInput">Email</label>
-              </div>
-              <div class="form-floating mb-3">
-                <input type="password" class="form-control rounded-3" id="loginPassword" placeholder="Password">
-                <label for="floatingPassword">Password</label>
-              </div>
-              <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit" onclick="login()">Login</button>
-              <small class="text-muted">Non ancora registrato? <a  href="#" class="link-dark" onclick="registerPage()" data-bs-dismiss="modal">Registrati</a></small>
-              <div id="loginAlertDiv" class="container"></div>
-            </form>
-          </div>
+        <div class="modal-content rounded-4 shadow" id="modIn">
+          
         </div>
       </div>
     </div>

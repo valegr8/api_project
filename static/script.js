@@ -3,7 +3,8 @@
  */
 var loggedUser = {};
 var counter = 0;
-const logMod = new bootstrap.Modal('#modalLogin', {keyboard: false});
+const inMod = new bootstrap.Modal('#modalInput', {keyboard: false});
+const modInp = document.getElementById("modIn"); 
 const postDetailMod = new bootstrap.Modal('#postDetailModal', {});
 const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
 const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
@@ -193,7 +194,7 @@ function loadDetails(id) {
  */
 function loadPosts() {
     //remove form login
-    logMod.hide();
+    inMod.hide();
 
     const main_div = document.getElementById("main_div");
     main_div.innerHTML = "";
@@ -300,7 +301,7 @@ function login()
 
             document.getElementById("loginEmail").value = '';
             document.getElementById("loginPassword").value = '';
-            logMod.hide();
+            inMod.hide();
 
             enNavButtons();
             
@@ -349,7 +350,7 @@ function register(){
         return;
     }
 
-    fetch('../api/v1/users', {
+    fetch('../api/v2/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify( { email: email, password: password, username: username }  ),
@@ -374,6 +375,50 @@ function register(){
         }
         return;
         
+    })
+    .catch( error => console.error(error) ); // If there is any error you will catch them here
+    
+}
+function chgUsrPage(){
+    modInp.innerHTML = `<div class="modal-header p-5 pb-4 border-bottom-0">
+            <h2 class="fw-bold mb-0">Cambiamento username</h2>
+        </div>
+        <div class="modal-body p-5 pt-0">
+            <form class="">
+            <div class="form-floating mb-3">
+                <input type="username" class="form-control rounded-3" id="newUsername" placeholder="username">
+                <label for="floatingInput">Nuovo Username</label>
+            </div>
+            <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit" onclick="changeUsername()">Conferma</button>
+            </form>
+        </div>`;
+    inMod.show();
+}
+
+
+function changeUsername(){
+    if(loggedUser.email == null){
+        const modal = new bootstrap.Modal('#modalLoginNeed', {keyboard: false});
+        modal.show();
+        return;
+    }
+    const nusername = document.getElementById("newUsername").value;
+    inMod.hide();
+
+    fetch('../api/v1/users/updateUsername', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify( { email: loggedUser.email, username: nusername }  ),
+    })
+    .then((resp) => resp.json() ) // Transform the data into json
+    .then(function(data){
+        if(data.email == undefined){
+            console.log("Errore cambiamento username");
+        }else{
+            loggedUser.username = data.username;
+        }
+        userPage();
+        return;
     })
     .catch( error => console.error(error) ); // If there is any error you will catch them here
     
@@ -462,7 +507,26 @@ function newPostPage()
   */
 function loginPage()
 {
-    logMod.show();
+    modInp.innerHTML = `<div class="modal-header p-5 pb-4 border-bottom-0">
+        <h2 class="fw-bold mb-0">Login</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="loadPosts()"></button>
+    </div>
+    <div class="modal-body p-5 pt-0">
+        <form class="">
+        <div class="form-floating mb-3">
+            <input type="email" class="form-control rounded-3" id="loginEmail" placeholder="name@example.com">
+            <label for="floatingInput">Email</label>
+        </div>
+        <div class="form-floating mb-3">
+            <input type="password" class="form-control rounded-3" id="loginPassword" placeholder="Password">
+            <label for="floatingPassword">Password</label>
+        </div>
+        <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit" onclick="login()">Login</button>
+        <small class="text-muted">Non ancora registrato? <a  href="#" class="link-dark" onclick="registerPage()" data-bs-dismiss="modal">Registrati</a></small>
+        <div id="loginAlertDiv" class="container"></div>
+        </form>
+    </div>`;
+    inMod.show();
 }
 
 /**
@@ -504,7 +568,7 @@ function userPage(){
     <div class='card-body'>
         <dl class="row">
         <dt class="col-sm-6 text-start">Username</dt>
-        <dd class="col-sm-6 text-start">${loggedUser.username} <i class="bi bi-pencil-square"></i></dd>
+        <dd class="col-sm-6 text-start"><a href="#" class="text-dark" onclick="chgUsrPage()">${loggedUser.username} <i class="bi bi-pencil-square"></i></a></dd>
         <dt class="col-sm-6 text-start">Email</dt>
         <dd class="col-sm-6 text-start">${loggedUser.email}</dd>
         </dl>
