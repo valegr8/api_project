@@ -4,7 +4,7 @@ const router = express.Router();
 /**
  * Get post model
  */
-const Post = require('./models/post'); 
+const Post = require('./models/post_v2'); 
 const User = require('./models/user'); 
 
 const utils = require('../utils/utils.js');
@@ -94,7 +94,7 @@ router.post('', async (req, res) => {
 			utils.notFound(res, 'Post id not valid');
 		}
 		else {
-			res.location("/api/v1/posts/" + postId);
+			res.location("/api/v2/posts_v2/" + postId);
 			utils.created(res, 'Post saved successfully');
 		}
 	}).catch((e) => {		
