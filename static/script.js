@@ -162,7 +162,7 @@ function loadDetails(id) {
         div.innerHTML = "<div id='posts'></div>";
         main_div.appendChild(div);
 
-        fetch('../api/v1/posts/' + id)
+        fetch('../api/v2/posts/' + id)
         .then((resp) => resp.json()) // Transform the data into json
         .then(function(data) { // Here you get the data to modify
             // console.log(data);
@@ -204,7 +204,7 @@ function loadPosts() {
 
 
 
-    fetch('../api/v1/posts')
+    fetch('../api/v2/posts')
     .then((resp) => resp.json()) // Transform the data into json
     .then(function(data) { // Here you get the data to modify
         if (!data.message){
@@ -240,7 +240,7 @@ function insertPost()
     
     // console.log(postTitle);
 
-    fetch('../api/v1/posts', {
+    fetch('../api/v2/posts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify( { title: postTitle , description: postDesc , email: loggedUser.email} ),
@@ -588,7 +588,7 @@ function userPage(){
     if(loggedUser.favorite.length == 0) {smallFav.innerHTML+= "<h5>Nessun annuncio preferito</h5>"; return;}
     sFt.innerHTML+= "<h5>Annunci preferiti</h5>"; 
     loggedUser.favorite.forEach(lid => {
-        fetch('../api/v1/posts/' + lid)
+        fetch('../api/v2/posts/' + lid)
         .then((resp) => resp.json()) // Transform the data into json
         .then(function(data) { // Here you get the data to modify
             if (!data.message) 
@@ -614,7 +614,7 @@ function favPage(){
     if(loggedUser.favorite.length == 0) {main_div.innerHTML= "<h3>Nessun annuncio preferito</h3>"; return;}
     main_div.innerHTML = "<h2>Annunci preferiti:</h2>";
     loggedUser.favorite.forEach(lid => {
-        fetch('../api/v1/posts/' + lid)
+        fetch('../api/v2/posts/' + lid)
         .then((resp) => resp.json()) // Transform the data into json
         .then(function(data) { // Here you get the data to modify
             if (!data.message) 
