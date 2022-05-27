@@ -1,0 +1,505 @@
+openapi: 3.0.0
+info:
+  version: '1.0'
+  title: "HouseMate OpenAPI"
+  description: HouseMate is a web API that allows users to view and create posts for renting houses and appartaments..
+  license:
+    name: MIT
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Localhost
+basepath: /api/v1
+consumes:
+- application/json
+produces:
+- application/json
+paths:
+  /posts:
+    get:
+      description: >-
+        Gets the list of posts.
+      summary: View all posts
+      responses:
+        '200':
+          description: 'Collection of posts'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Post'
+        '404':
+           description: 'Failure to fetch the data'
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   status:
+                     type: integer
+                     example: 404
+                     description: status code
+                   message:
+                     type: string
+                     example: Not found
+                     description: further info
+                 required:
+                   - status
+                   - message
+
+
+    post:
+      description: >-
+        Creates a new post in the system. The operation can be performed only by registered users.
+      summary: New post creation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - description
+                - email
+              properties:
+                title:
+                  type: string
+                  example: Appartamento bellissimo
+                  description: 'Title of the post'
+                description:
+                  type: string
+                  example: Vicino a tutto
+                  description: 'Details of the post'
+                email:
+                  type: string
+                  example: BenedettoBenedetti@email.com
+                  description: 'Email address of the user'
+      responses:
+        '201':
+          description: 'Post created. Link in the Location header'
+          headers:
+            'Location':
+              schema:
+                type: string
+                example: /api/v1/posts/2
+              description: Link to the newly created post.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - status
+                  - message
+                properties:                
+                  status:
+                    type: integer
+                    example: 201
+                  message:
+                    type: string
+                    example: Post saved successfully
+        '400':
+           description: 'Either the email address or the user is not in the database or the title is empty'
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   status:
+                     type: integer
+                     example: 400
+                     description: status code
+                   message:
+                     type: string
+                     example: Email not valid
+                     description: status code
+                 required:
+                   - status
+                   - message
+
+        '404':
+           description: 'Either the saving of the post failed or the id provided is invalid'
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   status:
+                     type: integer
+                     example: 404
+                     description: status code
+                   message:
+                     type: string
+                     example: Post saving failed
+                     example: Post id not valid
+                     description: status code
+                 required:
+                   - status
+                   - message
+
+    put:
+      responses:
+        '405':
+          description: 'Method Not Allowed'
+          content:
+            application/json:
+              schema:
+                 type: object
+                 properties:
+                   status:
+                     type: integer
+                     example: 405
+                     description: status code
+                   message:
+                     type: string
+                     example: Method Not Allowed
+                     description: Human-readable description
+                 required:
+                   - status
+                   - message
+
+    delete:
+      responses:
+        '405':
+          description: 'Method Not Allowed'
+          content:
+            application/json:
+              schema:
+                 type: object
+                 properties:
+                   status:
+                     type: integer
+                     example: 405
+                     description: status code
+                   message:
+                     type: string
+                     example: Method Not Allowed
+                     description: Human-readable description
+                 required:
+                   - status
+                   - message
+
+
+
+  /posts/{id}:
+    get:
+      description: >-
+        Gets a post.
+      summary: View a post
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The mongodb objectId of the post
+      responses:
+        '200':
+          description: 'A single post'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: 62866283f3ff1e92d70116ef
+                        description: "mongodb id of the newly created post"
+                      title:
+                        type: string
+                        example: Appartamento bellissimo
+                        description: "Title of the post"
+                      description:
+                        type: string
+                        example: Vicino a tutto
+                        description: "Details of the post"
+                      createdBy:
+                        type: string
+                        example: BenedettoBenedetti@email.com
+                        description: "Creator of the post"
+                items:
+                  $ref: '#/components/schemas/Post'
+        '404':
+           description: 'The post is not in the database'
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   status:
+                     type: integer
+                     example: 404
+                     description: status code
+                   message:
+                     type: string
+                     example: Not Found
+                     description: Human-readable description
+                 required:
+                   - status
+                   - message
+
+        '400':
+           description: 'The value of the id parameter is not a valid mongodb objectId'
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   status:
+                     type: integer
+                     example: 400
+                     description: status code
+                   message:
+                     type: string
+                     example: Bad Request
+                     description: status code
+                 required:
+                   - status
+                   - message
+
+
+  /users:
+
+    post:
+      description: >-
+        Creates a new user in the system.
+      summary: New user creation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - username
+              properties:
+                email:
+                  type: string
+                  example: prova@prova.com
+                  description: 'Email address of the user'
+              username:
+                type: string
+                example: pippo
+                description: 'Name othe user'
+              password:
+                type: string
+                example: ASecurePassword
+                description: 'Password of the user'
+      responses:
+        '200':
+          description: 'user created.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: user created
+                  token:
+                    type: string
+                    example: 628099dc6824bsadefa6e372e2a
+                  email:
+                    type: string
+                    example: prova@prova.com
+                  username:
+                    type: string
+                    example: pippo
+                  id:
+                    type: string
+                    example: 628240wq213258274ea229984ddee
+        '409':
+          description: 'There is already an user registered with that email address'
+          content:
+            application/json:
+              schema:
+                 type: object
+                 properties:
+                   status:
+                     type: integer
+                     example: 409
+                     description: status code
+                   message:
+                     type: string
+                     example: User already exists
+                     description: Human-readable description
+                 required:
+                   - status
+                   - message
+        '400':
+           description: 'Email, username or password is empty'
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   status:
+                     type: integer
+                     example: 400
+                     description: status code
+                   message:
+                     type: string
+                     example: Bad Request
+                     description: Human-readable description
+                 required:
+                   - status
+                   - message
+
+  /authentications:
+    post:
+      description: >-
+        Authenticates a user.
+      summary: User authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - username
+              properties:
+                email:
+                  type: string
+                  example: pippo@email.com
+                  description: 'Email address of the user'
+                username:
+                  type: string
+                  example: pippo
+                  description: 'Name othe user'
+                password:
+                  type: string
+                  example: "123456"
+                  description: 'Password of the user'
+      responses:
+        '200':
+          description: 'user authenticated.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Enjoy your token!
+                  token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InBpcHBvQGVtYWlsLmNvbSIsImlkIjoiNjI4N2FiY2RmMGE5NmJkOTc1YTNhODRlIiwiaWF0IjoxNjUzMDYwNTAzLCJleHAiOjE2NTMxNDY5MDN9.SUaMnP1YDdaGTIH-5au7NG7MlLTH_pIkOqUqQ1g0WiQ
+                  email:
+                    type: string
+                    example: pippo@email.com
+                  username:
+                    type: string
+                    example: pippo
+                  id:
+                    type: string
+                    example: 6287abcdf0a96bd975a3a84e
+        '404':
+           description: 'The user does not exist'
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   status:
+                     type: integer
+                     example: 404
+                     description: status code
+                   message:
+                     type: string
+                     example: User not found
+                     description: status code
+                 required:
+                   - status
+                   - message
+
+        '400':
+           description: 'Either the email address or the passward is invalid, e.g. empty password'
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   status:
+                     type: integer
+                     example: 400
+                     description: status code
+                   message:
+                     type: string
+                     example: Email not valid
+                     description: status code
+                 required:
+                   - status
+                   - message
+
+        '402':
+           description: 'The password provided by the user does not match the one in the database'
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   status:
+                     type: integer
+                     example: 402
+                     description: status code
+                   message:
+                     type: string
+                     example: Password does not match
+                     description: status code
+                 required:
+                   - status
+                   - message
+
+
+          
+components:
+  schemas:
+    Post:
+      type: object
+      required:
+        - id
+        - title
+        - description
+        - createdBy
+      properties:
+        id:
+          type: string
+          example: 628662fbf3ff1e92d70116f2
+          description: 'mongodb odjectId of the post'
+        title:
+          type: string
+          example: Appartamento bellissimo
+          description: 'title of the post'
+        description:
+          type: string
+          example: Vicino a tutto
+        createdBy:
+          type: string
+          example: BenedettoBenedetti@email.com
+          description: 'email address of the creator of the post'
+    Error:
+      type: object
+      required:
+        - status
+        - message
+      properties:
+        status:
+          type: integer
+          description: 'status code'
+        message:
+          type: string
+          description: 'Description of the error'
