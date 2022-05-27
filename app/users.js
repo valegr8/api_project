@@ -54,8 +54,7 @@ router.post('', async function(req,res) {
     user = new User({
         email: req.body.email,
         password: req.body.password,
-        username: req.body.username,
-        favorite: {}
+        username: req.body.username
     });
     user.save(function(err){});
 
@@ -78,7 +77,6 @@ router.post('', async function(req,res) {
 		email: user.email,
         username: user.username,
 		id: user._id,
-        favorite: favorite
 	});
 });
 
