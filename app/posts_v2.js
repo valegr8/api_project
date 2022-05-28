@@ -5,7 +5,7 @@ const router = express.Router();
  * Get post model
  */
 const Post = require('./models/post_v2'); 
-const User = require('./models/user'); 
+const User = require('./models/user_v2'); 
 
 const utils = require('../utils/utils.js');
 const { printd } = require('../utils/utils.js');
