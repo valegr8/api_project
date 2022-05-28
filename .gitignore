@@ -3,3 +3,9 @@ node_modules
 
 .DS_store
 app/.DS_Store
+
+#ignore coverage
+coverage
+
+#ingnore .env
+.env
