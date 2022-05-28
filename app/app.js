@@ -33,7 +33,7 @@ app.use('/api/v1/authentications', authentication);
 /**
  * Protect endpoints
  */
-app.use('/api/v2/users/published', tokenChecker);
+app.use('/api/v2/published', tokenChecker);
 /**
  * Resource routing
  */
@@ -42,9 +42,8 @@ app.use('/api/v1/posts/', posts);
 app.use('/api/v1/users', users);
 
 //version 2
-app.use('/api/v2/posts/', postsV2);
 app.use('/api/v2/users', usersV2);
-app.use('/api/v2/users/published', published);
+app.use('/api/v2/published', published);
 
 /**
  * Default 404 handler 
