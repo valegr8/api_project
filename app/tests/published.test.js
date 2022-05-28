@@ -1,28 +1,61 @@
 const request = require('supertest');
 const app = require('../app');
 const jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
-const mongoose = require('mongoose');
+//const mongoose = require('mongoose');
 
-const { printd } = require('../../utils/utils.js');
+//const { printd } = require('../../utils/utils.js');
+//const { deleteOne } = require('../models/post_V2');
 
-describe('GET /api/v2/published/:createdBy', () =>{
+describe('DELETE /api/v2/users/published/:email/posts/:id', () =>{
 
+    let postSpyDeleteOne;
+    let postSpyFindById;
     /**
      * Set database connection
      */
     beforeAll( async () => {
-        jest.setTimeout(8000); /** < Increments the timeout */
-        jest.unmock('mongoose');
-        await  mongoose.connect('mongodb+srv://admin:admin1234@cluster0.deuin.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', {useNewUrlParser: true, useUnifiedTopology: true});
-        printd('Database connected!');
+
+      const Post = require('../models/post_V2');
+      
+      /**
+     * Mock the Post.findById method of mongoose
+     */
+    postSpyFindById = jest.spyOn(Post, 'findById').mockImplementation((id) => {
+      if (id == "629227cbf7b170de7ebff2ac") {
+        let mock_post = new Post ({
+          _id : "629227cbf7b170de7ebff2ac",
+          title: "jester",
+          description: "jester",
+          createdBy: "pippo@mail.com",
+          available: [],
+          __v : 0
+        })
+        return mock_post;
+      }
+      else 
+        return null;
+    });
+
+    /**
+     * Mock the Post.deleteOne method of mongoose
+     */
+     postSpyDeleteOne = jest.spyOn(Post, 'deleteOne').mockImplementation(() => {
+       return;
+    });
+        //jest.setTimeout(30000); /** < Increments the timeout */
+        //jest.unmock('mongoose');
+        //await  mongoose.connect('mongodb+srv://admin:admin1234@cluster0.deuin.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', {useNewUrlParser: true, useUnifiedTopology: true});
+        //printd('Database connected!');
       });
       
       /**
        * End database connection
        */
       afterAll( () => {
-        mongoose.connection.close(true);
-        printd("Database connection closed");
+        //mongoose.connection.close(true);
+        //printd("Database connection closed");
+        postSpyFindById.mockRestore();
+        postSpyDeleteOne.mockRestore();
       });
       
       // create a valid token
@@ -32,31 +65,40 @@ describe('GET /api/v2/published/:createdBy', () =>{
         {expiresIn: 86400}
       );
 
-    test('GET /api/v2/published/:createdBy?token=<valid> should respond with array of json', async () => {
-        return request(app)
-        .get('/api/v2/published/pippo@mail.com?token='+token)
-        .expect('Content-Type', /json/)
-        .expect(200);
+    describe('with a correct token and id', () => {
+      it('should respond with a 200 status code', async () => {
+        const postId = "629227cbf7b170de7ebff2ac";
+        await request(app)
+          .delete(`/api/v2/users/published/pippo@mail.com/posts/${postId}?token=`+token)
+          .expect(200);
+      });
     });
 
-    test('GET /api/v2/published/:createdBy should respond with error 401, no token provided', async () => {
-        return request(app)
-        .get('/api/v2/published/pippo@mail.com')
-        .expect('Content-Type', /json/)
-        .expect(401);
+    describe('with a wrong token', () => {
+      it('should respond with a 403 status code', async () => {
+        const postId = "629227cbf7b170de7ebff2ac";
+        await request(app)
+          .delete(`/api/v2/users/published/pippo@mail.com/posts/${postId}?token=wrong`)
+          .expect(403);
+      });
     });
 
-    test('GET /api/v2/published/:createdBy?token=<valid> with no createdBy provided', async () => {
-        return request(app)
-        .get('/api/v2/published/?token='+token)
-        .expect('Content-Type', /json/)
-        .expect(404);
+    describe('without token', () => {
+      it('should respond with a 401 status code', async () => {
+        const postId = "629227cbf7b170de7ebff2ac";
+        await request(app)
+          .delete(`/api/v2/users/published/pippo@mail.com/posts/${postId}`)
+          .expect(401);
+      });
     });
 
-    test('GET /api/v2/published/:createdBy?token=<valid> with wrong token', async () => {
-        return request(app)
-        .get('/api/v2/published/pippo@mail.com?token='+'wrong')
-        .expect('Content-Type', /json/)
-        .expect(403);
-    })
+    describe('with non-existing id', () => {
+      it('should respond with a 404 status code', async () => {
+        const postId = "629227cbf7b170de7ebff2ac";
+        await request(app)
+          .delete(`/api/v2/users/published/pippo@mail.com/posts/000000000000000000000000?token=`+token)
+          .expect(404);
+      });
+    });
+    
 });

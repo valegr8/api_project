@@ -77,7 +77,7 @@ describe('v1/posts', () => {
   afterAll(async () => {
     postSpy.mockRestore();
     postSpyFindById.mockRestore();
-    useSpyFindOne.mockRestore();
+    userSpyFindOne.mockRestore();
   });
 
   /**
