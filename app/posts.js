@@ -17,7 +17,8 @@ const { isValidObjectId } = require('mongoose');
 router.get('', async (req, res) => {
 	// gets all posts
     let posts = await Post.find({}).exec();	
-    utils.setResponseStatus(posts,res);
+	let message = "Posts retrieved correctly";
+    utils.setResponseStatus(posts,res, message);
 });
 
 /**
@@ -43,7 +44,8 @@ router.get('/:id', async (req, res) => {
 		utils.badRequest(res);
 	}else{		
 		Post.findOne({ _id : req.params.id }).exec().then((post)=>{
-			utils.setResponseStatus(post,res);
+			let message = "Post retrieved successfully";
+			utils.setResponseStatus(post,res, message);
 		}).catch((e) => {
 			printd('Error: ' + e);
 			utils.notFound(res);

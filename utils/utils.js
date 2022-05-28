@@ -82,24 +82,14 @@ utils.wrongPassword = (res, message) => {
 /**
  * Sets a status, 200 ok or 404 Not found
  */
-utils.setResponseStatus = (param,res) => {
+utils.setResponseStatus = (param,res, message) => {
 	if(param) {
-		utils.printd('Successful request');
+		utils.printd(message);
 		res.status(200).json({message: param});
 	}
 	else
 		utils.notFound(res);
 };
-
-utils.setDeleteStatus = (param, res) => {
-	if (param) {
-		utils.printd('Post removed correctly');
-		res.status(200).json({message: param});
-	}
-	else {
-		utils.notFound(res);
-	}
-}
 
 /**
  * Sets a 201 status code, resource created
