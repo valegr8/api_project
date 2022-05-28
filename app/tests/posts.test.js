@@ -1,5 +1,9 @@
 const request = require('supertest');
 const app     = require('../app');
+const mongoose = require('mongoose');
+
+/* To use the debug print */
+const { printd } = require('../../utils/utils.js');
 
 /**
  * groups the tests of the v1/posts route
@@ -14,13 +18,17 @@ describe('v1/posts', () => {
    * Set the mock implementations of mongoose methods before the tests start
    */
   beforeAll( () => {
+    /* Set database connection */
+    jest.setTimeout(8000); /** < Increments the timeout */
+    jest.unmock('mongoose');
+    console.log('process.env.DB_URL');
+    mongoose.connect(process.env.DB_URL, {useNewUrlParser: true, useUnifiedTopology: true});
+    printd('Database connected!');
     
     const Post = require('../models/post');
     const User = require('../models/user');
 
-    /**
-     * Mock the Post.find method of mongoose
-     */
+    /* Mock the Post.find method of mongoose */
     postSpy = jest.spyOn(Post, 'find').mockImplementation(() => {
       return {
         message: [
@@ -34,9 +42,7 @@ describe('v1/posts', () => {
       };
     });
 
-    /**
-     * Mock the Post.findById method of mongoose
-     */
+    /* Mock the Post.findById method of mongoose */
     postSpyFindById = jest.spyOn(Post, 'findById').mockImplementation((id) => {
       if (id=="628a1d99fc4964ea27473f9a") {
         return {
@@ -53,16 +59,14 @@ describe('v1/posts', () => {
         return null;
     });
 
-    /**
-     * Mock the Post.findOne method of mongoose
-     */
+    /* Mock the Post.findOne method of mongoose */
     userSpyFindOne = jest.spyOn(User, 'findOne').mockImplementation((data) => {
-      if (data.email=="exists@email.com") {
+      if (data.email=="test@email.com") {
         return {
           _id:"628a1d73fc4964ea27473f96",
-          email:"exists@email.com",
-          password:"exists",
-          username:"exists",
+          email:"test@email.com",
+          password:"test",
+          username:"test",
           __v:0
         };
       }
@@ -77,17 +81,17 @@ describe('v1/posts', () => {
   afterAll(async () => {
     postSpy.mockRestore();
     postSpyFindById.mockRestore();
-    useSpyFindOne.mockRestore();
+    userSpyFindOne.mockRestore();
+
+    /* Close database connection */
+    mongoose.connection.close(true);
+    printd("Database connection closed");
   });
 
   /**
    * Test suite of the GET "/id" method 
    */
   describe('GET "/id" route', () => {
-
-    /**
-     * Correct post test
-     */
     describe('with a correct id', () => {
       it('should return 200 and a json', async () => {
         const postId = "628a1d99fc4964ea27473f9a";
@@ -98,9 +102,6 @@ describe('v1/posts', () => {
       });
     });
 
-    /**
-     * Wrong id test
-     */
     describe('with an id that does not exist', () => {
       it('should return 404, not found', async () => {
         const postId = "666666666666666666666666";
@@ -111,9 +112,6 @@ describe('v1/posts', () => {
       });
     });
 
-    /**
-     * Wrong id format
-     */
     describe('with an id of the wrong format', () => {
       it('should return 400, bad request', async () => {
         const postId = "abc-id";
@@ -129,7 +127,7 @@ describe('v1/posts', () => {
    * Test the GET method
    */
   describe('GET "/" route', () => {
-    it('should return an array of posts', async () => {
+    it('should return 200 and an array of posts', async () => {
       await request(app)
         .get(`/api/v1/posts`)
         .expect('Content-Type', /json/)
@@ -164,15 +162,76 @@ describe('v1/posts', () => {
   /**
    * Test the POST method
    */
-  // describe('POST "/" route', () => {
-  //   it('should return 201, created', async () => {
-  //     body = {};
-  //     await request(app)
-  //       .post(`/api/v1/posts`)
-  //       .send(body)
-  //       .expect('Content-Type', /json/)
-  //       .expect(201);
-  //   });
-  // });
+  describe('POST "/" route', () => {
+    describe('with correct user', () => {
+      it('should return 201, created', async () => {
+        await request(app)
+          .post(`/api/v1/posts`)
+          .send({
+            email: "test@email.com",
+            title: "test",
+            description: "test"
+          })
+          .expect('Content-Type', /json/)
+          .expect(201);
+      });
+    });
+
+    describe('with a user that does not exist', () => {
+      it('should return 400, bad request', async () => {
+        await request(app)
+          .post(`/api/v1/posts`)
+          .send({
+            email: "pippo@email.com",
+            title: "test",
+            description: "test"
+          })
+          .expect('Content-Type', /json/)
+          .expect(400);
+      });
+    });
+
+    describe('leaving the title field empty', () => {
+      it('should return 400, bad request', async () => {
+        await request(app)
+          .post(`/api/v1/posts`)
+          .send({
+            email: "test@email.com",
+            title: "",
+            description: "test"
+          })
+          .expect('Content-Type', /json/)
+          .expect(400);
+      });
+    });
+
+    describe('leaving the email field empty', () => {
+      it('should return 400, bad request', async () => {
+        await request(app)
+          .post(`/api/v1/posts`)
+          .send({
+            email: "",
+            title: "test",
+            description: "test"
+          })
+          .expect('Content-Type', /json/)
+          .expect(400);
+      });
+    });
+
+    describe('with an email not in the correct format', () => {
+      it('should return 400, bad request', async () => {
+        await request(app)
+          .post(`/api/v1/posts`)
+          .send({
+            email: "test",
+            title: "test",
+            description: "test"
+          })
+          .expect('Content-Type', /json/)
+          .expect(400);
+      });
+    });
+  });
 });
  
