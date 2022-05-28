@@ -292,7 +292,7 @@ paths:
                 example: ASecurePassword
                 description: 'Password of the user'
       responses:
-        '200':
+        '201':
           description: 'user created.'
           content:
             application/json:
@@ -382,7 +382,7 @@ paths:
                   example: "123456"
                   description: 'Password of the user'
       responses:
-        '200':
+        '201':
           description: 'user authenticated.'
           content:
             application/json:
