@@ -1,6 +1,13 @@
 #ignore node_modules folder
 node_modules
 
+#ignore hidden folders
 .DS_store
 app/.DS_Store
 .coverage
+
+#ignore coverage
+coverage
+
+#ingnore .env
+.env

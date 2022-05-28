@@ -29,9 +29,7 @@ router.post('', async function(req, res) {
 	}
 
 	// find the user
-	let user = await User.findOne({
-		email: req.body.email
-	}).exec();
+	let user = await User.findOne({ email: req.body.email });
 
 	utils.printd(user);
 	
@@ -59,7 +57,7 @@ router.post('', async function(req, res) {
 	var token = jwt.sign(payload, 'admin1234', options);
 
 	// successful request
-	res.status(200).json({
+	res.status(201).json({
 		success: true,
 		message: 'Enjoy your token!',
 		token: token,

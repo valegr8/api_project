@@ -1,21 +1,28 @@
 const request = require('supertest');
-const app = require('./app');
+const app = require('../app');
 const jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 const mongoose = require('mongoose');
 
+const { printd } = require('../../utils/utils.js');
+
 describe('GET /api/v2/published/:createdBy', () =>{
 
+    /**
+     * Set database connection
+     */
     beforeAll( async () => {
-        jest.setTimeout(8000);
+        jest.setTimeout(8000); /** < Increments the timeout */
         jest.unmock('mongoose');
-        connection = await  mongoose.connect('mongodb+srv://admin:admin1234@cluster0.deuin.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', {useNewUrlParser: true, useUnifiedTopology: true});
-        console.log('Database connected!');
-        //return connection; // Need to return the Promise db connection?
+        await  mongoose.connect('mongodb+srv://admin:admin1234@cluster0.deuin.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', {useNewUrlParser: true, useUnifiedTopology: true});
+        printd('Database connected!');
       });
-    
+      
+      /**
+       * End database connection
+       */
       afterAll( () => {
         mongoose.connection.close(true);
-        console.log("Database connection closed");
+        printd("Database connection closed");
       });
       
       // create a valid token

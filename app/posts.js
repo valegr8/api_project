@@ -4,7 +4,7 @@ const router = express.Router();
 /**
  * Get post model
  */
-const Post = require('./models/post_v2');
+const Post = require('./models/post');
 const User = require('./models/user'); 
 
 const utils = require('../utils/utils.js');
@@ -16,7 +16,7 @@ const { isValidObjectId } = require('mongoose');
  */
 router.get('', async (req, res) => {
 	// gets all posts
-    let posts = await Post.find({}).exec();	
+    let posts = await Post.find({});	
     utils.setResponseStatus(posts,res);
 });
 
@@ -38,16 +38,12 @@ router.put('', async (req, res) => {
  * Get a single post by its id
  */
 router.get('/:id', async (req, res) => {
-	printd('[GET/:id]ID: ' + req.params.id);	
+	printd('id: ' + req.params.id);	
 	if(!isValidObjectId(req.params.id)){
 		utils.badRequest(res);
 	}else{		
-		Post.findOne({ _id : req.params.id }).exec().then((post)=>{
-			utils.setResponseStatus(post,res);
-		}).catch((e) => {
-			printd('Error: ' + e);
-			utils.notFound(res);
-		});
+		let post = await Post.findById(req.params.id);
+		utils.setResponseStatus(post,res);
 	}
 });
 

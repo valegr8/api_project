@@ -6,7 +6,7 @@
 const utils = {}; 
 
 // enables the debug print when is setted to 1
-const debug = 1;
+const debug = 0;
 
 /**
  * Debug print
@@ -69,12 +69,12 @@ utils.notFound = (res, message) => {
 
 /**
  * 
- * Sets a 402 http response status, wrong password
+ * Sets a 401 http response status, Unathorized
  */
 
 utils.wrongPassword = (res, message) => {
 	if(!utils.isValid(message))
-		message = 'Wrong Password';
+		message = 'Unathorized';
 	utils.printd(message);
 	res.status(401).json({status: 401, message: message});
 }
