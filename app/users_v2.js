@@ -129,7 +129,7 @@ router.post('/:email/posts/', async function(req,res) {
 			utils.notFound(res, 'Post id not valid');
 		}
 		else {
-			res.location("/api/v1/posts/" + postId);
+			res.location("/api/v2/posts/" + postId);
 			utils.created(res, 'Post saved successfully');
 		}
 	}).catch((e) => {		
