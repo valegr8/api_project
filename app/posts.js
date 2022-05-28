@@ -17,7 +17,7 @@ const { isValidObjectId } = require('mongoose');
 router.get('', async (req, res) => {
 	// gets all posts
     let posts = await Post.find({});	
-    utils.setResponseStatus(posts,res);
+    utils.setResponseStatus(posts,res, 'Post collection retrieved correctly');
 });
 
 /**
@@ -43,7 +43,7 @@ router.get('/:id', async (req, res) => {
 		utils.badRequest(res);
 	}else{		
 		let post = await Post.findById(req.params.id);
-		utils.setResponseStatus(post,res);
+		utils.setResponseStatus(post,res, 'Post retieved successfully');
 	}
 });
 
