@@ -82,6 +82,10 @@ describe('v1/posts', () => {
     postSpy.mockRestore();
     postSpyFindById.mockRestore();
     userSpyFindOne.mockRestore();
+
+     /* Close database connection */
+     mongoose.connection.close(true);
+     printd("Database connection closed");
   });
 
   /**

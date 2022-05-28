@@ -15,7 +15,7 @@ router.delete('/:email/posts/:id', async (req, res) =>{
     let post = await Post.findById(req.params.id);
     if (!post) {
         res.status(404).send();
-        console.log('post not found');
+        //console.log('post not found');
         return;
     }
     if (post.createdBy != req.params.email) {
@@ -25,7 +25,7 @@ router.delete('/:email/posts/:id', async (req, res) =>{
     }
     //await post.deleteOne();
     await Post.deleteOne(post);
-    console.log('post removed');
+    //console.log('post removed');
     //res.status(204).send();
     utils.setResponseStatus(post, res, 'Post deleted successfully');
 })
@@ -34,7 +34,7 @@ router.delete('/:email/posts/:id', async (req, res) =>{
  * Modify published post
  */
 router.put('/:email/posts/:id', async (req, res) =>{
-    let post = await Post.findById(req.params.id).exec();
+    let post = await Post.findById(req.params.id);
     if (!post) {
         res.status(404).send();
         console.log('post not found');
@@ -49,7 +49,7 @@ router.put('/:email/posts/:id', async (req, res) =>{
             message: 'You can only modify your own posts'
         });
     }
-    return post.update({
+    return Post.updateOne(post, {
         title: req.body.title,
         description: req.body.description
     }, {
