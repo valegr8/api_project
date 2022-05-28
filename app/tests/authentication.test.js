@@ -16,9 +16,7 @@ describe('v1/authentications', () => {
     
     const User = require('../models/user');
 
-    /**
-     * Mock the User.findOne method of mongoose
-     */
+   /* Mock the User.findOne method of mongoose */
     userSpyFindOne = jest.spyOn(User, 'findOne').mockImplementation((data) => {
       if (data.email=="exists@email.com") {
         return {
@@ -34,9 +32,7 @@ describe('v1/authentications', () => {
     });
   });
 
-  /**
-   * Restore the mock functions after the test suite ends
-   */
+  /* Restore the mock functions after the test suite ends */
   afterAll(async () => {
     userSpyFindOne.mockRestore();
   });

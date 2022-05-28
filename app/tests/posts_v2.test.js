@@ -6,9 +6,9 @@ const mongoose = require('mongoose');
 const { printd } = require('../../utils/utils.js');
 
 /**
- * groups the tests of the v1/posts route
+ * groups the tests of the v2/posts route
  */
-describe('v1/posts', () => {
+describe('v2/posts', () => {
  
   let postSpy;
   let postSpyFindById;
@@ -82,6 +82,10 @@ describe('v1/posts', () => {
     postSpy.mockRestore();
     postSpyFindById.mockRestore();
     userSpyFindOne.mockRestore();
+
+    /* Close database connection */
+    mongoose.connection.close(true);
+    printd("Database connection closed");
   });
 
   /**
@@ -92,7 +96,7 @@ describe('v1/posts', () => {
       it('should return 200 and a json', async () => {
         const postId = "628a1d99fc4964ea27473f9a";
         await request(app)
-          .get(`/api/v1/posts/${postId}`)
+          .get(`/api/v2/posts/${postId}`)
           .expect('Content-Type', /json/)
           .expect(200);
       });
@@ -102,7 +106,7 @@ describe('v1/posts', () => {
       it('should return 404, not found', async () => {
         const postId = "666666666666666666666666";
         await request(app)
-          .get(`/api/v1/posts/${postId}`)
+          .get(`/api/v2/posts/${postId}`)
           .expect('Content-Type', /json/)
           .expect(404);
       });
@@ -112,7 +116,7 @@ describe('v1/posts', () => {
       it('should return 400, bad request', async () => {
         const postId = "abc-id";
         await request(app)
-          .get(`/api/v1/posts/${postId}`)
+          .get(`/api/v2/posts/${postId}`)
           .expect('Content-Type', /json/)
           .expect(400);
       });
@@ -125,7 +129,7 @@ describe('v1/posts', () => {
   describe('GET "/" route', () => {
     it('should return 200 and an array of posts', async () => {
       await request(app)
-        .get(`/api/v1/posts`)
+        .get(`/api/v2/posts`)
         .expect('Content-Type', /json/)
         .expect(200);
     });
@@ -137,7 +141,7 @@ describe('v1/posts', () => {
   describe('PUT on "/" route', () => {
     it('should return 405, method not allowed', async () => {
       await request(app)
-        .put(`/api/v1/posts`)
+        .put(`/api/v2/posts`)
         .expect('Content-Type', /json/)
         .expect(405);
     });
@@ -149,7 +153,7 @@ describe('v1/posts', () => {
   describe('DELETE on "/" route', () => {
     it('should return 405, method not allowed', async () => {
       await request(app)
-        .delete(`/api/v1/posts`)
+        .delete(`/api/v2/posts`)
         .expect('Content-Type', /json/)
         .expect(405);
     });
@@ -162,7 +166,7 @@ describe('v1/posts', () => {
     describe('with correct user', () => {
       it('should return 201, created', async () => {
         await request(app)
-          .post(`/api/v1/posts`)
+          .post(`/api/v2/posts`)
           .send({
             email: "test@email.com",
             title: "test",
@@ -176,7 +180,7 @@ describe('v1/posts', () => {
     describe('with a user that does not exist', () => {
       it('should return 400, bad request', async () => {
         await request(app)
-          .post(`/api/v1/posts`)
+          .post(`/api/v2/posts`)
           .send({
             email: "pippo@email.com",
             title: "test",
@@ -190,7 +194,7 @@ describe('v1/posts', () => {
     describe('leaving the title field empty', () => {
       it('should return 400, bad request', async () => {
         await request(app)
-          .post(`/api/v1/posts`)
+          .post(`/api/v2/posts`)
           .send({
             email: "test@email.com",
             title: "",
@@ -204,7 +208,7 @@ describe('v1/posts', () => {
     describe('leaving the email field empty', () => {
       it('should return 400, bad request', async () => {
         await request(app)
-          .post(`/api/v1/posts`)
+          .post(`/api/v2/posts`)
           .send({
             email: "",
             title: "test",
@@ -218,7 +222,7 @@ describe('v1/posts', () => {
     describe('with an email not in the correct format', () => {
       it('should return 400, bad request', async () => {
         await request(app)
-          .post(`/api/v1/posts`)
+          .post(`/api/v2/posts`)
           .send({
             email: "test",
             title: "test",

@@ -58,12 +58,12 @@ describe('DELETE /api/v2/users/published/:email/posts/:id', () =>{
         postSpyDeleteOne.mockRestore();
       });
       
-      // create a valid token
-      var token = jwt.sign(
-        {email: 'pippo@mail.com'},
-        'admin1234',
-        {expiresIn: 86400}
-      );
+  // create a valid token
+  var token = jwt.sign(
+    {email: 'pippo@mail.com'},
+    'admin1234',
+    {expiresIn: 86400}
+  );
 
     describe('with a correct token and id', () => {
       it('should respond with a 200 status code', async () => {

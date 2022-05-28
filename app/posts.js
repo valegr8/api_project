@@ -63,7 +63,7 @@ router.post('', async (req, res) => {
 		//Checks whether the user is already signed up.
 		//'await' is used to stop the execution until the promise is fullfilled or rejected
 		// find a user with the email in the request otherwise null
-		let user = await User.findOne({ email : req.body.email }).exec();
+		let user = await User.findOne({ email : req.body.email });
 		if(user == null){
 			utils.badRequest(res, 'User does not exist');	//return 400;
 			return;//the run ends here.
@@ -94,8 +94,8 @@ router.post('', async (req, res) => {
 			utils.created(res, 'Post saved successfully');
 		}
 	}).catch((e) => {		
-		// If the post fails we return 404 status code
-		utils.notFound(res,'Post saving failed');
+		// If the post fails we return 500 status code, Internal server error
+		utils.internalServerError(res,'Post saving failed');
 	});
 });
 

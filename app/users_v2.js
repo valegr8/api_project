@@ -31,7 +31,7 @@ router.post('', async function(req,res) {
     }
 
     //search if there is already a user with the same email
-    let user = await User.findOne({ email: req.body.email}).exec();
+    let user = await User.findOne({ email: req.body.email});
     
     //if user already exist, return error and a 409 status code
     if(user != null) { 		
@@ -72,14 +72,14 @@ router.post('', async function(req,res) {
 	var token = jwt.sign(payload, 'admin1234', options);
 
     //return value
-	res.status(200).json({
+	res.status(201).json({
 		success: true,
 		message: 'User created!',
 		token: token,
 		email: user.email,
         username: user.username,
 		id: user._id,
-        favorite: favorite
+        favorite: {}
 	});
 });
 
@@ -96,7 +96,7 @@ router.post('', async function(req,res) {
 //work in progress
 router.post('/:email/posts/', async function(req,res) {
 	let email = req.params.email;
-	let user = await User.findOne({ email : email }).exec();
+	let user = await User.findOne({ email : email });
 	
 	if(!checkIfEmailInString(email) || !user){
 		utils.badRequest(res);
@@ -143,7 +143,7 @@ router.post('/:email/posts/', async function(req,res) {
  */
 router.get('/:email/posts/', async function(req,res) {
 	let email = req.params.email;
-	let user = await User.findOne({ email : email }).exec();
+	let user = await User.findOne({ email : email });
 	
 	if(!checkIfEmailInString(email) || !user){
 		utils.badRequest(res);

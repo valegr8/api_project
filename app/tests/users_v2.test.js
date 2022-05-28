@@ -2,9 +2,9 @@ const request = require('supertest');
 const app     = require('../app');
 
 /**
- * groups the tests of the v1/users route
+ * groups the tests of the v2/users route
  */
-describe('v1/users', () => {
+describe('v2/users', () => {
  
   let userSpyFindOne;
 
@@ -45,7 +45,7 @@ describe('v1/users', () => {
     describe('with correct username and password', () => {
       it('should return 201, created', async () => {
         await request(app)
-          .post(`/api/v1/users`)
+          .post(`/api/v2/users`)
           .send({
             email: "test@email.com",
             username: "test",
@@ -59,7 +59,7 @@ describe('v1/users', () => {
     describe('with an user that already exists', () => {
       it('should return 409', async () => {
         await request(app)
-          .post(`/api/v1/users`)
+          .post(`/api/v2/users`)
           .send({
             email: "exists@email.com",
             username: "exists",
@@ -73,7 +73,7 @@ describe('v1/users', () => {
     describe('leaving the username field empty', () => {
       it('should return 400, bad request', async () => {
         await request(app)
-          .post(`/api/v1/users`)
+          .post(`/api/v2/users`)
           .send({
             email: "test@email.com",
             username: "",
@@ -87,7 +87,7 @@ describe('v1/users', () => {
     describe('leaving the email field empty', () => {
       it('should return 400, bad request', async () => {
         await request(app)
-          .post(`/api/v1/users`)
+          .post(`/api/v2/users`)
           .send({
             email: "",
             username: "test",
@@ -101,7 +101,7 @@ describe('v1/users', () => {
     describe('with an email not in the correct format', () => {
       it('should return 400, bad request', async () => {
         await request(app)
-          .post(`/api/v1/users`)
+          .post(`/api/v2/users`)
           .send({
             email: "test",
             username: "test",
@@ -115,7 +115,7 @@ describe('v1/users', () => {
     describe('leaving the password field empty', () => {
       it('should return 400, bad request', async () => {
         await request(app)
-          .post(`/api/v1/users`)
+          .post(`/api/v2/users`)
           .send({
             email: "test@email.com",
             username: "test",
