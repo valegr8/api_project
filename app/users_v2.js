@@ -55,7 +55,8 @@ router.post('', async function(req,res) {
     user = new User({
         email: req.body.email,
         password: req.body.password,
-        username: req.body.username
+        username: req.body.username,
+        favorite: {}
     });
     user.save(function(err){});
 
@@ -78,6 +79,7 @@ router.post('', async function(req,res) {
 		email: user.email,
         username: user.username,
 		id: user._id,
+        favorite: favorite
 	});
 });
 
@@ -127,7 +129,7 @@ router.post('/:email/posts/', async function(req,res) {
 			utils.notFound(res, 'Post id not valid');
 		}
 		else {
-			res.location("/api/v1/posts/" + postId);
+			res.location("/api/v2/posts/" + postId);
 			utils.created(res, 'Post saved successfully');
 		}
 	}).catch((e) => {		

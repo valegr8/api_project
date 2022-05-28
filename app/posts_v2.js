@@ -94,7 +94,7 @@ router.post('', async (req, res) => {
 			utils.notFound(res, 'Post id not valid');
 		}
 		else {
-			res.location("/api/v2/posts_v2/" + postId);
+			res.location("/api/v2/posts/" + postId);
 			utils.created(res, 'Post saved successfully');
 		}
 	}).catch((e) => {		

@@ -1,7 +1,7 @@
 FORMAT: 1A
 HOST: https://localhost:8080/
 
-# HouseMate API
+# HouseMate API v1.0
 
 HouseMate is a web API that allows users to view and create posts for renting houses and appartaments.
 
@@ -234,7 +234,7 @@ and the password for the account.
 
 **Responses**:
 
-* The response returns a status code of "success", `200`, and other 
+* The response returns a status code of "resource created", `201`, and other 
 parameters useful for the login, such as the account token and the email.
 
 * The response can be also `409` if the user alredy exists or `400`, bad request, if the parameters are not valid.
@@ -249,7 +249,7 @@ parameters useful for the login, such as the account token and the email.
                 "password": "ASecurePassword"
             }
 
-+ Response 200 (application/json)
++ Response 201 (application/json)
     
     Successful response.
     
