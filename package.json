@@ -23,7 +23,8 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.3.3",
     "popper.js": "^1.16.1",
-    "swagger-ui-express": "^4.3.0"
+    "swagger-ui-express": "^4.3.0",
+    "v8-to-istanbul": "^9.0.0"
   },
   "repository": {
     "type": "git",
@@ -34,6 +35,9 @@
   },
   "homepage": "https://github.com/valegr8/api_project#readme",
   "devDependencies": {
-    "jest": "^26.6.3"
+    "@types/jest": "^27.5.1",
+    "jest": "^26.6.3",
+    "node-fetch": "^3.2.4",
+    "supertest": "^6.2.3"
   }
 }

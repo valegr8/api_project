@@ -24,7 +24,6 @@ const { isValidObjectId } = require('mongoose');
 /**
  * Delete one post
  */
-
 router.delete('/:id/:createdBy', async (req, res) =>{
     let post = await Post.findById(req.params.id).exec();
     if (!post) {
