@@ -76,7 +76,7 @@ utils.wrongPassword = (res, message) => {
 	if(!utils.isValid(message))
 		message = 'Wrong Password';
 	utils.printd(message);
-	res.status(402).json({status: 402, message: message});
+	res.status(401).json({status: 401, message: message});
 }
 
 /**
