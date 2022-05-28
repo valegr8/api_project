@@ -24,11 +24,11 @@ utils.isValid = (value) => {
 	if(value == undefined || value == null || value == NaN || value == "")
 	{
 		res = false;
-		utils.printd('The value "' + value +'" is not valid');
+		// utils.printd('The value "' + value +'" is not valid');
 	}
 	else 
 	{
-		utils.printd('The value "' + value +'" is valid');
+		// utils.printd('The value "' + value +'" is valid');
 	}
 	return res;
 }
@@ -121,5 +121,14 @@ utils.alreadyExists = (res, message) => {
 	res.status(409).json({status: 409, message: message});
 };
 
+/**
+ * Sets a 500 status code, Internal Server Error
+ */
+ utils.internalServerError = (res, message) => {
+	if(!utils.isValid(message)) 
+		message = 'Internal Server Error';
+	utils.printd(message);
+	res.status(500).json({status: 500, message: message});
+};
 
 module.exports = utils;

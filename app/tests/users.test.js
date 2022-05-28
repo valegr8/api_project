@@ -1,6 +1,5 @@
 const request = require('supertest');
 const app     = require('../app');
-const mongoose = require('mongoose');
 
 /**
  * groups the tests of the v1/users route
@@ -16,9 +15,7 @@ describe('v1/users', () => {
     
     const User = require('../models/user');
 
-    /**
-     * Mock the User.findOne method of mongoose
-     */
+    /* Mock the User.findOne method of mongoose */
     userSpyFindOne = jest.spyOn(User, 'findOne').mockImplementation((data) => {
       if (data.email=="exists@email.com") {
         return {
