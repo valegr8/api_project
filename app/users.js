@@ -30,7 +30,7 @@ router.post('', async function(req,res) {
     }
 
     //search if there is already a user with the same email
-    let user = await User.findOne({ email: req.body.email}).exec();
+    let user = await User.findOne({ email: req.body.email});
     
     //if user already exist, return error and a 409 status code
     if(user != null) { 		

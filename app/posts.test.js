@@ -24,10 +24,10 @@ describe('v1/posts', () => {
       return {
         message: [
           {
-            id: "628662fbf3ff1e92d70116f2",
+            id: "628a1d99fc4964ea27473f9a",
             title: "Appartamento bellissimo",
             description: "Vicino a tutto",
-            createdBy: "BenedettoBenedetti@email.com"
+            createdBy: "test@email.com"
           }
         ]
       };
@@ -41,9 +41,9 @@ describe('v1/posts', () => {
         return {
           message: {
             _id: "628a1d99fc4964ea27473f9a",
-            title: "appartamento di Pippo",
-            description: "questo è un bell'appartamento",
-            createdBy: "pippo@mail.com",
+            title: "Appartamento bellissimo",
+            description: "Vicino a tutto",
+            createdBy: "test@email.com",
             __v: 0
             }
         };
@@ -56,12 +56,12 @@ describe('v1/posts', () => {
      * Mock the Post.findOne method of mongoose
      */
     postSpyFindOne = jest.spyOn(Post, 'findOne').mockImplementation((email) => {
-      if (email=="pippo@mail.com") {
+      if (email=="test@email.com") {
         return {
           _id:"628a1d73fc4964ea27473f96",
-          email:"pippo@mail.com",
-          password:"1234",
-          username:"pippo",
+          email:"test@email.com",
+          password:"test",
+          username:"test",
           __v:0
         };
       }
