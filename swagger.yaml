@@ -196,7 +196,7 @@ paths:
             type: string
           description: The mongodb objectId of the post
       responses:
-        '200':
+        '201':
           description: 'A single post'
           content:
             application/json:
@@ -222,8 +222,7 @@ paths:
                         type: string
                         example: BenedettoBenedetti@email.com
                         description: "Creator of the post"
-                items:
-                  $ref: '#/components/schemas/Post'
+
         '404':
            description: 'The post is not in the database'
            content:
@@ -292,7 +291,7 @@ paths:
                 example: ASecurePassword
                 description: 'Password of the user'
       responses:
-        '200':
+        '201':
           description: 'user created.'
           content:
             application/json:
@@ -359,15 +358,27 @@ paths:
       description: >-
         Creates a new post.
       summary: New post creation
+      parameters:
+        - in: path
+          name: email
+          required: true
+          schema:
+            type: string
+          description: The email of the registered user
       requestBody:
         content:
           application/json:
             schema:
               type: object
               required:
-                - email
-                - password
-                - username
+                - title
+                - description
+                - createdBy
+                - contract
+                - phone
+                - rooms
+                - available
+                - where
               properties:
                   title:
                     type: string
@@ -434,6 +445,144 @@ paths:
                  required:
                    - status
                    - message
+    get:
+      description: >-
+        Gets the list of the posts created by the user.
+      summary: View all posts
+      responses:
+        '200':
+          description: 'Collection of posts'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Post'
+        '404':
+           description: 'Failure to fetch the data'
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   status:
+                     type: integer
+                     example: 404
+                     description: status code
+                   message:
+                     type: string
+                     example: Not found
+                     description: further info
+                 required:
+                   - status
+                   - message
+                   
+  /usesrs/{email}/posts/{id}:
+    get:
+      description: >-
+        Gets a post.
+      summary: View a post
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The mongodb objectId of the post
+        - in: path
+          name: email
+          required: true
+          schema:
+            type: string
+          description: The email of the registered user
+      responses:
+        '200':
+          description: 'A single post'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: object
+                    properties:
+                      title:
+                        type: string
+                        example: Appartamento bellissimo
+                        description: "title of the post"
+                      description:
+                        type: string
+                        example: Vicino a tutto
+                        description: "Further info"
+                      createdBy:
+                        type: string
+                        example: pippo@email.com
+                        description: "Email address of the creator"
+                      contract:
+                        type: string
+                        example: annuale
+                        description: "type of contract"
+                      phone:
+                        type: string
+                        example: 1234 56789
+                        description: "Phone number of the creator"
+                      rooms:
+                        type: integer
+                        example: 6
+                        description: "Number of rooms"
+                      available:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Room'
+                        description: "Rooms available for rent"
+                      where:
+                        type: string
+                        example: Via Rossi, 44 (TN)
+                        description: "Address of the apartment"
+
+
+        '404':
+           description: 'The post is not in the database'
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   status:
+                     type: integer
+                     example: 404
+                     description: status code
+                   message:
+                     type: string
+                     example: Not Found
+                     description: Human-readable description
+                 required:
+                   - status
+                   - message
+
+        '400':
+           description: 'The value of the id parameter is not a valid mongodb objectId'
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   status:
+                     type: integer
+                     example: 400
+                     description: status code
+                   message:
+                     type: string
+                     example: Bad Request
+                     description: status code
+                 required:
+                   - status
+                   - message
+
+
 
   /authentications:
     post:
@@ -463,7 +612,7 @@ paths:
                   example: "123456"
                   description: 'Password of the user'
       responses:
-        '200':
+        '201':
           description: 'user authenticated.'
           content:
             application/json:
@@ -572,6 +721,28 @@ components:
           type: string
           example: BenedettoBenedetti@email.com
           description: 'email address of the creator of the post'
+        contract:
+          type: string
+          example: annuale
+          description: 'Type of contract'
+        phone:
+          type: string
+          example: 7890 12345
+          description: 'phone number of th creator'
+        rooms:
+          type: integer
+          example: 5
+          description: 'number of rooms'
+        available:
+          type: array
+          items:
+            $ref: '#/components/schemas/Room'
+          description: 'rooms available for rent'
+        where:
+          type: string
+          example: Via Fiore, 71 (TN)
+          description: 'address of the apartment'
+
     Room:
       type: object
       required:
