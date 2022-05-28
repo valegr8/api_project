@@ -26,7 +26,7 @@ router.delete('/:email/posts/:id', async (req, res) =>{
     await post.deleteOne();
     //console.log('post removed');
     //res.status(204).send();
-    utils.setDeleteStatus(post, res);
+    utils.setResponseStatus(post, res, 'Post deleted successfully');
 })
 
 /**

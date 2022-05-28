@@ -138,7 +138,9 @@ router.post('/:email/posts/', async function(req,res) {
 	});
 });
 
-//work in progress
+/**
+ * Get all posts published by a user
+ */
 router.get('/:email/posts/', async function(req,res) {
 	let email = req.params.email;
 	let user = await User.findOne({ email : email }).exec();
@@ -148,7 +150,7 @@ router.get('/:email/posts/', async function(req,res) {
 		return;
 	}else{		
 		Post.find({}).where('createdBy').equals(email).exec().then((post)=>{
-			utils.setResponseStatus(post,res);
+			utils.setResponseStatus(post,res, 'Post published retrieved correctly');
 		}).catch((e) => {
 			printd('Error: ' + e);
 			utils.notFound(res);
@@ -156,7 +158,9 @@ router.get('/:email/posts/', async function(req,res) {
 	}
 });
 
-//work in progress
+/**
+ * Get a single post published by a user
+ */
 router.get('/:email/posts/:id', async function(req,res) {
 	let email = req.params.email;
 	let user = await User.findOne({ email : email }).exec();
@@ -167,7 +171,7 @@ router.get('/:email/posts/:id', async function(req,res) {
 		return;
 	}else{
 		Post.findOne({ _id : req.params.id }).exec().then((post)=>{
-			utils.setResponseStatus(post,res);
+			utils.setResponseStatus(post,res, 'Post published retrieved successfully');
 		}).catch((e) => {
 			printd('Error: ' + e);
 			utils.notFound(res);
