@@ -9,7 +9,7 @@ const { isValidObjectId } = require('mongoose');
 /**
  * Get user model
  */
-const User = require('./models/user');
+const User = require('./models/user_v2');
 
 /**
  * Get post model
@@ -20,10 +20,10 @@ const Post = require('./models/post_v2'); //the new version
 /**
  * function for creating a new user
  */
-router.post('', async function(req,res) {
+router.post('', async function(req,res) {	
     printd('Email: ' + req.body.email);
     printd('Username: ' + req.body.username);
-    printd('Password: ' + req.body.password);
+    printd('Password: ' + req.body.password);		
 
     if(!isValid(req.body.email)) {
         utils.badRequest(res, "Bad request, email not valid");
@@ -56,8 +56,9 @@ router.post('', async function(req,res) {
         email: req.body.email,
         password: req.body.password,
         username: req.body.username,
-        favorite: {}
+        favorite: req.body.favorite
     });
+	
     user.save(function(err){});
 
     // if user is found and password is right create a token
@@ -79,7 +80,7 @@ router.post('', async function(req,res) {
 		email: user.email,
         username: user.username,
 		id: user._id,
-        favorite: {}
+        favorite: user.favorite
 	});
 });
 
@@ -94,11 +95,12 @@ router.post('', async function(req,res) {
 }
 
 //work in progress
-router.post('/:email/posts/', async function(req,res) {
-	let email = req.params.email;
-	let user = await User.findOne({ email : email });
+//uid = user id
+router.post('/:uid/posts/', async function(req,res) {
+	let uid = req.params.uid;
+	let user = await User.findById(uid);
 	
-	if(!checkIfEmailInString(email) || !user){
+	if(!user){
 		utils.badRequest(res);
 		return;
 	}		
@@ -109,11 +111,18 @@ router.post('/:email/posts/', async function(req,res) {
 		utils.badRequest(res, 'User title not valid');	//return 400;
 		return;
 	}
+	
+	if(!isValidObjectId(req.body.uid)){
+		utils.badRequest(res, 'User title not valid');	//return 400;
+		return;
+	}
+	
+	
 		
 	let post = new Post({
         title: req.body.title,
 		description: req.body.description,
-		createdBy: req.body.email,
+		createdBy: req.body.uid,
 		contract: req.body.contract,
 		phone: req.body.phone,
 		rooms: req.body.rooms,
@@ -129,7 +138,7 @@ router.post('/:email/posts/', async function(req,res) {
 			utils.notFound(res, 'Post id not valid');
 		}
 		else {
-			res.location("/api/v2/posts/" + postId);
+			res.location("/api/v2/users/"+ uid + "/posts/" + postId);
 			utils.created(res, 'Post saved successfully');
 		}
 	}).catch((e) => {		
@@ -141,15 +150,16 @@ router.post('/:email/posts/', async function(req,res) {
 /**
  * Get all posts published by a user
  */
-router.get('/:email/posts/', async function(req,res) {
-	let email = req.params.email;
-	let user = await User.findOne({ email : email });
+ //uid = user id 
+router.get('/:uid/posts/', async function(req,res) {
+	let uid = req.params.uid;
+	let user = await User.findById(uid);
 	
-	if(!checkIfEmailInString(email) || !user){
+	if(!user){
 		utils.badRequest(res);
 		return;
 	}else{		
-		Post.find({}).where('createdBy').equals(email).exec().then((post)=>{
+		Post.find({}).where('createdBy').equals(uid).exec().then((post)=>{
 			utils.setResponseStatus(post,res, 'Post published retrieved correctly');
 		}).catch((e) => {
 			printd('Error: ' + e);
@@ -161,16 +171,17 @@ router.get('/:email/posts/', async function(req,res) {
 /**
  * Get a single post published by a user
  */
-router.get('/:email/posts/:id', async function(req,res) {
-	let email = req.params.email;
-	let user = await User.findOne({ email : email }).exec();
+ //uid = user id
+router.get('/:uid/posts/:id', async function(req,res) {
+	let uid = req.params.uid;
+	let user = await User.findById(uid).exec();
 	let id = req.params.id;
 	
-	if(!checkIfEmailInString(email) || !user || !isValidObjectId(id)){
+	if(!user || !isValidObjectId(id)){
 		utils.badRequest(res);
 		return;
 	}else{
-		Post.findOne({ _id : req.params.id }).exec().then((post)=>{
+		Post.findOne({ _id : id }).exec().then((post)=>{
 			utils.setResponseStatus(post,res, 'Post published retrieved successfully');
 		}).catch((e) => {
 			printd('Error: ' + e);
