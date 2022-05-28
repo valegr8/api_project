@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app     = require('./app');
+const app     = require('../app');
 
 /**
  * groups the tests of the v1/posts route
@@ -8,14 +8,15 @@ describe('v1/posts', () => {
  
   let postSpy;
   let postSpyFindById;
-  let postSpyFindOne;
+  let userSpyFindOne;
 
   /**
    * Set the mock implementations of mongoose methods before the tests start
    */
   beforeAll( () => {
     
-    const Post = require('./models/post');
+    const Post = require('../models/post');
+    const User = require('../models/user');
 
     /**
      * Mock the Post.find method of mongoose
@@ -55,13 +56,13 @@ describe('v1/posts', () => {
     /**
      * Mock the Post.findOne method of mongoose
      */
-    postSpyFindOne = jest.spyOn(Post, 'findOne').mockImplementation((email) => {
-      if (email=="test@email.com") {
+    userSpyFindOne = jest.spyOn(User, 'findOne').mockImplementation((data) => {
+      if (data.email=="exists@email.com") {
         return {
           _id:"628a1d73fc4964ea27473f96",
-          email:"test@email.com",
-          password:"test",
-          username:"test",
+          email:"exists@email.com",
+          password:"exists",
+          username:"exists",
           __v:0
         };
       }
@@ -76,7 +77,7 @@ describe('v1/posts', () => {
   afterAll(async () => {
     postSpy.mockRestore();
     postSpyFindById.mockRestore();
-    postSpyFindOne.mockRestore();
+    useSpyFindOne.mockRestore();
   });
 
   /**

@@ -2,7 +2,7 @@
  * https://www.npmjs.com/package/supertest
  */
 const request = require('supertest');
-const app = require('./app');
+const app = require('../app');
 
 /**
  * Test if the app module has been defined
