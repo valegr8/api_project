@@ -354,6 +354,87 @@ paths:
                    - status
                    - message
 
+  /users/{email}/posts/:
+    post:
+      description: >-
+        Creates a new post.
+      summary: New post creation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - username
+              properties:
+                  title:
+                    type: string
+                    example: Appartamento bellissimo
+                  description:
+                    type: string
+                    example: Vicino al supermercato
+                  createdBy:
+                    type: string
+                    example: pippo@email.com
+                  contract:
+                    type: string
+                    example: annuale
+                  phone:
+                    type: string
+                    example: 3456 12890
+                  rooms:
+                    type: integer
+                    example: 6
+                  available:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Room'
+                  where:
+                    type: string
+                    example: Via Rossi, 44 (TN)
+
+
+      responses:
+        '201':
+           description: 'User created'
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   status:
+                     type: integer
+                     example: 201
+                     description: status code
+                   message:
+                     type: string
+                     example: Created
+                     description: status code
+                 required:
+                   - status
+                   - message
+
+        '404':
+           description: 'Post saving failed'
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   status:
+                     type: integer
+                     example: 404
+                     description: status code
+                   message:
+                     type: string
+                     example: Post saving failed
+                     description: status code
+                 required:
+                   - status
+                   - message
+
   /authentications:
     post:
       description: >-
@@ -491,6 +572,29 @@ components:
           type: string
           example: BenedettoBenedetti@email.com
           description: 'email address of the creator of the post'
+    Room:
+      type: object
+      required:
+        - name
+        - price
+        - type
+        - description
+      properties:
+        name:
+          type: string
+          example: stanza 1
+          description: 'name of the room'
+        price:
+          type: integer
+          example: 200
+          description: 'price of the room'
+        type:
+          type: string
+          example: Vicino a tutto
+        description:
+          type: string
+          example: stanza bella
+          description: 'info about the room'
     Error:
       type: object
       required:
