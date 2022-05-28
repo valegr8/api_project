@@ -16,7 +16,7 @@ const { isValidObjectId } = require('mongoose');
  */
 router.get('', async (req, res) => {
 	// gets all posts
-    let posts = await Post.find({}).exec();	
+    let posts = await Post.find({});	
     utils.setResponseStatus(posts,res, 'Post collection retrieved correctly');
 });
 
@@ -38,16 +38,12 @@ router.put('', async (req, res) => {
  * Get a single post by its id
  */
 router.get('/:id', async (req, res) => {
-	printd('[GET/:id]ID: ' + req.params.id);	
+	printd('id: ' + req.params.id);	
 	if(!isValidObjectId(req.params.id)){
 		utils.badRequest(res);
 	}else{		
-		Post.findOne({ _id : req.params.id }).exec().then((post)=>{
-			utils.setResponseStatus(post,res, 'Post retrieved successfully');
-		}).catch((e) => {
-			printd('Error: ' + e);
-			utils.notFound(res);
-		});
+		let post = await Post.findById(req.params.id)
+		utils.setResponseStatus(post,res, 'Post retieved successfully');
 	}
 });
 
@@ -67,7 +63,7 @@ router.post('', async (req, res) => {
 		//Checks whether the user is already signed up.
 		//'await' is used to stop the execution until the promise is fullfilled or rejected
 		// find a user with the email in the request otherwise null
-		let user = await User.findOne({ email : req.body.email }).exec();
+		let user = await User.findOne({ email : req.body.email });
 		if(user == null){
 			utils.badRequest(res, 'User does not exist');	//return 400;
 			return;//the run ends here.
