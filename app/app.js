@@ -44,6 +44,7 @@ app.use('/api/v1/users', users);
 //version 2
 app.use('/api/v2/users', usersV2);
 app.use('/api/v2/published', published);
+app.use('/api/v2/posts', postsV2);
 
 /**
  * Default 404 handler 

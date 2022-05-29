@@ -13,7 +13,7 @@ describe('v2/users', () => {
    */
   beforeAll( () => {
     
-    const User = require('../models/user');
+    const User = require('../models/user_v2');
 
     /* Mock the User.findOne method of mongoose */
     userSpyFindOne = jest.spyOn(User, 'findOne').mockImplementation((data) => {

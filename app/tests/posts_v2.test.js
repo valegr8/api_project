@@ -25,18 +25,22 @@ describe('v2/posts', () => {
     mongoose.connect(process.env.DB_URL, {useNewUrlParser: true, useUnifiedTopology: true});
     printd('Database connected!');
     
-    const Post = require('../models/post');
-    const User = require('../models/user');
+    const Post = require('../models/post_v2');
+    const User = require('../models/user_v2');
 
     /* Mock the Post.find method of mongoose */
     postSpy = jest.spyOn(Post, 'find').mockImplementation(() => {
       return {
         message: [
           {
-            id: "628a1d99fc4964ea27473f9a",
-            title: "Appartamento bellissimo",
-            description: "Vicino a tutto",
-            createdBy: "test@email.com"
+            _id: "629346eee4ffb99bc81af228",
+            title: "primo post nuovo",
+            description: "ecco il primo",
+            createdBy: "628a1d73fc4964ea27473f96",
+            contract: "mono",
+            phone: "0425404040",
+            where: "lontano",
+            __v: 0
           }
         ]
       };
@@ -44,13 +48,16 @@ describe('v2/posts', () => {
 
     /* Mock the Post.findById method of mongoose */
     postSpyFindById = jest.spyOn(Post, 'findById').mockImplementation((id) => {
-      if (id=="628a1d99fc4964ea27473f9a") {
+      if (id=="629346eee4ffb99bc81af228") {
         return {
           message: {
-            _id: "628a1d99fc4964ea27473f9a",
-            title: "Appartamento bellissimo",
-            description: "Vicino a tutto",
-            createdBy: "test@email.com",
+            _id: "629346eee4ffb99bc81af228",
+            title: "primo post nuovo",
+            description: "ecco il primo",
+            createdBy: "628a1d73fc4964ea27473f96",
+            contract: "mono",
+            phone: "0425404040",
+            where: "lontano",
             __v: 0
             }
         };
@@ -61,12 +68,12 @@ describe('v2/posts', () => {
 
     /* Mock the Post.findOne method of mongoose */
     userSpyFindOne = jest.spyOn(User, 'findOne').mockImplementation((data) => {
-      if (data.email=="test@email.com") {
+      if (data.email=="pippo@mail.com") {
         return {
           _id:"628a1d73fc4964ea27473f96",
-          email:"test@email.com",
-          password:"test",
-          username:"test",
+          email:"pippo@mail.com",
+          password:"1234",
+          username:"pippo",
           __v:0
         };
       }
@@ -94,7 +101,7 @@ describe('v2/posts', () => {
   describe('GET "/id" route', () => {
     describe('with a correct id', () => {
       it('should return 200 and a json', async () => {
-        const postId = "628a1d99fc4964ea27473f9a";
+        const postId = "629346eee4ffb99bc81af228";
         await request(app)
           .get(`/api/v2/posts/${postId}`)
           .expect('Content-Type', /json/)
@@ -168,7 +175,7 @@ describe('v2/posts', () => {
         await request(app)
           .post(`/api/v2/posts`)
           .send({
-            email: "test@email.com",
+            email: "pippo@mail.com",
             title: "test",
             description: "test"
           })
@@ -196,7 +203,7 @@ describe('v2/posts', () => {
         await request(app)
           .post(`/api/v2/posts`)
           .send({
-            email: "test@email.com",
+            email: "pippo@mail.com",
             title: "",
             description: "test"
           })
