@@ -112,7 +112,7 @@ router.post('/:uid/posts/', async function(req,res) {
 		return;
 	}
 	
-	if(!isValidObjectId(req.body.uid)){
+	if(!isValidObjectId(uid)){
 		utils.badRequest(res, 'User title not valid');	//return 400;
 		return;
 	}
@@ -122,7 +122,7 @@ router.post('/:uid/posts/', async function(req,res) {
 	let post = new Post({
         title: req.body.title,
 		description: req.body.description,
-		createdBy: req.body.uid,
+		createdBy: uid,
 		contract: req.body.contract,
 		phone: req.body.phone,
 		rooms: req.body.rooms,
