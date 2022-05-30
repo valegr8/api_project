@@ -34,21 +34,21 @@ router.delete('/:uid/posts/:id', async (req, res) =>{
         console.log("sto analizzando i preferiti di "+user.email);
         let preferiti = user.favorite;
         let uid = user.id;
-        console.log(preferiti);
+        //console.log(preferiti);
         preferiti.forEach( (annuncio) => {
-            console.log(annuncio+" vs "+post._id);
+            //console.log(annuncio+" vs "+post._id);
             if (annuncio == post._id) {
-                console.log("cancello dai preferiti");
+                //console.log("cancello dai preferiti");
                 var index = preferiti.indexOf(annuncio);
-                console.log(index);
+                //console.log(index);
                 if (index !== -1) {
                     preferiti.splice(index, 1);
-                    console.log("devo cercare l'utente con id: "+id);
+                    //console.log("devo cercare l'utente con id: "+id);
                     User.updateOne({ _id: uid}, {
                         favorite: preferiti
                     });
                 }
-                console.log("preferiti ora sono: "+user.favorite);
+                //console.log("preferiti ora sono: "+user.favorite);
             }
         })
     }))
