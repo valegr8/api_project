@@ -14,7 +14,7 @@ const { isValidObjectId } = require('mongoose');
 router.delete('/:uid/posts/:id', async (req, res) =>{
 	let uid = req.params.uid;
 	let id = req.params.id;
-    let post = await Post.findById(id).exec();
+    let post = await Post.findById(id);
     if (!post) {
         res.status(404).send();
         console.log('post not found');
@@ -29,7 +29,7 @@ router.delete('/:uid/posts/:id', async (req, res) =>{
             message: 'You can only delete your own posts'
         });
     }
-    await post.deleteOne();
+    await Post.deleteOne(post);
     //console.log('post removed');
     //res.status(204).send();
     utils.setResponseStatus(post, res, 'Post deleted successfully');
@@ -41,7 +41,7 @@ router.delete('/:uid/posts/:id', async (req, res) =>{
 router.put('/:uid/posts/:id', async (req, res) =>{
 	let uid = req.params.uid;
 	let id = req.params.id;
-    let post = await Post.findById(id).exec();
+    let post = await Post.findById(id);
     if (!post) {
         res.status(404).send();
         console.log('post not found');
@@ -60,7 +60,7 @@ router.put('/:uid/posts/:id', async (req, res) =>{
             message: 'You can only modify your own posts'
         });
     }
-    return post.update({
+    return Post.updateOne(post, {
         title: req.body.title,
         description: req.body.description
     }, {
