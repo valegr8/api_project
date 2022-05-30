@@ -71,11 +71,11 @@ const fullStar = '<i class="bi bi-star-fill"></i>';
 /**
  * Create a post with a card user interface (bootstap)
  */
-function addStar(fav,id){ return fav ? `<a href="#" id="Fav${id}" onclick="remFavorite('${id}')" class="text-decoration-none text-warning">${fullStar}</a>` : `<a href="#" id="notFav${id}" onclick="setFavorite('${id}')" class="text-decoration-none text-warning">${empStar}</a>`}
+function addStar(fav,id){ return fav ? `<button id="Fav${id}" onclick="remFavorite('${id}')" class="btn text-bg-dark btn-link text-warning">${fullStar}</button>` : `<button id="notFav${id}" onclick="setFavorite('${id}')" class="btn btn-link text-bg-dark text-warning">${empStar}</button>`}
 
 
 function createCardPost(id, title){
-    return `    <div class='card mb-3 float-center' style='width: 40rem;'> <div class="card-header clearfix">
+    return `    <div class='card mb-3 float-center' style='width: 40rem;'> <div class="card-header text-bg-dark clearfix">
     <div class="hstack gap-3"><h5>${title}</h5><span class="ms-auto h4 fav" id="starAtt${id}"></span></div></div>
   <div class='card-body grid'>
     <a href="#" onclick='loadDetails("${id}")' class="text-decoration-none text-dark">
@@ -90,7 +90,7 @@ function createCardPost(id, title){
 function createDetailPost(id,title, descr,createdBy){
     return `
     <div class='card mb-3 float-center'> 
-    <div class="card-header clearfix"><div class="hstack gap-3"><h5>${title}</h5><span class="ms-auto h4" id="starAtt${id}"></span></div></div>
+    <div class="card-header text-bg-dark clearfix"><div class="hstack gap-3"><h5>${title}</h5><span class="ms-auto h4" id="starAtt${id}"></span></div></div>
     <div class='card-body '><div class="grid"><div class="g-col-6">
           <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel"><div class="carousel-inner">
             <div class="carousel-item active"><img src="https://www.agenziazaramella.it/wp-content/uploads/2019/05/14-Larredo-per-un-mini-appartamento-di-50-mq.jpg" class="d-block w-100"></div>
@@ -543,7 +543,7 @@ function registerPage()
     //check if the register form already exists
     if(!document.getElementById("registerform")) 
     {
-        var form = `<form method="post" action="api/v1/users" name="registerform" id="registerform"><h2>Registra un nuovo account:</h2><div class="form-floating mb-3" id="usrDiv"><input id="registerUsr" name="username" class="form-control" placeholder="Username"><label for="registerUsr">Username</label></div><div class="form-floating mb-3" id="emailDiv"><input id="registerEmail" name="email" class="form-control" placeholder="Email"><label for="registerEmail">Email</label></div><div class="form-floating mb-3" id="pwdDiv"><input id="registerPassword" name="password" class="form-control" placeholder="Password" type="password"><label for="registerPassword">Password</label></div><div class="form-floating mb-3" id="pwdDiv"><input id="registerPasswordVer" name="password" class="form-control" placeholder="Password" type="password"><label for="registerPasswordVer">Confirm Password</label></div><button type="button" class="btn btn-primary" onclick="register()">Registrati</button></form>`;
+        var form = `<form method="post" action="api/v1/users" name="registerform" id="registerform"><h2>Registra un nuovo account:</h2><div class="form-floating mb-3" id="usrDiv"><input id="registerUsr" name="username" class="form-control" placeholder="Username"><label for="registerUsr">Username</label></div><div class="form-floating mb-3" id="emailDiv"><input id="registerEmail" name="email" class="form-control" placeholder="Email"><label for="registerEmail">Email</label></div><div class="form-floating mb-3" id="pwdDiv"><input id="registerPassword" name="password" class="form-control" placeholder="Password" type="password"><label for="registerPassword">Password</label></div><div class="form-floating mb-3" id="pwdDiv"><input id="registerPasswordVer" name="password" class="form-control" placeholder="Password" type="password"><label for="registerPasswordVer">Confirm Password</label></div><button type="button" class="btn btn-success" onclick="register()">Registrati</button></form>`;
 
         const main_div = document.getElementById("main_div");
         main_div.innerHTML = form;
@@ -553,7 +553,7 @@ function registerPage()
 /**
  * @returns a card with some post info
  */
-function smallFavPost(id,title, price, position){
+function smallPost(id,title, price, position){
     return `<div class="col"><a href="#" class="text-decoration-none text-dark" onclick='loadDetails("${id}")'><div class="card"><div class="card-body">
             <h5 class="card-title">${title}</h5><small class="card-text text-muted"><i class="bi bi-geo-alt-fill"></i>${position}</small>
             <h2 class="card-text">${price}€</h2></div></div></a></div>`;
@@ -601,7 +601,7 @@ function userPage(){
             if (Array.isArray(data.message)) 
                 console.log('result is an array');
             post = data.message;
-            smallFav.innerHTML+= smallFavPost(lid,post.title, "350", "Via Gino, 32 - Trento(TN)");
+            smallFav.innerHTML+= smallPost(lid,post.title, "350", "Via Gino, 32 - Trento(TN)");
         })
         .catch( error => console.error(error) );// If there is any error you will catch them here
     });
@@ -635,6 +635,37 @@ function favPage(){
         })
         .catch( error => console.error(error) );// If there is any error you will catch them here
     });
+    
+
+}
+
+function postCreatedPage(){
+    if(loggedUser.email == null){
+        const modal = new bootstrap.Modal('#modalLoginNeed', {keyboard: false});
+        modal.show();
+        return;
+    }
+    const main_div = document.getElementById("main_div");
+    //if(loggedUser.favorite.length == 0) {main_div.innerHTML= "<h3>Nessun annuncio creato</h3><button type='button' class='btn btn-success' onclick='newPostPage()'>Crea il tuo primo annuncio</button>"; return;}
+    main_div.innerHTML = "<h2>Annunci creati:</h2>";
+    fetch('../api/v2/users/'+ loggedUser.id +'/postsCr')
+    .then((resp) => resp.json()) // Transform the data into json
+    .then(function(data) { // Here you get the data to modify
+        if (!data.message) 
+            console.log('no data');
+        if (Array.isArray(data.message)) 
+            console.log('result is an array');
+        
+        return data.message.map(function(post) { // Map through the results and for each run the code below
+            counter++;
+            var star = false;
+            if(loggedUser.favorite != null){loggedUser.favorite.forEach(fav => {if(post._id == fav) star = true;});}
+            main_div.innerHTML+= createCardPost(post._id, post.title, star);
+            let postIn = document.getElementById("starAtt"+post._id);
+            postIn.innerHTML=addStar(star, post._id);
+        });
+    })
+    .catch( error => console.error(error) );// If there is any error you will catch them here
     
 
 }

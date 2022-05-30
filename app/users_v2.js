@@ -97,24 +97,24 @@ router.post('', async function(req,res) {
 
 //work in progress
 //uid = user id
-router.post('/:uid/posts/', async function(req,res) {
+router.post('/:uid/posts', async function(req,res) {
 	let uid = req.params.uid;
-	let user = await User.findById(uid);
+	let user = await User.findById({_id: uid});
 	
 	if(!user){
-		utils.badRequest(res);
+		utils.badRequest(res,info);
 		return;
 	}		
 	
 
 	//check if the request title is not null
 	if(!utils.isValid(req.body.title)) {
-		utils.badRequest(res, 'User title not valid');	//return 400;
+		utils.badRequest(res, 'User title not valid', info);	//return 400;
 		return;
 	}
 	
 	if(!isValidObjectId(uid)){
-		utils.badRequest(res, 'User title not valid');	//return 400;
+		utils.badRequest(res, 'User title not valid', info);	//return 400;
 		return;
 	}
 	
@@ -152,15 +152,15 @@ router.post('/:uid/posts/', async function(req,res) {
  * Get all posts published by a user
  */
  //uid = user id 
-router.get('/:uid/posts/', async function(req,res) {
+router.get('/:uid/postsCr', async function(req,res) {
 	let uid = req.params.uid;
-	let user = await User.findById(uid);
+	let user = await User.findById({_id: uid});
 	
 	if(!user){
 		utils.badRequest(res);
 		return;
 	}else{		
-		Post.find({}).where('createdBy').equals(uid).exec().then((post)=>{
+		Post.find({createdBy : user.email }).exec().then((post)=>{
 			utils.setResponseStatus(post,res, 'Post published retrieved correctly',info);
 		}).catch((e) => {
 			printd('Error: ' + e,info);
@@ -281,6 +281,7 @@ router.get('/:uid/posts/:id', async function(req,res) {
 		success: true,
 		message: 'username changed',
 		uid: uid,
+		email: user.email,
 		username: nusername
 	});
 	return;
