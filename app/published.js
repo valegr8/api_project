@@ -31,6 +31,22 @@ router.delete('/:uid/posts/:id', async (req, res) =>{
         });
     }
     await Post.deleteOne(post);
+    User.find({}).then(users => users.forEach( (user) => {
+        console.log("sto analizzando i preferiti di "+user.email);
+        let preferiti = user.favorite;
+        console.log(preferiti);
+        preferiti.forEach( (annuncio) => {
+            console.log(annuncio+" vs "+post._id);
+            if (annuncio == post._id) {
+                console.log("cancello dai preferiti");
+                var index = preferiti.indexOf(annuncio);
+                if (index !== -1) {
+                    preferiti.splice(index, 1);
+                }
+                console.log("preferiti ora sono: "+preferiti);
+            }
+        })
+    }))
     utils.printd("Post delete succesfully");
     //res.status(204).send();
     utils.setResponseStatus(post, res, 'Post deleted successfully');
