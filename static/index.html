@@ -24,11 +24,20 @@
             </a>
             <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
               <li>
-                <a href="#" class="nav-link text-secondary" onclick="loadPosts()">
+                <a href="#" class="nav-link text-secondary" onclick="homePage()">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-house-door d-block mx-auto mb-1" viewBox="0 0 16 16">
                     <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146zM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4H2.5z"/>
                   </svg>
                   Home
+                </a>
+              </li>
+              <li>
+                <a href="#" class="nav-link text-secondary" onclick="loadPosts()">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-house-door d-block mx-auto mb-1" viewBox="0 0 16 16">
+                    <path d="M1.5 0A1.5 1.5 0 0 0 0 1.5V13a1 1 0 0 0 1 1V1.5a.5.5 0 0 1 .5-.5H14a1 1 0 0 0-1-1H1.5z"/>
+                    <path d="M3.5 2A1.5 1.5 0 0 0 2 3.5v11A1.5 1.5 0 0 0 3.5 16h6.086a1.5 1.5 0 0 0 1.06-.44l4.915-4.914A1.5 1.5 0 0 0 16 9.586V3.5A1.5 1.5 0 0 0 14.5 2h-11zM3 3.5a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 .5.5V9h-4.5A1.5 1.5 0 0 0 9 10.5V15H3.5a.5.5 0 0 1-.5-.5v-11zm7 11.293V10.5a.5.5 0 0 1 .5-.5h4.293L10 14.793z"/>
+                    </svg>
+                  Annunci
                 </a>
               </li>
               <li>
@@ -66,9 +75,52 @@
       </div>
     </header>
     <div id="mainAlertDiv" class="container mt-3"></div>
+    <div id="home_div" class="container mt-3">
+      <div class="px-4 pt-5 my-5 text-center border-bottom">
+        <h1 class="display-4 fw-bold">Benvenuto su HouseMate</h1>
+        <div class="col-lg-6 mx-auto">
+          <p class="lead mb-4">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptatum veniam maxime quos nisi, illum sequi, iusto, quod qui aspernatur perferendis pariatur? Maiores fuga culpa dolores perspiciatis molestias sunt ex minus?</p>
+          <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
+            <button type="button" class="btn btn-primary btn-lg px-4 me-sm-3" onclick="loadPosts()">Visualizza gli annunci</button>
+            <button type="button" class="btn btn-outline-secondary btn-lg px-4" onclick="newPostPage()">Pubblica un annuncio</button>
+          </div>
+        </div>
+        <div class="overflow-hidden" style="max-height: 30vh;"><div class="container px-5">
+            <img src="https://images.unsplash.com/photo-1622866306950-81d17097d458?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2274&q=80" class="img-fluid border rounded-3 shadow-lg mb-4" alt="Example image" width="700" height="500" loading="lazy">
+          </div>
+        </div>
+        <div class="container my-5">
+          <div class="row p-4 pb-0 pe-lg-0 pt-lg-5 align-items-center rounded-3 border shadow-lg">
+            <div class="col-lg-7 p-3 p-lg-5 pt-lg-3">
+              <h1 class="display-4 fw-bold lh-1">Trova l'appartamento che fa per te</h1>
+              <p class="lead">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Esse, repellendus! Est tempora itaque tempore dolorem odit temporibus porro ducimus, ea veritatis omnis architecto velit reiciendis iusto eveniet sed officiis saepe?</p>
+              <div class="d-grid gap-2 d-md-flex justify-content-md-start mb-4 mb-lg-3">
+                <button type="button" class="btn btn-primary btn-lg px-4 me-md-2 fw-bold">Inizia a cercare</button>
+              </div>
+            </div>
+            <div class="col-lg-4 offset-lg-1 p-0 overflow-hidden shadow-lg">
+                <img class="rounded-lg-3" src="https://images.unsplash.com/photo-1464890100898-a385f744067f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80" alt="" width="720">
+            </div>
+          </div>
+        </div>
+          <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+            <div class="col-10 col-sm-8 col-lg-6">
+              <img src="https://images.unsplash.com/photo-1550838771-2b5ce38db44a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80" class="d-block mx-lg-auto img-fluid" alt="Bootstrap Themes" width="700" height="500" loading="lazy">
+            </div>
+            <div class="col-lg-6">
+              <h1 class="display-5 fw-bold lh-1 mb-3">Affitta il tuo appartiamento</h1>
+              <p class="lead">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perferendis iste neque exercitationem quis velit quas alias facilis maiores repellendus enim. Tempore vel assumenda ipsa possimus ipsum sequi numquam facilis qui.</p>
+              <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+                <button type="button" class="btn btn-primary btn-lg px-4 me-md-2">Crea un annuncio</button>
+                <button type="button" class="btn btn-outline-secondary btn-lg px-4">Gestisci i tuoi annunci</button>
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
     <div id="main_div" class="container mt-3" style="width: 40rem;">
+    
     <!-------------------------------------------------------------->
-
     <!-------------------------------------------------------------->
     </div>
     <div class="modal fade" id="modalLoginNeed" tabindex="-1" aria-labelledby="modalLoginNeed" aria-hidden="true">
@@ -79,7 +131,7 @@
             <p class="mb-0">Devi effettuare l'accesso per poter usare questa funzione</p>
           </div>
           <div class="modal-footer flex-nowrap p-0">
-            <button type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0 border-end" onclick="loginPage()" data-bs-dismiss="modal"><strong>Login</strong></button>
+            <button type="button" class="btn btn-lg btn-link text-success fs-6 text-decoration-none col-6 m-0 rounded-0 border-end" onclick="loginPage()" data-bs-dismiss="modal"><strong>Login</strong></button>
             <button type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0 text-danger" data-bs-dismiss="modal">Chiudi</button>
           </div>
         </div>
@@ -92,6 +144,7 @@
         </div>
       </div>
     </div>
+
 
     <div class="modal fade" id="modalInput" tabindex="-1" aria-labelledby="modalInput" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
@@ -108,6 +161,9 @@
         <div class="toast-body" id="toastMsg"></div>
       </div>
     </div>
+    <datalist id="comu"></datalist>
+    <datalist id="prov"></datalist>
+    <script src="posData.js"></script>
     <script src="script.js"></script>
   </body>
 </html>

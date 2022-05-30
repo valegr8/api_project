@@ -8,7 +8,7 @@ const modInp = document.getElementById("modIn");
 const postDetailMod = new bootstrap.Modal('#postDetailModal', {});
 const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
 const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-window.onload = loadPosts();
+
 
 function showToast(message,title, type){
     const toast = new bootstrap.Toast(document.getElementById('liveToast'));
@@ -71,7 +71,7 @@ const fullStar = '<i class="bi bi-star-fill"></i>';
 /**
  * Create a post with a card user interface (bootstap)
  */
-function addStar(fav,id){ return fav ? `<button id="Fav${id}" onclick="remFavorite('${id}')" class="btn text-bg-dark btn-link text-warning">${fullStar}</button>` : `<button id="notFav${id}" onclick="setFavorite('${id}')" class="btn btn-link text-bg-dark text-warning">${empStar}</button>`}
+function addStar(fav,id){ return  fav ? `<button id="Fav${id}" onclick="remFavorite('${id}')" class="btn text-bg-dark btn-link text-warning">${fullStar}</button>` : `<button id="notFav${id}" onclick="setFavorite('${id}')" class="btn btn-link text-bg-dark text-warning">${empStar}</button>`;}
 
 
 function createCardPost(id, title){
@@ -197,8 +197,8 @@ function loadPosts() {
     inMod.hide();
 
     const main_div = document.getElementById("main_div");
-    main_div.innerHTML = "";
-
+    const home_div = document.getElementById("home_div");
+    home_div.hidden = true;
 
     main_div.innerHTML = "<h2>Annunci:</h2>";
 
@@ -308,7 +308,9 @@ function login()
 
             //show username on top of the page
             document.getElementById("user").innerText = loggedUser.username;
-            showAlert("Benvenuto "+ loggedUser.username +"!", "success");
+            showToast("Benvenuto "+ loggedUser.username +"!","Benvenuto!", "success");
+            const home_div = document.getElementById("home_div");
+            home_div.hidden = true;
             loadPosts(); //shows posts page
         }
         return;
@@ -370,7 +372,10 @@ function register(){
             enNavButtons();
             //show username on top of the page
             document.getElementById("user").innerHTML = loggedUser.username;
+            const home_div = document.getElementById("home_div");
+            home_div.hidden = true;
             loadPosts();
+
             showAlert("Registrato con successo!", "success");
         }
         return;
@@ -424,10 +429,6 @@ function changeUsername(){
     
 }
 
-
-function userPosts(){
-
-}
 
 
 /**
@@ -500,9 +501,94 @@ function newPostPage()
     //check if the create form already exists
     if(!document.getElementById("createform")) 
     {
-        var form= `<form id="createform" method="post" action="api/v1/post"><h2>Crea nuovo annuncio:</h2><div class="form-floating mb-3" id="usrDiv"><input id="postTitle" name="title" maxlength="30" class="form-control" placeholder="Titolo"><label for="postTitle">Titolo</label><div class="form-text">Lunghezza massima: 30 caratteri</div></div><div class="input-group mb-3" id="usrDiv"><span class="input-group-text">Descrizione</span><textarea id="postDesc" name="postDesc" class="form-control" maxlength="500" placeholder="Descrizione"></textarea></div><button type="button" class="btn btn-primary" onclick="insertPost()">Salva</button></form>`;
+        var form= `    <form id="createform" method="post" action="api/v1/post">
+        <h2>Crea nuovo annuncio:</h2>
+        <div class="form-floating mb-3" id="usrDiv">
+          <input id="postTitle" name="title" maxlength="30" class="form-control" placeholder="Titolo">
+          <label for="postTitle">Titolo</label>
+          <div class="form-text">Lunghezza massima: 30 caratteri</div>
+        </div>
+        <div class="input-group mb-3" id="usrDiv">
+          <span class="input-group-text">Descrizione</span>
+          <textarea id="postDesc" name="postDesc" class="form-control" maxlength="1000" placeholder="Descrizione"></textarea>
+        </div>
+        <div class="row g-3">
+          <hr>
+          <div class="input-group mb-3 col-12">
+            <label class="input-group-text" for="inputGroupSelect01">Tipologia appartamento</label>
+            <select class="form-select" id="inputGroupSelect01">
+              <option selected>Scegli...</option>
+              <option value="1">Monolocale</option>
+              <option value="2">Bilocale</option>
+              <option value="3">Trilocale</option>
+              <option value="0">Altro</option>
+            </select>
+          </div>
+          <hr>
+          <div class="input-group mb-3 col-12">
+            <label class="input-group-text" for="inputGroupSelect01">Tipologia contratto</label>
+            <select class="form-select" id="inputGroupSelect01">
+              <option selected>Scegli...</option>
+              <option value="1">Annuale</option>
+              <option value="2">Mensile</option>
+              <option value="0">Altro</option>
+            </select>
+          </div>
+          <hr>
+          <div class="mb-3 col-6">
+            <div class="input-group">
+              <div class="input-group-text"><i class="bi bi-geo-alt"></i></div>
+              <input type="text" class="form-control" id="specificSizeInputGroupUsername" placeholder="Indirizzo">
+            </div>
+          </div>
+          <div class="mb-3 col-3">
+            <input id="postProv" name="provincia" class="form-control" placeholder="Comune" list="comu" type="text">
+            
+          </div>
+          <div class="mb-3 col-3">
+            <input id="postProv" name="provincia" class="form-control" placeholder="Provincia" list="prov" type="text">
+            
+          </div>
+          <hr>
+        </div>
+        <div class="card mb-3">
+          <div class="card-header"><h5 class="card-title">Stanze</h5></div>
+          <div class="card-body">
+            <div class="card mb-3 mt-3">
+              <div class="card-header"><h6 class="card-title">Info stanza</h6></div>
+              <div class="card-body">
+                <div class="input-group mb-3">
+                  <div class="input-group-text">Nome Stanza</div>
+                  <input type="text" class="form-control" id="specificSizeInputGroupUsername" placeholder="Nome">
+                </div>
+                <div class="input-group mb-3">
+                  <input type="text" class="form-control" id="specificSizeInputGroupUsername" placeholder="Prezzo">
+                  <div class="input-group-text"><i class="bi bi-currency-euro"></i></div>
+                </div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <h2><i class="bi bi-plus-square-dotted"></i></h2><span>Aggiungi stanza</span>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="insertPost()">Crea annuncio</button>
+      </form>`;
+
+        const home_div = document.getElementById("home_div");
+        home_div.hidden = true;
         const main_div = document.getElementById("main_div");
         main_div.innerHTML=form;
+        var prov = document.getElementById("prov");
+        for(let i = 0; i< province.length; i++){
+            let provi = province[i].split(",");
+            prov.appendChild(new Option(provi[0]));
+        }
+        var comun = document.getElementById("comu");
+        for(let i = 0; i< comuni.length; i++){
+            let comune = comuni[i].split(",");
+            comun.appendChild(new Option(comune[0]));
+        }
     }
 }
 
@@ -540,15 +626,27 @@ function loginPage()
  */
 function registerPage()
 {
+    
     //check if the register form already exists
     if(!document.getElementById("registerform")) 
     {
         var form = `<form method="post" action="api/v1/users" name="registerform" id="registerform"><h2>Registra un nuovo account:</h2><div class="form-floating mb-3" id="usrDiv"><input id="registerUsr" name="username" class="form-control" placeholder="Username"><label for="registerUsr">Username</label></div><div class="form-floating mb-3" id="emailDiv"><input id="registerEmail" name="email" class="form-control" placeholder="Email"><label for="registerEmail">Email</label></div><div class="form-floating mb-3" id="pwdDiv"><input id="registerPassword" name="password" class="form-control" placeholder="Password" type="password"><label for="registerPassword">Password</label></div><div class="form-floating mb-3" id="pwdDiv"><input id="registerPasswordVer" name="password" class="form-control" placeholder="Password" type="password"><label for="registerPasswordVer">Confirm Password</label></div><button type="button" class="btn btn-success" onclick="register()">Registrati</button></form>`;
-
+        
+        const home_div = document.getElementById("home_div");
+        home_div.hidden = true;
         const main_div = document.getElementById("main_div");
         main_div.innerHTML = form;
     }
 }
+
+function homePage(){
+        const main_div = document.getElementById("main_div");
+        main_div.innerHTML = "";
+        const home_div = document.getElementById("home_div");
+        home_div.hidden = false;
+        
+}
+
 
 /**
  * @returns a card with some post info
@@ -585,6 +683,8 @@ function userPage(){
         </div>
     </div>
     </div>`;
+    const home_div = document.getElementById("home_div");
+    home_div.hidden = true;
     const main_div = document.getElementById("main_div");
     main_div.innerHTML = page;
 
@@ -615,6 +715,8 @@ function favPage(){
         modal.show();
         return;
     }
+    const home_div = document.getElementById("home_div");
+    home_div.hidden = true;
     const main_div = document.getElementById("main_div");
     if(loggedUser.favorite.length == 0) {main_div.innerHTML= "<h3>Nessun annuncio preferito</h3>"; return;}
     main_div.innerHTML = "<h2>Annunci preferiti:</h2>";
@@ -645,6 +747,8 @@ function postCreatedPage(){
         modal.show();
         return;
     }
+    const home_div = document.getElementById("home_div");
+    home_div.hidden = true;
     const main_div = document.getElementById("main_div");
     //if(loggedUser.favorite.length == 0) {main_div.innerHTML= "<h3>Nessun annuncio creato</h3><button type='button' class='btn btn-success' onclick='newPostPage()'>Crea il tuo primo annuncio</button>"; return;}
     main_div.innerHTML = "<h2>Annunci creati:</h2>";
