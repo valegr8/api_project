@@ -764,9 +764,7 @@ function postCreatedPage(){
             counter++;
             var star = false;
             if(loggedUser.favorite != null){loggedUser.favorite.forEach(fav => {if(post._id == fav) star = true;});}
-            main_div.innerHTML+= createCardPost(post._id, post.title, star);
-            let postIn = document.getElementById("starAtt"+post._id);
-            postIn.innerHTML=addStar(star, post._id);
+            main_div.innerHTML+= createCardPost(post._id, post.title + ` <span class="badge text-bg-secondary ms-auto h4"><i class="bi bi-pencil-square"></i></span> <span class="badge text-bg-danger ms-auto h4"><i class="bi bi-trash-fill"></i></span>`, star);
         });
     })
     .catch( error => console.error(error) );// If there is any error you will catch them here

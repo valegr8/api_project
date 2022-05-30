@@ -82,7 +82,7 @@
           <p class="lead mb-4">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptatum veniam maxime quos nisi, illum sequi, iusto, quod qui aspernatur perferendis pariatur? Maiores fuga culpa dolores perspiciatis molestias sunt ex minus?</p>
           <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
             <button type="button" class="btn btn-primary btn-lg px-4 me-sm-3" onclick="loadPosts()">Visualizza gli annunci</button>
-            <button type="button" class="btn btn-outline-secondary btn-lg px-4" onclick="newPostPage()">Pubblica un annuncio</button>
+            <button type="button" class="btn btn-outline-secondary btn-lg px-4" onclick="loginPage()">Accedi</button>
           </div>
         </div>
         <div class="overflow-hidden" style="max-height: 30vh;"><div class="container px-5">
@@ -95,7 +95,7 @@
               <h1 class="display-4 fw-bold lh-1">Trova l'appartamento che fa per te</h1>
               <p class="lead">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Esse, repellendus! Est tempora itaque tempore dolorem odit temporibus porro ducimus, ea veritatis omnis architecto velit reiciendis iusto eveniet sed officiis saepe?</p>
               <div class="d-grid gap-2 d-md-flex justify-content-md-start mb-4 mb-lg-3">
-                <button type="button" class="btn btn-primary btn-lg px-4 me-md-2 fw-bold">Inizia a cercare</button>
+                <button type="button" class="btn btn-primary btn-lg px-4 me-md-2 fw-bold" onclick="loadPosts()">Inizia a cercare</button>
               </div>
             </div>
             <div class="col-lg-4 offset-lg-1 p-0 overflow-hidden shadow-lg">
@@ -103,24 +103,37 @@
             </div>
           </div>
         </div>
-          <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
-            <div class="col-10 col-sm-8 col-lg-6">
-              <img src="https://images.unsplash.com/photo-1550838771-2b5ce38db44a?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80" class="d-block mx-lg-auto img-fluid" alt="Bootstrap Themes" width="700" height="500" loading="lazy">
+        <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
+          <div class="col-10 col-sm-8 col-lg-6">
+            <img src="https://images.unsplash.com/photo-1566601146613-82f9dbd68995?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1335&q=80" class="d-block mx-lg-auto img-fluid" alt="Bootstrap Themes" width="700" height="500" loading="lazy">
+          </div>
+          <div class="col-lg-6">
+            <h1 class="display-5 fw-bold lh-1 mb-3">Affitta il tuo appartiamento</h1>
+            <p class="lead">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perferendis iste neque exercitationem quis velit quas alias facilis maiores repellendus enim. Tempore vel assumenda ipsa possimus ipsum sequi numquam facilis qui.</p>
+            <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+              <button type="button" class="btn btn-primary btn-lg px-4 me-md-2" onclick="newPostPage()">Crea un annuncio</button>
+              <button type="button" class="btn btn-outline-secondary btn-lg px-4" onclick="postCreatedPage()">Gestisci i tuoi annunci</button>
             </div>
-            <div class="col-lg-6">
-              <h1 class="display-5 fw-bold lh-1 mb-3">Affitta il tuo appartiamento</h1>
-              <p class="lead">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Perferendis iste neque exercitationem quis velit quas alias facilis maiores repellendus enim. Tempore vel assumenda ipsa possimus ipsum sequi numquam facilis qui.</p>
-              <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-                <button type="button" class="btn btn-primary btn-lg px-4 me-md-2">Crea un annuncio</button>
-                <button type="button" class="btn btn-outline-secondary btn-lg px-4">Gestisci i tuoi annunci</button>
+          </div>
+        </div>
+          <div class="container my-5">
+            <div class="row p-4 pb-0 pe-lg-0 pt-lg-5 align-items-center rounded-3 border shadow-lg">
+              <div class="col-lg-7 p-3 p-lg-5 pt-lg-3">
+                <h1 class="display-4 fw-bold lh-1">Da studenti per studenti</h1>
+                <p class="lead">Lorem ipsum dolor sit amet consectetur adipisicing elit. Non laboriosam magnam quasi ipsum quidem ex doloremque corrupti, tempora quas exercitationem, dolores eligendi qui nam obcaecati voluptatibus, blanditiis labore dignissimos nobis.</p>
+              </div>
+              <div class="col-lg-4 offset-lg-1 p-0 overflow-hidden shadow-lg">
+                  <img class="rounded-lg-3" src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2670&q=80" alt="" width="720">
               </div>
             </div>
+          </div>
         </div>
       </div>
     </div>
     <div id="main_div" class="container mt-3" style="width: 40rem;">
     
     <!-------------------------------------------------------------->
+
     <!-------------------------------------------------------------->
     </div>
     <div class="modal fade" id="modalLoginNeed" tabindex="-1" aria-labelledby="modalLoginNeed" aria-hidden="true">
