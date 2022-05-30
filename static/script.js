@@ -504,9 +504,9 @@ function newPostPage()
         var form= `    <form id="createform" method="post" action="api/v1/post">
         <h2>Crea nuovo annuncio:</h2>
         <div class="form-floating mb-3" id="usrDiv">
-          <input id="postTitle" name="title" maxlength="30" class="form-control" placeholder="Titolo">
+          <input id="postTitle" name="title" maxlength="50" class="form-control" placeholder="Titolo">
           <label for="postTitle">Titolo</label>
-          <div class="form-text">Lunghezza massima: 30 caratteri</div>
+          <div class="form-text">Lunghezza massima: 50 caratteri</div>
         </div>
         <div class="input-group mb-3" id="usrDiv">
           <span class="input-group-text">Descrizione</span>
@@ -768,9 +768,25 @@ function postCreatedPage(){
         });
     })
     .catch( error => console.error(error) );// If there is any error you will catch them here
-    
-
 }
+
+function editPostPage(){
+    ///:uid/posts/:id
+}
+
+function deletePostConf(pid){
+    deletePost(pid);
+}
+
+function deletePost(pid){
+    //
+    fetch('../api/v2/published/'+ loggedUser.id+'/posts/'+pid , {method: 'DELETE',})
+    .then((resp) => resp.json()) // Transform the data into json
+    .then(function(data) {
+        showToast(data.message, "Eliminazione Post", "dark");
+    });
+}
+
 
 /**
  * This function check if the pattern of an email is correct
