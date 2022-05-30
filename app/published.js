@@ -24,9 +24,8 @@ router.delete('/:uid/posts/:id', async (req, res) =>{
 		utils.badRequest(res,'Invalid parameters');
 		return;
 	}
-    const user = await User.findOne({ _id: uid}).exec();
-
-    if (post.createdBy != user.email) {
+    
+    if (post.createdBy != req.params.uid) {
         return res.status(401).json({
             message: 'You can only delete your own posts'
         });

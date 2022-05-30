@@ -5,10 +5,12 @@ var Schema = mongoose.Schema;
 module.exports = mongoose.model('Post', new Schema({
 	title: String,
 	description: String,
-	createdBy: String,	//email of the user
+	createdBy: String,	
 	contract: String,
 	phone: String,
+	showPrice: String, //the price shown (could be different from the one of the rooms)
 	rooms: Number, //number of rooms
+	email: String, //email of the user
 	//{type:String} is due to mongoose
 	//and it means that the type field is a string,
 	//otherwise it would mean that available is an array of strings
