@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const utils = require('../utils/utils.js');
 const { printd, isValid } = require('../utils/utils.js');
 const { isValidObjectId } = require('mongoose');
+const info = "User";
 
 /**
  * Get user model
@@ -21,9 +22,9 @@ const Post = require('./models/post_v2'); //the new version
  * function for creating a new user
  */
 router.post('', async function(req,res) {	
-    printd('Email: ' + req.body.email);
-    printd('Username: ' + req.body.username);
-    printd('Password: ' + req.body.password);		
+    printd('Email: ' + req.body.email, info);
+    printd('Username: ' + req.body.username, info);
+    printd('Password: ' + req.body.password,info);		
 
     if(!isValid(req.body.email)) {
         utils.badRequest(res, "Bad request, email not valid");
@@ -96,24 +97,24 @@ router.post('', async function(req,res) {
 
 //work in progress
 //uid = user id
-router.post('/:uid/posts/', async function(req,res) {
+router.post('/:uid/posts', async function(req,res) {
 	let uid = req.params.uid;
-	let user = await User.findById(uid);
+	let user = await User.findById({_id: uid});
 	
 	if(!user){
-		utils.badRequest(res);
+		utils.badRequest(res,info);
 		return;
 	}		
 	
 
 	//check if the request title is not null
 	if(!utils.isValid(req.body.title)) {
-		utils.badRequest(res, 'User title not valid');	//return 400;
+		utils.badRequest(res, 'User title not valid', info);	//return 400;
 		return;
 	}
 	
 	if(!isValidObjectId(uid)){
-		utils.badRequest(res, 'User title not valid');	//return 400;
+		utils.badRequest(res, 'User title not valid', info);	//return 400;
 		return;
 	}
 	
@@ -135,15 +136,15 @@ router.post('/:uid/posts/', async function(req,res) {
 		// printd(savedPost._id);
 		let postId = savedPost._id;
 		if(!isValidObjectId(postId)) {
-			utils.notFound(res, 'Post id not valid');
+			utils.notFound(res, 'Post id not valid',info);
 		}
 		else {
 			res.location("/api/v2/users/"+ uid + "/posts/" + postId);
-			utils.created(res, 'Post saved successfully');
+			utils.created(res, 'Post saved successfully',info);
 		}
 	}).catch((e) => {		
 		// If the post fails we return 404 status code
-		utils.notFound(res,'Post saving failed');
+		utils.notFound(res,'Post saving failed',info);
 	});
 });
 
@@ -151,18 +152,18 @@ router.post('/:uid/posts/', async function(req,res) {
  * Get all posts published by a user
  */
  //uid = user id 
-router.get('/:uid/posts/', async function(req,res) {
+router.get('/:uid/postsCr', async function(req,res) {
 	let uid = req.params.uid;
-	let user = await User.findById(uid);
+	let user = await User.findById({_id: uid});
 	
 	if(!user){
 		utils.badRequest(res);
 		return;
 	}else{		
-		Post.find({}).where('createdBy').equals(uid).exec().then((post)=>{
-			utils.setResponseStatus(post,res, 'Post published retrieved correctly');
+		Post.find({createdBy : user.email }).exec().then((post)=>{
+			utils.setResponseStatus(post,res, 'Post published retrieved correctly',info);
 		}).catch((e) => {
-			printd('Error: ' + e);
+			printd('Error: ' + e,info);
 			utils.notFound(res);
 		});
 	}
@@ -178,11 +179,11 @@ router.get('/:uid/posts/:id', async function(req,res) {
 	let id = req.params.id;
 	
 	if(!user || !isValidObjectId(id)){
-		utils.badRequest(res);
+		utils.badRequest(res,info);
 		return;
 	}else{
 		Post.findOne({ _id : id }).exec().then((post)=>{
-			utils.setResponseStatus(post,res, 'Post published retrieved successfully');
+			utils.setResponseStatus(post,res, 'Post published retrieved successfully',info);
 		}).catch((e) => {
 			printd('Error: ' + e);
 			utils.notFound(res);
@@ -190,5 +191,100 @@ router.get('/:uid/posts/:id', async function(req,res) {
 	}
 	
 });
+
+
+/**
+ * This function sets a specific post as "favorite"
+ */
+ router.post('/:uid/setFavorite', async function(req,res) {
+	const postId = req.body.id;
+	if(!isValid(postId)) {utils.badRequest(res, "Bad request, postId not valid");return;}
+	const uid = req.params.uid;
+	if(!isValid(uid)) {utils.badRequest(res, "Bad request, uid not valid");return;}
+	utils.printd("PostId: " + postId,"AddFav");
+	utils.printd("UserId: " + uid,"AddFav");
+	const user = await User.findOne({ _id: uid}).exec();
+	if(user == null){utils.notFound(res, "User not found"); return;}
+	let favList = user.favorite;
+
+    if (favList.indexOf(postId) !== -1) {
+        utils.alreadyExists(res, `Post ${postId} already on Favorite List`,info); return;
+    }
+    favList.push(postId);
+	await User.updateOne({ _id: uid}, {
+		favorite: favList
+	});
+	res.status(200).json({
+		success: true,
+		message: 'Post addedd to your favorites!',
+		uid: uid,
+		id: postId,
+        favorite: favList
+	});
+    printd("Fav added. Post id: " + postId,info);
+	return;
+ });
+
+ /**
+ * This function remove a specific post as "favorite"
+ */
+  router.post('/:uid/remFavorite', async function(req,res) {
+	const postId = req.body.id;
+	if(!isValid(postId)) {utils.badRequest(res, "Bad request, postId not valid",info);return;}
+	const uid = req.params.uid;
+	if(!isValid(uid)) {utils.badRequest(res, "Bad request, uid not valid",info);return;}
+	utils.printd("PostId: " + postId,"RemFav");
+	utils.printd("UserId: " + uid,"RemFav");
+	const user = await User.findOne({ _id: uid}).exec();
+	if(user == null){utils.notFound(res, "User not found"); return;}
+	var favList = user.favorite;
+    var index = favList.indexOf(postId);
+    if (index !== -1) {
+        favList.splice(index, 1);
+    }
+    else{
+        utils.notFound(res, `Post ${postId} not found on Favorite List`,info); return;
+    }	
+	await User.updateOne({ _id: uid}, {
+		favorite: favList
+	});
+	res.status(200).json({
+		success: true,
+		message: 'Post removed from your favorites!',
+		uid: uid,
+		id: postId,
+        favorite: favList
+	});
+    printd("Fav removed. Post id: " + postId,info);
+	return;
+ });
+
+
+ /**
+ * This function updates a specific username
+ */
+  router.post('/:uid/updateUsername', async function(req,res) {
+	const uid = req.params.uid;
+	utils.printd(uid);
+	if(!isValid(uid)) {utils.badRequest(res, "Bad request, uid not valid");return;}
+    const nusername = req.body.username;
+    if(!isValid(nusername)) {utils.badRequest(res, "Bad request, username not valid");return;}
+	utils.printd("Username: " + nusername,"UsrnameUpd");
+	utils.printd("UserId: " + uid,"UsrnameUpd");
+	const user = await User.findOne({ _id: uid}).exec();
+    if(user == null) {utils.notFound(res,"Utente non trovato"); return;}
+    
+	await User.updateOne({ _id: uid}, {
+		username: nusername
+	});
+	res.status(200).json({
+		success: true,
+		message: 'username changed',
+		uid: uid,
+		email: user.email,
+		username: nusername
+	});
+	return;
+ });
 
 module.exports = router;

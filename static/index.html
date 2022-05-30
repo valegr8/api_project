@@ -50,7 +50,7 @@
                   </a>
                   <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1">
                     <li><a class="dropdown-item uLogged" href="#" onclick="newPostPage()" hidden id="create" ><i class="bi bi-plus-lg"></i> Nuovo annuncio</a></li>
-                    <li><a class="dropdown-item uLogged" href="#" hidden><i class="bi bi-list"></i> Annunci creati</a></li>
+                    <li><a class="dropdown-item uLogged" href="#" onclick="postCreatedPage()" hidden><i class="bi bi-list"></i> Annunci creati</a></li>
                     <li><a class="dropdown-item uLogged" href="#" onclick="favPage()" hidden><i class="bi bi-star"></i> Preferiti</a></li>
                     <li><a class="dropdown-item uLogged" href="#" onclick="userPage()" hidden><i class="bi bi-person-circle"></i> Profilo</a></li>
                     <li><a class="dropdown-item uNLogged" href="#" onclick="loginPage()"><i class="bi bi-box-arrow-in-right"></i> Login</a></li>
@@ -96,7 +96,6 @@
     <div class="modal fade" id="modalInput" tabindex="-1" aria-labelledby="modalInput" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content rounded-4 shadow" id="modIn">
-          
         </div>
       </div>
     </div>
