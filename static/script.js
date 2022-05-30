@@ -405,10 +405,10 @@ function changeUsername(){
     const nusername = document.getElementById("newUsername").value;
     inMod.hide();
 
-    fetch('../api/v1/users/updateUsername', {
+    fetch('../api/v2/users/'+ loggedUser.id+'/updateUsername', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify( { email: loggedUser.email, username: nusername }  ),
+        body: JSON.stringify( { username: nusername }  ),
     })
     .then((resp) => resp.json() ) // Transform the data into json
     .then(function(data){
@@ -425,6 +425,11 @@ function changeUsername(){
 }
 
 
+function userPosts(){
+
+}
+
+
 /**
  *this function set a particular post as favorite
  */
@@ -434,10 +439,10 @@ function setFavorite(id){
         modal.show();
         return;
     }
-    fetch('../api/v1/users/setFavorite', {
+    fetch('../api/v2/users/'+ loggedUser.id+'/setFavorite', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify( { email: loggedUser.email, id: id }  ),
+        body: JSON.stringify( {id: id }  ),
     })
     .then((resp) => resp.json() ) // Transform the data into json
     .then(function(data){
@@ -459,10 +464,10 @@ function remFavorite(id){
         modal.show();
         return;
     }
-    fetch('../api/v1/users/remFavorite', {
+    fetch('../api/v2/users/'+ loggedUser.id+'/remFavorite', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify( { email: loggedUser.email, id: id }  ),
+        body: JSON.stringify( {id: id }  ),
     })
     .then((resp) => resp.json() ) // Transform the data into json
     .then(function(data){
