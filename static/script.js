@@ -127,20 +127,21 @@ function createDetailPost(id,title, descr, typect, phone, email, where, nRoom, r
 
 function createSmallRoomDiv(rooms, buttons = false){
     var div = '';
-    rooms.forEach(room => {
+    rooms.forEach((room,index )=> {
         div+= `
         <div class="col">
             <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">${room.name}</h5>
-                <h2 class="card-text">${room.price}€</h2>
-                ${(buttons) ? `<div class="d-flex justify-content-between align-items-center">
-                <div class="btn-group">
-                  <button type="button" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil-square"></i></button>
-                  <button type="button" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash-fill"></i></button>
+                <div class="card-body">
+                    <h5 class="card-title">${room.name}</h5>
+                    <h2 class="card-text">${room.price}€</h2>
+                    ${(buttons) ? `
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="showEditRoom(${index})"><i class="bi bi-pencil-square"></i></button>
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRoom(${index})"><i class="bi bi-trash-fill"></i></button>
+                        </div>
+                    </div>` : ""}
                 </div>
-              </div>` : ""}
-            </div>
             </div>
         </div>`;
     });
@@ -193,23 +194,23 @@ function loadDetails(id) {
         
 }
 
-function showAddRoom(){
+function showAddRoom(title = "Aggiugni Stanza", button = "Aggiungi", oncl = "addRoom()", nome = "", prezzo = ""){
     modalAdd.innerHTML = 
     `<div class="modal-header p-5 pb-4 border-bottom-0">
-        <h2 class="fw-bold mb-0">Aggiugni Stanza</h2>
+        <h2 class="fw-bold mb-0">${title}</h2>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
     <div class="modal-body p-5 pt-0">
         <form class="">
             <div class="mb-3">
-                <input type="text" class="form-control mb-3" id="roomName" placeholder="Nome">
+                <input type="text" class="form-control mb-3" id="roomName" placeholder="Nome" value="${nome}">
                 <div class="input-group mb-3">
-                <input type="number" class="form-control" id="price" min="0" max="100000" placeholder="Prezzo">
+                <input type="number" class="form-control" id="price" min="0" max="100000" placeholder="Prezzo" value="${prezzo}">
                 <div class="input-group-text"><i class="bi bi-currency-euro"></i></div>
                 </div>
                 <hr>
                 <div class="btn-group mb-3" role="group">
-                    <button class="btn btn-lg btn-primary" type="button" onclick="addRoom()">Aggiungi</button>
+                    <button class="btn btn-lg btn-primary" type="button" onclick="${oncl}">${button}</button>
                     <button class="btn btn-lg btn-danger" type="button" data-bs-dismiss="modal" aria-label="Close">Annulla</button>
                 </div>
                 <div id="addRoomAlertDiv" class="container"></div>
@@ -217,6 +218,10 @@ function showAddRoom(){
         </form>
     </div>`;
     addRoomMod.show();
+}
+
+function showEditRoom(ind){
+    showAddRoom("Modifica Stanza", "Modifica", `editRoom(${ind})`, roomsToAdd[ind].name, roomsToAdd[ind].price);
 }
 
 
@@ -242,10 +247,41 @@ function addRoom(){
     }
     addRoomMod.hide();
     roomsToAdd.push({name: nome, price: prezzo, description: ""});
-    showAlert("Room added" , "success");
+    showAlert("Stanza aggiunta" , "success");
     var roms = document.getElementById("newRooms");
     roms.innerHTML = createSmallRoomDiv(roomsToAdd, true);
-    
+}
+
+function removeRoom(ind){
+    roomsToAdd.splice(ind, 1);
+    var roms = document.getElementById("newRooms");
+    roms.innerHTML = createSmallRoomDiv(roomsToAdd, true);
+    showAlert("Stanza rimossa" , "success");
+}
+
+function editRoom(ind){
+    var nome = document.getElementById("roomName").value;
+    var prezzo = document.getElementById("price").value;
+    if(nome == ""){
+        showAlert("Inserisci un nome!" , "danger", "addRoomAlertDiv");
+        return;
+    }
+    if(prezzo == ""){
+        showAlert("Inserisci un prezzo!" , "danger", "addRoomAlertDiv");
+        return;
+    }
+    if(prezzo < 0){
+        showAlert("Inserisci un prezzo valido!" , "danger", "addRoomAlertDiv");
+        return;
+    }
+    if(prezzo > 100000){
+        showAlert("Inserisci un prezzo ragionevole!" , "danger", "addRoomAlertDiv");
+        return;
+    }
+    addRoomMod.hide();
+    roomsToAdd[ind] = {name: nome, price: prezzo, description: ""};
+    var roms = document.getElementById("newRooms");
+    roms.innerHTML = createSmallRoomDiv(roomsToAdd, true);
 }
 
 
@@ -412,7 +448,6 @@ function register(){
     var email = document.getElementById("registerEmail").value;
     var password = document.getElementById("registerPassword").value;
     var username = document.getElementById("registerUsr").value;
-
 
     if (username == "") {
         showAlert("Inserisci username", "danger");
@@ -585,6 +620,7 @@ function newRoomCard(){
  */
 function newPostPage()
 {
+    roomsToAdd = [];
     if(loggedUser.email == null){
         const modal = new bootstrap.Modal('#modalLoginNeed', {keyboard: false});
         modal.show();
