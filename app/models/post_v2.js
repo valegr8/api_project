@@ -11,9 +11,6 @@ module.exports = mongoose.model('Post', new Schema({
 	showPrice: String, //the price shown (could be different from the one of the rooms)
 	rooms: Number, //number of rooms
 	email: String, //email of the user
-	//{type:String} is due to mongoose
-	//and it means that the type field is a string,
-	//otherwise it would mean that available is an array of strings
-	available: [{name: String, price: Number, type: {type:String},description: String}],//rooms available
+	available: [{name: String, price: Number,description: String}],//rooms available
 	where: String, //the location of the apartment
 }));
