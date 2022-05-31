@@ -15,7 +15,7 @@
     <title>HouseMate</title>
   </head>
   <body class="text-center"> 
-    <header >
+    <header>
       <div class="px-3 py-2 bg-dark text-white">
         <div class="container">
           <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
@@ -80,17 +80,13 @@
         <h1 class="display-4 fw-bold">Benvenuto su HouseMate</h1>
         <div class="col-lg-6 mx-auto">
           <p class="lead mb-4">Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptatum veniam maxime quos nisi, illum sequi, iusto, quod qui aspernatur perferendis pariatur? Maiores fuga culpa dolores perspiciatis molestias sunt ex minus?</p>
-          <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
-            <button type="button" class="btn btn-primary btn-lg px-4 me-sm-3" onclick="loadPosts()">Visualizza gli annunci</button>
-            <button type="button" class="btn btn-outline-secondary btn-lg px-4" onclick="loginPage()">Accedi</button>
-          </div>
         </div>
         <div class="overflow-hidden" style="max-height: 30vh;"><div class="container px-5">
             <img src="https://images.unsplash.com/photo-1622866306950-81d17097d458?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2274&q=80" class="img-fluid border rounded-3 shadow-lg mb-4" alt="Example image" width="700" height="500" loading="lazy">
           </div>
         </div>
         <div class="container my-5">
-          <div class="row p-4 pb-0 pe-lg-0 pt-lg-5 align-items-center rounded-3 border shadow-lg">
+          <div class="row p-4 pb-0 pe-lg-0 pt-lg-5 align-items-center">
             <div class="col-lg-7 p-3 p-lg-5 pt-lg-3">
               <h1 class="display-4 fw-bold lh-1">Trova l'appartamento che fa per te</h1>
               <p class="lead">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Esse, repellendus! Est tempora itaque tempore dolorem odit temporibus porro ducimus, ea veritatis omnis architecto velit reiciendis iusto eveniet sed officiis saepe?</p>
@@ -117,7 +113,7 @@
           </div>
         </div>
           <div class="container my-5">
-            <div class="row p-4 pb-0 pe-lg-0 pt-lg-5 align-items-center rounded-3 border shadow-lg">
+            <div class="row p-4 pb-0 pe-lg-0 pt-lg-5 align-items-center">
               <div class="col-lg-7 p-3 p-lg-5 pt-lg-3">
                 <h1 class="display-4 fw-bold lh-1">Da studenti per studenti</h1>
                 <p class="lead">Lorem ipsum dolor sit amet consectetur adipisicing elit. Non laboriosam magnam quasi ipsum quidem ex doloremque corrupti, tempora quas exercitationem, dolores eligendi qui nam obcaecati voluptatibus, blanditiis labore dignissimos nobis.</p>
@@ -153,6 +149,7 @@
         </div>
       </div>
     </div>
+
     <div class="modal fade"  id="postDetailModal"  aria-hidden="true" tabindex="-1" aria-labelledby="postModal" >
       <div class="modal-dialog modal-dialog-centered" role="document" style="width: 40rem;">
         <div class="modal-content" id="detailModal">
@@ -160,6 +157,25 @@
         </div>
       </div>
     </div>
+
+    <div class="modal fade" id="modalAddRoom" tabindex="-1" aria-labelledby="modalAddRoom" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content rounded-4 shadow" id="modalAdd">
+          
+        </div>
+      </div>
+    </div>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+      <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+          <strong class="me-auto" id="toastTit">HouseMate</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="toastMsg"></div>
+      </div>
+    </div>
+    
 
 
     <div class="modal fade" id="modalInput" tabindex="-1" aria-labelledby="modalInput" aria-hidden="true">

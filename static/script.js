@@ -4,10 +4,13 @@
 var loggedUser = {};
 var counter = 0;
 const inMod = new bootstrap.Modal('#modalInput', {keyboard: false});
+const addRoomMod = new bootstrap.Modal('#modalAddRoom', {keyboard: false});
+const modalAdd = document.getElementById("modalAdd"); 
 const modInp = document.getElementById("modIn"); 
 const postDetailMod = new bootstrap.Modal('#postDetailModal', {});
 const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
 const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+var roomsToAdd = [];
 
 
 function showToast(message,title, type){
@@ -71,7 +74,7 @@ const fullStar = '<i class="bi bi-star-fill"></i>';
 /**
  * Create a post with a card user interface (bootstap)
  */
-function addStar(fav,id){ return  fav ? `<button id="Fav${id}" onclick="remFavorite('${id}')" class="btn text-bg-dark btn-link text-warning">${fullStar}</button>` : `<button id="notFav${id}" onclick="setFavorite('${id}')" class="btn btn-link text-bg-dark text-warning">${empStar}</button>`;}
+function addStar(fav,id){ return  fav ? `<button id="Fav${id}" onclick="remFavorite('${id}')" class="btn btn-link text-warning">${fullStar}</button>` : `<button id="notFav${id}" onclick="setFavorite('${id}')" class="btn btn-link text-warning">${empStar}</button>`;}
 
 
 function createCardPost(id, title, showPrice, where, typect, nRoom){
@@ -84,9 +87,11 @@ function createCardPost(id, title, showPrice, where, typect, nRoom){
       <dl class="row"><dt class="col-sm-6 text-start">Numero Camere</dt><dd class="col-sm-6 text-start">${nRoom}</dd>
         <dt class="col-sm-6 text-start">Tipologia Contratto</dt><dd class="col-sm-6 text-start">${typect}</dd></dl>
       <p><i class="bi bi-geo-alt-fill"> ${where}</i></p> <h2>${showPrice}€</h2></div></a></div></div>`;
+
+
 }
 
-function createDetailPost(id,title, descr, typect, phone, email, where, nRoom){
+function createDetailPost(id,title, descr, typect, phone, email, where, nRoom, roomDiv){
     return `
     <div class='card mb-3 float-center'> 
     <div class="card-header text-bg-dark clearfix"><div class="hstack gap-3"><h5>${title}</h5><span class="ms-auto h4" id="starAtt${id}"></span></div></div>
@@ -113,78 +118,138 @@ function createDetailPost(id,title, descr, typect, phone, email, where, nRoom){
       </div><hr><div class="text-start">${descr}</div><hr><div class="mt-3">
         <h5>Camere disponibili:</h5>
         <div class="row row-cols-1 row-cols-md-2 g-4">
-          <div class="col">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">Singola 1</h5>
-                <h2 class="card-text">320€</h2>
-              </div>
-            </div>
-          </div>
-          <div class="col">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">Singola 2</h5>
-                <h2 class="card-text">320€</h2>
-              </div>
-            </div>
-          </div>
-          <div class="col">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">Doppia</h5>
-                <h2 class="card-text">280 €</h2>
-              </div>
-            </div>
-          </div>
+          ${roomDiv}
         </div>
       </div>
     </div>
   </div>`;
 }
 
+function createSmallRoomDiv(rooms, buttons = false){
+    var div = '';
+    rooms.forEach(room => {
+        div+= `
+        <div class="col">
+            <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">${room.name}</h5>
+                <h2 class="card-text">${room.price}€</h2>
+                ${(buttons) ? `<div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">
+                  <button type="button" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil-square"></i></button>
+                  <button type="button" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash-fill"></i></button>
+                </div>
+              </div>` : ""}
+            </div>
+            </div>
+        </div>`;
+    });
+    return div;
+}
+
+
+
+
 /**
  * This function creates a page that shows the details of a post
  */
 function loadDetails(id) {
-        //remove posts
-        const main_div = document.getElementById("main_div");
-        //main_div.innerHTML = "";
+    //remove posts
+    const main_div = document.getElementById("main_div");
+    //main_div.innerHTML = "";
 
- 
-        const div = document.createElement("div");
-        div.setAttribute('class', "form-group");
-        div.setAttribute('id', "posts_div");
 
-        div.innerHTML = "<div id='posts'></div>";
-        main_div.appendChild(div);
+    const div = document.createElement("div");
+    div.setAttribute('class', "form-group");
+    div.setAttribute('id', "posts_div");
 
-        fetch('../api/v2/posts/' + id)
-        .then((resp) => resp.json()) // Transform the data into json
-        .then(function(data) { // Here you get the data to modify
-            // console.log(data);
-            
-            if (!data.message) 
-                console.log('no data');
-            if (Array.isArray(data.message)) 
-                console.log('result is an array');
+    div.innerHTML = "<div id='posts'></div>";
+    main_div.appendChild(div);
 
-            post = data.message;
-            const post_div = document.getElementById("detailModal");
-            post_div.innerHTML = "";
+    fetch('../api/v2/posts/' + id)
+    .then((resp) => resp.json()) // Transform the data into json
+    .then(function(data) { // Here you get the data to modify
+        // console.log(data);
+        
+        if (!data.message) 
+            console.log('no data');
+        if (Array.isArray(data.message)) 
+            console.log('result is an array');
 
-            var star = false;
-            if(loggedUser.favorite != null){loggedUser.favorite.forEach(fav => {if(id == fav) star = true;});}
-            
-            post_div.innerHTML+= createDetailPost(id,post.title, post.description, post.contract, post.phone,post.email,post.where,post.rooms);
-            var postIn = document.getElementById("starAtt"+id);
-            postIn.innerHTML=addStar(star, id);
-            post_div.innerHTML+= "<a href='#' class='text-muted text-decoration-none mb-3' data-bs-dismiss='modal'><i class='bi bi-arrow-left-short'></i> indietro</a>";
-            postDetailMod.show();
-        })
-        .catch( error => console.error(error) );// If there is any error you will catch them here
+        post = data.message;
+        const post_div = document.getElementById("detailModal");
+        post_div.innerHTML = "";
+
+        var star = false;
+        if(loggedUser.favorite != null){loggedUser.favorite.forEach(fav => {if(id == fav) star = true;});}
+
+        post_div.innerHTML+= createDetailPost(id,post.title, post.description, post.contract, post.phone,post.email,post.where,post.rooms, createSmallRoomDiv(post.available));
+        var postIn = document.getElementById("starAtt"+id);
+        postIn.innerHTML=addStar(star, id);
+        post_div.innerHTML+= "<a href='#' class='text-muted text-decoration-none mb-3' data-bs-dismiss='modal'><i class='bi bi-arrow-left-short'></i> indietro</a>";
+        postDetailMod.show();
+    })
+    .catch( error => console.error(error) );// If there is any error you will catch them here
         
 }
+
+function showAddRoom(){
+    modalAdd.innerHTML = 
+    `<div class="modal-header p-5 pb-4 border-bottom-0">
+        <h2 class="fw-bold mb-0">Aggiugni Stanza</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body p-5 pt-0">
+        <form class="">
+            <div class="mb-3">
+                <input type="text" class="form-control mb-3" id="roomName" placeholder="Nome">
+                <div class="input-group mb-3">
+                <input type="number" class="form-control" id="price" min="0" max="100000" placeholder="Prezzo">
+                <div class="input-group-text"><i class="bi bi-currency-euro"></i></div>
+                </div>
+                <hr>
+                <div class="btn-group mb-3" role="group">
+                    <button class="btn btn-lg btn-primary" type="button" onclick="addRoom()">Aggiungi</button>
+                    <button class="btn btn-lg btn-danger" type="button" data-bs-dismiss="modal" aria-label="Close">Annulla</button>
+                </div>
+                <div id="addRoomAlertDiv" class="container"></div>
+            </div>
+        </form>
+    </div>`;
+    addRoomMod.show();
+}
+
+
+
+function addRoom(){
+    var nome = document.getElementById("roomName").value;
+    var prezzo = document.getElementById("price").value;
+    if(nome == ""){
+        showAlert("Inserisci un nome!" , "danger", "addRoomAlertDiv");
+        return;
+    }
+    if(prezzo == ""){
+        showAlert("Inserisci un prezzo!" , "danger", "addRoomAlertDiv");
+        return;
+    }
+    if(prezzo < 0){
+        showAlert("Inserisci un prezzo valido!" , "danger", "addRoomAlertDiv");
+        return;
+    }
+    if(prezzo > 100000){
+        showAlert("Inserisci un prezzo ragionevole!" , "danger", "addRoomAlertDiv");
+        return;
+    }
+    addRoomMod.hide();
+    roomsToAdd.push({name: nome, price: prezzo, description: ""});
+    showAlert("Room added" , "success");
+    var roms = document.getElementById("newRooms");
+    roms.innerHTML = createSmallRoomDiv(roomsToAdd, true);
+    
+}
+
+
+
 
 /**
  * This function refresh the list of posts
@@ -198,7 +263,6 @@ function loadPosts() {
     home_div.hidden = true;
 
     main_div.innerHTML = "<h2>Annunci:</h2>";
-
 
 
     fetch('../api/v2/posts')
@@ -234,11 +298,19 @@ function insertPost()
     //get the post title
     var postTitle = document.getElementById("postTitle").value;
     var postDesc = document.getElementById("postDesc").value;
-    var price = document.getElementById("price").value;
     var via = document.getElementById("addrOne").value;
     var comu = document.getElementById("addrTwo").value;
     var prov = document.getElementById("addrThree").value;
     var contr = document.getElementById("tyContr").value;
+    var min = roomsToAdd[0].price;
+    var max = roomsToAdd[0].price;
+    roomsToAdd.forEach(room => {
+        if(room.price < min) min = room.price;
+        if(room.price > max) max = room.price;
+    });
+    var showPrice;
+    if(min == max) showPrice = min;
+    else showPrice = `${min} - ${max}`;
     
     // console.log(postTitle);
 
@@ -251,10 +323,10 @@ function insertPost()
             email: loggedUser.email,
             contract: contr,
             phone: "1234453",
-            rooms: 1,
-            available: null,
+            rooms: roomsToAdd.length + 1,
+            available: roomsToAdd,
             where: `${via} - ${comu}[${prov}]`,
-            showPrice: price,
+            showPrice: showPrice,
             createdBy: loggedUser.id
         }),
     })
@@ -266,6 +338,8 @@ function insertPost()
         }
         else {
             showToast('Post creato con successo!',"Successo", "success");
+            roomsToAdd = [];
+            modalAdd.innerHTML = "";
             loadPosts();
         }
         return;
@@ -498,6 +572,11 @@ function remFavorite(id){
     .catch( error => console.error(error) ); // If there is any error you will catch them here
 }
 
+function newRoomCard(){
+
+}
+
+
 
  
 /**
@@ -516,15 +595,14 @@ function newPostPage()
     {
         var form= `    <form id="createform" method="post" action="api/v1/post">
         <h2>Crea nuovo annuncio:</h2>
-        <div class="form-floating mb-3" id="usrDiv">
-          <input id="postTitle" name="title" maxlength="50" class="form-control" placeholder="Titolo">
-          <label for="postTitle">Titolo</label>
-          <div class="form-text">Lunghezza massima: 50 caratteri</div>
+        <input id="postTitle" name="title" maxlength="50" class="form-control" placeholder="Titolo">
+        <div class="invalid-feedback">
+            Inserisci un titolo.
         </div>
         <hr>
         <div class="input-group mb-3" id="usrDiv">
           <span class="input-group-text">Descrizione</span>
-          <textarea id="postDesc" name="postDesc" class="form-control" maxlength="800" placeholder="Descrizione"></textarea>
+          <textarea id="postDesc" name="postDesc" class="form-control" maxlength="800" placeholder="Descrizione" rows="5"></textarea>
         </div>
         <div class="row g-3">
           <hr>
@@ -536,46 +614,45 @@ function newPostPage()
               <option value="Mensile">Mensile</option>
               <option value="Altro">Altro</option>
             </select>
+            <div class="invalid-feedback">
+                Scegli il tipo di contratto.
+            </div>
           </div>
           <hr>
           <div class="mb-3 col-6">
             <div class="input-group">
               <div class="input-group-text"><i class="bi bi-geo-alt"></i></div>
               <input type="text" class="form-control" id="addrOne" placeholder="Indirizzo">
+              <div class="invalid-feedback">
+                Inserisci un indirizzo.
+                </div>
             </div>
           </div>
           <div class="mb-3 col-3">
             <input id="addrTwo" name="provincia" class="form-control" placeholder="Comune" list="comu" type="text">
+            <div class="invalid-feedback">
+                Inserisci un Comune.
+            </div>
           </div>
           <div class="mb-3 col-3">
             <input id="addrThree" name="provincia" class="form-control" placeholder="Provincia" list="prov" type="text">
+            <div class="invalid-feedback">
+                Inserisci una Provincia.
+            </div>
           </div>
           <hr>
         </div>
         <div class="card mb-3">
           <div class="card-header"><h5 class="card-title">Stanze</h5></div>
-          <div class="card-body">
-            <div class="card mb-3 mt-3">
-              <div class="card-header"><h6 class="card-title">Info stanza</h6></div>
-              <div class="card-body">
-                <div class="input-group mb-3">
-                  <div class="input-group-text">Nome Stanza</div>
-                  <input type="text" class="form-control" id="specificSizeInputGroupUsername" placeholder="Nome">
-                </div>
-                <div class="input-group mb-3">
-                  <input type="text" class="form-control" id="price" placeholder="Prezzo">
-                  <div class="input-group-text"><i class="bi bi-currency-euro"></i></div>
-                </div>
-              </div>
+          <div class="card-body" >
+          <div class="row row-cols-1 row-cols-md-2 g-4" id="newRooms">
             </div>
-            <div class="mb-3">
-              <h2><i class="bi bi-plus-square-dotted"></i></h2><span>Aggiungi stanza</span>
             </div>
-          </div>
+          <button type="button" class="btn btn-secondary" onclick="showAddRoom()">Aggiungi Stanza</button>
         </div>
         <button type="button" class="btn btn-primary" onclick="insertPost()">Crea annuncio</button>
       </form>`;
-
+        
         const home_div = document.getElementById("home_div");
         home_div.hidden = true;
         const main_div = document.getElementById("main_div");
@@ -601,7 +678,7 @@ function loginPage()
 {
     modInp.innerHTML = `<div class="modal-header p-5 pb-4 border-bottom-0">
         <h2 class="fw-bold mb-0">Login</h2>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="loadPosts()"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
     <div class="modal-body p-5 pt-0">
         <form class="">
