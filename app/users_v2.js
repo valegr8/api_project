@@ -154,7 +154,7 @@ router.post('/:uid/posts', async function(req,res) {
  * Get all posts published by a user
  */
  //uid = user id 
-router.get('/:uid/postsCr', async function(req,res) {
+router.get('/:uid/posts', async function(req,res) {
 	let uid = req.params.uid;
 	let user = await User.findById({_id: uid});
 	
@@ -192,6 +192,70 @@ router.get('/:uid/posts/:id', async function(req,res) {
 		});
 	}
 	
+});
+
+//returns the array containing
+//all the rooms
+router.get('/:uid/posts/:id/rooms/', async function(req,res) {
+	let uid = req.params.uid;
+	let id = req.params.id;
+	
+	let query = {
+		"_id": id,
+		"owner_id": uid
+	};
+	
+	let post = await Post.findOne(query).exec();
+	utils.setResponseStatus(post.available,res);
+});
+
+//returns the room with id equal to rid
+//rid = room id
+router.get('/:uid/posts/:id/rooms/:rid', async function(req,res) {
+	let uid = req.params.uid;
+	let id = req.params.id;
+	let name = req.params.name;
+	let rid = req.params.rid;
+	
+	let query = {
+		"_id": id,
+		"createdBy": uid,		
+	};
+	
+	let post = await Post.findOne(query).exec();
+	let room = post.available.find((v) => {
+		let r = false;
+		if(v.id === rid)
+			r = true;
+		return r;
+	});
+	utils.setResponseStatus(room,res);
+});
+
+
+//removes from the array the room with
+//id equal to rid
+//rid = room id
+router.delete('/:uid/posts/:id/rooms/:rid', async function(req,res) {
+	let uid = req.params.uid;
+	let id = req.params.id;
+	let rid = req.params.rid;
+	
+	let query = {
+		"_id": id,
+		"createdBy": uid,		
+	};
+	
+	let post = await Post.findOne(query).exec();
+	let index = post.available.findIndex((v) => {
+		let r = false;
+		if(v.id === rid)
+			r = true;
+		return r;
+	});	
+	let a = post.available.splice(index,1);
+	await post.save();	
+	utils.setDeleteStatus(post.available,res);
 });
 
 
