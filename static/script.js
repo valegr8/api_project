@@ -1,4 +1,4 @@
-/**
+﻿/**
  * This variable stores the logged in user
  */
 var loggedUser = {};
@@ -752,7 +752,7 @@ function postCreatedPage(){
     home_div.hidden = true;
     const main_div = document.getElementById("main_div");
     main_div.innerHTML = "<h2>Annunci creati:</h2>";
-    fetch('../api/v2/users/'+ loggedUser.id +'/postsCr', {method: "GET"})
+    fetch('../api/v2/users/'+ loggedUser.id +'/posts', {method: "GET"})
     .then((resp) => resp.json()) // Transform the data into json
     .then(function(data) { // Here you get the data to modify
         if (!data.message) 
