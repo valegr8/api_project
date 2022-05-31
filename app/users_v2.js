@@ -126,6 +126,8 @@ router.post('/:uid/posts', async function(req,res) {
 		createdBy: uid,
 		contract: req.body.contract,
 		phone: req.body.phone,
+		showPrice: req.body.showPrice,
+		email: req.body.email,
 		rooms: req.body.rooms,
 		available: req.body.available,
 		where: req.body.where
@@ -144,7 +146,7 @@ router.post('/:uid/posts', async function(req,res) {
 		}
 	}).catch((e) => {		
 		// If the post fails we return 404 status code
-		utils.notFound(res,'Post saving failed',info);
+		utils.notFound(res,'Post saving failed, '+ e,info);
 	});
 });
 
@@ -160,7 +162,7 @@ router.get('/:uid/postsCr', async function(req,res) {
 		utils.badRequest(res);
 		return;
 	}else{		
-		Post.find({createdBy : user.email }).exec().then((post)=>{
+		Post.find({createdBy : user._id }).exec().then((post)=>{
 			utils.setResponseStatus(post,res, 'Post published retrieved correctly',info);
 		}).catch((e) => {
 			printd('Error: ' + e,info);

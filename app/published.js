@@ -24,13 +24,36 @@ router.delete('/:uid/posts/:id', async (req, res) =>{
 		utils.badRequest(res,'Invalid parameters');
 		return;
 	}
+    
     if (post.createdBy != req.params.uid) {
         return res.status(401).json({
             message: 'You can only delete your own posts'
         });
     }
+    User.find({}).then(users => users.forEach( (user) => {
+        console.log("sto analizzando i preferiti di "+user.email);
+        let preferiti = user.favorite;
+        let uid = user.id;
+        //console.log(preferiti);
+        preferiti.forEach( (annuncio) => {
+            //console.log(annuncio+" vs "+post._id);
+            if (annuncio == post._id) {
+                //console.log("cancello dai preferiti");
+                var index = preferiti.indexOf(annuncio);
+                //console.log(index);
+                if (index !== -1) {
+                    preferiti.splice(index, 1);
+                    //console.log("devo cercare l'utente con id: "+id);
+                    User.updateOne({ _id: uid}, {
+                        favorite: preferiti
+                    });
+                }
+                //console.log("preferiti ora sono: "+user.favorite);
+            }
+        })
+    }))
     await Post.deleteOne(post);
-    //console.log('post removed');
+    utils.printd("Post delete succesfully");
     //res.status(204).send();
     utils.setResponseStatus(post, res, 'Post deleted successfully');
 })
