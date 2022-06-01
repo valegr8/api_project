@@ -68,16 +68,14 @@ router.put('/:uid/posts/:id', async (req, res) =>{
     if (!post) {
         res.status(404).send();
         console.log('post not found');
+        utils.printd("Post non trovato","EDIT");
         return;
     }
 	if(!isValidObjectId(uid) || !isValidObjectId(id)){
 		utils.badRequest(res,'Invalid parameters');
+        utils.printd("Invalid parameters","EDIT");
 		return;
 	}
-    if (!isValid(req.body.title) || !isValid(req.body.description)) {
-        utils.badRequest(res, 'Bad request: no modification info given');
-        return;
-    }
     if (post.createdBy != uid) {
         return res.status(401).json({
             message: 'You can only modify your own posts'
@@ -85,7 +83,13 @@ router.put('/:uid/posts/:id', async (req, res) =>{
     }
     return Post.updateOne(post, {
         title: req.body.title,
-        description: req.body.description
+		description: req.body.description,
+		contract: req.body.contract,
+		phone: req.body.phone,
+		showPrice: req.body.showPrice,
+		rooms: req.body.available.length,
+		available: req.body.available,
+		where: req.body.where
     }, {
         where : {
             id: req.params.id
@@ -95,6 +99,7 @@ router.put('/:uid/posts/:id', async (req, res) =>{
             res.send(post);
         }
         else {
+            utils.printd("Invalid parameters","EDIT");
             res.status(400).send('Error');
         }
     })

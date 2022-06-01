@@ -85,11 +85,11 @@ function createCardPost(id, title, showPrice, where, typect, nRoom, buttons = fa
     <div class="g-col-6"><img src="https://www.agenziazaramella.it/wp-content/uploads/2019/05/14-Larredo-per-un-mini-appartamento-di-50-mq.jpg" class="rounded float-start w-50" ></div>
     <div class='g-col-6 card-text' >
       <dl class="row"><dt class="col-sm-6 text-start">Numero Camere</dt><dd class="col-sm-6 text-start">${nRoom}</dd>
-        <dt class="col-sm-6 text-start">Contratto</dt><dd class="col-sm-6 text-start">${typect}</dd></dl>
+        <dt class="col-sm-6 text-start">Contratto</dt><dd class="col-sm-6 text-start">${(typect == "") ? "<small class='text-muted'>Non definito</small>" :typect}</dd></dl>
       <p><i class="bi bi-geo-alt-fill"> ${where}</i></p> <h2>${showPrice}€</h2></div></a></div>${(buttons) ? `<div class="card-footer bg-transparent justify-content-center d-flex">
       <div class="d-flex justify-content-between ">
           <div class="btn-group">
-          <button type="button" class="btn btn-sm btn-outline-secondary" onclick="showEditRoom('${id}')">Modifica <i class="bi bi-pencil-square"></i></button>
+          <button type="button" class="btn btn-sm btn-outline-secondary" onclick="editPostPage('${id}')">Modifica <i class="bi bi-pencil-square"></i></button>
           <button type="button" class="btn btn-sm btn-outline-danger" onclick="deletePost('${id}')">Elimina <i class="bi bi-trash-fill"></i></button>
           </div></div>
       </div>` : ""}</div>`;
@@ -100,7 +100,7 @@ function createCardPost(id, title, showPrice, where, typect, nRoom, buttons = fa
 function createDetailPost(id,title, descr, typect, phone, email, where, nRoom, roomDiv){
     return `
     <div class='card mb-3 float-center'> 
-    <div class="card-header text-bg-dark clearfix"><div class="hstack gap-3"><h5>${title}</h5><span class="ms-auto h4" id="starAtt${id}"></span></div></div>
+    <div class="card-header"><div class="hstack gap-3"><h5>${title}</h5><span class="ms-auto h4" id="starAtt${id}"></span></div></div>
     <div class='card-body '><div class="grid"><div class="g-col-6">
           <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel"><div class="carousel-inner">
             <div class="carousel-item active"><img src="https://www.agenziazaramella.it/wp-content/uploads/2019/05/14-Larredo-per-un-mini-appartamento-di-50-mq.jpg" class="d-block w-100"></div>
@@ -113,12 +113,12 @@ function createDetailPost(id,title, descr, typect, phone, email, where, nRoom, r
             <dt class="col-sm-6 text-start">Numero Camere</dt>
             <dd class="col-sm-6 text-start">${nRoom}</dd>
             <dt class="col-sm-6 text-start">Tipologia Contratto</dt>
-            <dd class="col-sm-6 text-start">${typect}</dd>
+            <dd class="col-sm-6 text-start">${(typect == "") ? "<small class='text-muted'>Non definito</small>" :typect}</dd>
           </dl></div></div><hr>
       <p><i class="bi bi-geo-alt-fill">${where} </i></p><hr>
       <div class="text-start"><dl class="row">
           <dt class="col-sm-6 text-start">Telefono</dt>
-          <dd class="col-sm-6 text-start">${phone}</dd>
+          <dd class="col-sm-6 text-start">${(phone == "") ? "<small class='text-muted'>Non definito</small>" :phone}</dd>
           <dt class="col-sm-6 text-start">Email</dt>
           <dd class="col-sm-6 text-start">${email}</dd></dl>
       </div><hr><div class="text-start">${descr}</div><hr><div class="mt-3">
@@ -369,8 +369,8 @@ function insertPost()
             title: postTitle , 
             description: postDesc,
             email: loggedUser.email,
-            contract: `${(contr == "") ? "<small class='text-muted'>Non definito</small>" : contr}`,
-            phone: `${(phone == "") ? "<small class='text-muted'>Non definito</small>" : phone}`,
+            contract: contr,
+            phone: phone,
             rooms: roomsToAdd.length + 1,
             available: roomsToAdd,
             where: `${(via == "") ? "" : via + ' - '}${comu}[${prov}]`,
@@ -619,12 +619,6 @@ function remFavorite(id){
     .catch( error => console.error(error) ); // If there is any error you will catch them here
 }
 
-function newRoomCard(){
-
-}
-
-
-
  
 /**
  * This function is called by clicking on the "add new post" button.
@@ -648,12 +642,15 @@ function newPostPage()
             Inserisci un titolo.
         </div>
         <hr>
-        <div class="input-group mb-3" id="usrDiv">
+        <div class="input-group mb-3 " id="usrDiv">
           <span class="input-group-text">Descrizione</span>
           <textarea id="postDesc" name="postDesc" class="form-control" maxlength="800" placeholder="Descrizione" rows="5"></textarea>
         </div>
         <hr>
-        <input id="phone" class="form-control" placeholder="Numero di Telefono" type="number">
+        <div class="input-group mt-3 mb-3">
+        <div class="input-group-text"><i class="bi bi-telephone"></i></div>
+        <input type="text" class="form-control" id="phone" placeholder="Numero di telefono" type="number">
+        </div>
         <div class="row g-3">
           <hr>
           <div class="input-group mb-3 col-12">
@@ -894,9 +891,143 @@ function postCreatedPage(){
     .catch( error => console.error(error) );// If there is any error you will catch them here
 }
 
-function editPostPage(){
+function editPostPage(id){
     ///:uid/posts/:id
+    if(loggedUser.email == null){
+        const modal = new bootstrap.Modal('#modalLoginNeed', {keyboard: false});
+        modal.show();
+        return;
+    }
+    fetch('../api/v2/posts/' + id)
+    .then((resp) => resp.json()) // Transform the data into json
+    .then(function(data) { // Here you get the data to modify
+        // console.log(data);
+        var post = data.message;
+        if (!data.message) 
+            console.log('no data');
+        if (Array.isArray(data.message)) 
+            console.log('result is an array');
+
+            var form= `    <form id="createform" method="post" action="api/v1/post">
+        <h2>Modifica Annuncio</h2>
+        <input id="postTitle" name="title" maxlength="50" class="form-control" placeholder="Titolo" value="${post.title}">
+        <hr>
+        <div class="input-group mb-3" id="usrDiv">
+          <span class="input-group-text">Descrizione</span>
+          <textarea id="postDesc" name="postDesc" class="form-control" maxlength="800" placeholder="Descrizione" rows="5">${post.description}</textarea>
+        </div>
+        <hr>
+        <div class="input-group mt-3 mb-3">
+            <div class="input-group-text"><i class="bi bi-telephone"></i></div>
+            <input type="text" class="form-control" id="phone" placeholder="Numero di telefono" value="${post.phone}" type="number">
+        </div>
+        <div class="row g-3">
+          <hr>
+          <div class="input-group mb-3 col-12">
+            <label class="input-group-text" for="tyContr">Tipologia contratto</label>
+            <select class="form-select" id="tyContr" value="${post.contract}">
+              <option value="Annuale">Annuale</option>
+              <option value="Mensile">Mensile</option>
+              <option value="Altro">Altro</option>
+            </select>
+          </div>
+          <hr>
+            <div class="input-group">
+              <div class="input-group-text"><i class="bi bi-geo-alt"></i></div>
+              <input type="text" class="form-control" id="addr" placeholder="Indirizzo" value="${post.where}">
+            </div>
+          <hr>
+        </div>
+        <div class="card mb-3">
+          <div class="card-header"><h5 class="card-title">Stanze</h5></div>
+          <div class="card-body" >
+          <div class="row row-cols-1 row-cols-md-2 g-4" id="newRooms">
+            </div>
+            </div>
+          <button type="button" class="btn btn-secondary" onclick="showAddRoom()">Aggiungi Stanza</button>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="editPost('${id}')">Conferma le modifiche</button>
+        <button type="button" class="btn btn-danger" onclick="postCreatedPage()">Annulla</button>
+      </form>`;
+        
+        const home_div = document.getElementById("home_div");
+        home_div.hidden = true;
+        const main_div = document.getElementById("main_div");
+        main_div.innerHTML=form;
+        var prov = document.getElementById("prov");
+        for(let i = 0; i< province.length; i++){
+            let provi = province[i].split(",");
+            prov.appendChild(new Option(provi[0]));
+        }
+        var comun = document.getElementById("comu");
+        for(let i = 0; i< comuni.length; i++){
+            let comune = comuni[i].split(",");
+            comun.appendChild(new Option(comune[0]));
+        }
+
+        roomsToAdd = post.available;
+        var roms = document.getElementById("newRooms");
+        roms.innerHTML = createSmallRoomDiv(roomsToAdd, true);
+
+        
+    })
+    .catch( error => console.error(error) );// If there is any error you will catch them here
 }
+function editPost(id){
+    ///:uid/posts/:id
+    var postTitle = document.getElementById("postTitle").value;
+    if(postTitle == "") {showAlert("Inserisci un titolo!", "danger"); return;};
+    var postDesc = document.getElementById("postDesc").value;
+    if(postDesc == "") {showAlert("Inserisci una descrizione!", "danger"); return;};
+    var phone = document.getElementById("phone").value;
+    var addr = document.getElementById("addr").value;
+    if(addr == "") {showAlert("Inserisci il comune!", "danger"); return;};
+    if(prov == "") {showAlert("Inserisci il comune!", "danger"); return;};
+    var contr = document.getElementById("tyContr").value;
+    if(roomsToAdd.length == 0) {showAlert("Inserisci almeno una stanza!", "danger"); return;};
+    var min = roomsToAdd[0].price;
+    var max = roomsToAdd[0].price;
+    roomsToAdd.forEach(room => {
+        if(room.price < min) min = room.price;
+        if(room.price > max) max = room.price;
+    });
+    var showPrice;
+    if(min == max) showPrice = min;
+    else showPrice = `${min} - ${max}`;
+    
+    // console.log(postTitle);
+
+    fetch('../api/v2/published/'+ loggedUser.id +'/posts/' + id, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify( { 
+            title: postTitle , 
+            description: postDesc,
+            email: loggedUser.email,
+            contract: contr,
+            phone: phone,
+            rooms: roomsToAdd.length + 1,
+            available: roomsToAdd,
+            where: addr,
+            showPrice: showPrice,
+            createdBy: loggedUser.id
+        }),
+    })
+    .then((resp) => {
+        if(resp.status == 400){
+            showAlert("Errore modifica annuncio", "danger")
+        }
+        else {
+            showToast('Post modificato con successo',"Successo", "success");
+            roomsToAdd = [];
+            modalAdd.innerHTML = "";
+            postCreatedPage();
+        }
+        return;
+    })
+    .catch( error => console.error(error) ); // If there is any error you will catch them here
+}
+
 
 
 function deletePost(pid){
