@@ -77,7 +77,7 @@ const fullStar = '<i class="bi bi-star-fill"></i>';
 function addStar(fav,id){ return  fav ? `<button id="Fav${id}" onclick="remFavorite('${id}')" class="btn btn-link text-warning">${fullStar}</button>` : `<button id="notFav${id}" onclick="setFavorite('${id}')" class="btn btn-link text-warning">${empStar}</button>`;}
 
 
-function createCardPost(id, title, showPrice, where, typect, nRoom){
+function createCardPost(id, title, showPrice, where, typect, nRoom, buttons = false){
     return `    <div class='card mb-3 float-center' style='width: 40rem;'> <div class="card-header text-bg-dark clearfix">
     <div class="hstack gap-3"><h5>${title}</h5><span class="ms-auto h4 fav" id="starAtt${id}"></span></div></div>
   <div class='card-body grid'>
@@ -85,8 +85,14 @@ function createCardPost(id, title, showPrice, where, typect, nRoom){
     <div class="g-col-6"><img src="https://www.agenziazaramella.it/wp-content/uploads/2019/05/14-Larredo-per-un-mini-appartamento-di-50-mq.jpg" class="rounded float-start w-50" ></div>
     <div class='g-col-6 card-text' >
       <dl class="row"><dt class="col-sm-6 text-start">Numero Camere</dt><dd class="col-sm-6 text-start">${nRoom}</dd>
-        <dt class="col-sm-6 text-start">Tipologia Contratto</dt><dd class="col-sm-6 text-start">${typect}</dd></dl>
-      <p><i class="bi bi-geo-alt-fill"> ${where}</i></p> <h2>${showPrice}€</h2></div></a></div></div>`;
+        <dt class="col-sm-6 text-start">Contratto</dt><dd class="col-sm-6 text-start">${typect}</dd></dl>
+      <p><i class="bi bi-geo-alt-fill"> ${where}</i></p> <h2>${showPrice}€</h2></div></a></div>${(buttons) ? `<div class="card-footer bg-transparent justify-content-center d-flex">
+      <div class="d-flex justify-content-between ">
+          <div class="btn-group">
+          <button type="button" class="btn btn-sm btn-outline-secondary" onclick="showEditRoom('${id}')">Modifica <i class="bi bi-pencil-square"></i></button>
+          <button type="button" class="btn btn-sm btn-outline-danger" onclick="deletePost('${id}')">Elimina <i class="bi bi-trash-fill"></i></button>
+          </div></div>
+      </div>` : ""}</div>`;
 
 
 }
@@ -333,11 +339,17 @@ function insertPost()
 {
     //get the post title
     var postTitle = document.getElementById("postTitle").value;
+    if(postTitle == "") {showAlert("Inserisci un titolo!", "danger"); return;};
     var postDesc = document.getElementById("postDesc").value;
+    if(postDesc == "") {showAlert("Inserisci una descrizione!", "danger"); return;};
+    var phone = document.getElementById("phone").value;
     var via = document.getElementById("addrOne").value;
     var comu = document.getElementById("addrTwo").value;
+    if(comu == "") {showAlert("Inserisci il comune!", "danger"); return;};
     var prov = document.getElementById("addrThree").value;
+    if(prov == "") {showAlert("Inserisci il comune!", "danger"); return;};
     var contr = document.getElementById("tyContr").value;
+    if(roomsToAdd.length == 0) {showAlert("Inserisci almeno una stanza!", "danger"); return;};
     var min = roomsToAdd[0].price;
     var max = roomsToAdd[0].price;
     roomsToAdd.forEach(room => {
@@ -357,11 +369,11 @@ function insertPost()
             title: postTitle , 
             description: postDesc,
             email: loggedUser.email,
-            contract: contr,
-            phone: "1234453",
+            contract: `${(contr == "") ? "<small class='text-muted'>Non definito</small>" : contr}`,
+            phone: `${(phone == "") ? "<small class='text-muted'>Non definito</small>" : phone}`,
             rooms: roomsToAdd.length + 1,
             available: roomsToAdd,
-            where: `${via} - ${comu}[${prov}]`,
+            where: `${(via == "") ? "" : via + ' - '}${comu}[${prov}]`,
             showPrice: showPrice,
             createdBy: loggedUser.id
         }),
@@ -640,12 +652,14 @@ function newPostPage()
           <span class="input-group-text">Descrizione</span>
           <textarea id="postDesc" name="postDesc" class="form-control" maxlength="800" placeholder="Descrizione" rows="5"></textarea>
         </div>
+        <hr>
+        <input id="phone" class="form-control" placeholder="Numero di Telefono" type="number">
         <div class="row g-3">
           <hr>
           <div class="input-group mb-3 col-12">
             <label class="input-group-text" for="tyContr">Tipologia contratto</label>
             <select class="form-select" id="tyContr">
-              <option selected disabled>Scegli...</option>
+              <option selected disabled value="">Scegli...</option>
               <option value="Annuale">Annuale</option>
               <option value="Mensile">Mensile</option>
               <option value="Altro">Altro</option>
@@ -874,7 +888,7 @@ function postCreatedPage(){
         if(data.message.length == 0) main_div.innerHTML = "<h3>Nessun annuncio creato</h3><button type='button' class='btn btn-success' onclick='newPostPage()'>Crea il tuo primo annuncio</button>";
         return data.message.map(function(post) { // Map through the results and for each run the code below
             counter++;
-            main_div.innerHTML+= createCardPost(post._id, post.title + ` <span class="badge text-bg-secondary ms-auto h4"><i class="bi bi-pencil-square"></i></span> <span class="badge text-bg-danger ms-auto h4"><i class="bi bi-trash-fill"></i></span>`, post.showPrice, post.where, post.contract,post.rooms);
+            main_div.innerHTML+= createCardPost(post._id, post.title, post.showPrice, post.where, post.contract,post.rooms, true);
         });
     })
     .catch( error => console.error(error) );// If there is any error you will catch them here
@@ -884,9 +898,6 @@ function editPostPage(){
     ///:uid/posts/:id
 }
 
-function deletePostConf(pid){
-    deletePost(pid);
-}
 
 function deletePost(pid){
     //
@@ -894,6 +905,7 @@ function deletePost(pid){
     .then((resp) => resp.json()) // Transform the data into json
     .then(function(data) {
         showToast(data.message, "Eliminazione Post", "dark");
+        postCreatedPage();
     });
 }
 
