@@ -205,7 +205,7 @@ router.get('/:uid/posts/:id/rooms/', async function(req,res) {
 	let id = req.params.id;
 	
 	if(!isValidObjectId(uid) || !isValidObjectId(id)){
-		utils.badRequest(res, 'At least one id is not valid', info);	//return 400;
+		utils.badRequest(res, 'At least one id is not valid');	//return 400;
 		return;
 	}
 	
@@ -215,6 +215,11 @@ router.get('/:uid/posts/:id/rooms/', async function(req,res) {
 	};
 	
 	let post = await Post.findOne(query).exec();
+	
+	if(post.createdBy != uid){
+		utils.badRequest(res, 'Post id and user id are mismatching');	//return 400;
+		return;
+	}
 	utils.setResponseStatus(post.available,res);
 });
 
@@ -237,6 +242,12 @@ router.get('/:uid/posts/:id/rooms/:rid', async function(req,res) {
 	};
 	
 	let post = await Post.findOne(query).exec();
+	
+	if(post.createdBy != uid){
+		utils.badRequest(res, 'Post id and user id are mismatching');	//return 400;
+		return;
+	}
+	
 	let room = post.available.find((v) => {
 		let r = false;
 		if(v.id === rid)
@@ -266,6 +277,12 @@ router.delete('/:uid/posts/:id/rooms/:rid', async function(req,res) {
 	};
 	
 	let post = await Post.findOne(query).exec();
+	
+	if(post.createdBy != uid){
+		utils.badRequest(res, 'Post id and user id are mismatching');	//return 400;
+		return;
+	}
+	
 	let index = post.available.findIndex((v) => {
 		let r = false;
 		if(v.id === rid)
