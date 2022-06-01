@@ -30,8 +30,17 @@ describe('DELETE /api/v2/published/:uid/posts/:id', () =>{
           createdBy: "628a1d73fc4964ea27473f96",
           contract: "mono",
           phone: "0425404040",
+		  showPrice:"500",
+		  rooms: 2,
+		  email:"sonic@prova.com",
           where: "lontano",
-          available: [],
+          available: [
+		    {
+				name:"Stanza1",
+				price:500,
+				description:"Stanza"
+			}
+		  ],
           __v : 0
         })
         return mock_post;
@@ -90,15 +99,19 @@ describe('DELETE /api/v2/published/:uid/posts/:id', () =>{
     describe('without token', () => {
       it('should respond with a 401 status code', async () => {
         const postId = "629346eee4ffb99bc81af228";
+		const userId = "62926a256236cd334360ac49";		
         await request(app)
-          .delete(`/api/v2/published/628a1d73fc4964ea27473f96/posts/${postId}`)
-          .expect(401);
+          .delete(`/api/v2/published/${userId}/posts/${postId}`)
+		  .expect('Content-Type', /json/)
+          .expect(401,{
+            message: 'You can only delete your own posts'
+        });
       });
     });
 
     describe('with non-existing id', () => {
       it('should respond with a 404 status code', async () => {
-        const postId = "629346eee4ffb99bc81af228";
+        const postId = "629346eee4ffb99bc81af228";		
         await request(app)
           .delete(`/api/v2/users/published/628a1d73fc4964ea27473f96/posts/000000000000000000000000?token=`+token)
           .expect(404);
