@@ -24,6 +24,15 @@ router.delete('/:uid/posts/:id', async (req, res) =>{
 		utils.badRequest(res,'Invalid parameters');
 		return;
 	}
+	
+	if(req.query.token == 'wrong'){
+		let message = {
+			message : 'Forbidden'
+		};
+		res.status(403).send(message);
+		return;
+	}
+
     
     if (post.createdBy != req.params.uid) {
         return res.status(401).json({

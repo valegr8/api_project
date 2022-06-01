@@ -211,7 +211,7 @@ router.get('/:uid/posts/:id/rooms/', async function(req,res) {
 	
 	let query = {
 		"_id": id,
-		"owner_id": uid
+		"createdBy": uid
 	};
 	
 	let post = await Post.findOne(query).exec();
