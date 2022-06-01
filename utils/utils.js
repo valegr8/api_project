@@ -6,13 +6,16 @@ const utils = {};
 
 // enables the debug print when is setted to 1
 const debug = 1;
+const grcl = "\x1b[32m"; /**< green */
+const rdcl = "\x1b[31m"; /**< red */
+const rst = "\x1b[0m";   /**< no color */
 
 /**
  * Debug print
  */
-utils.printd = (string) => {
+utils.printd = (text, info = "", color = grcl) => {
 	if(debug)
-		console.log(string);
+		console.log((info == "") ? text : "["+ color + info + rst + "]" + text);
 };
 
 /**
@@ -39,30 +42,30 @@ utils.isValid = (value) => {
 /**
  * Sets a 405 http response status, method not allowed
  */
- utils.notAllowed = (res, message) => {
+ utils.notAllowed = (res, message, info = "" ) => {
 	if(!utils.isValid(message)) 
 		message = 'Method Not Allowed';
-	utils.printd(message);
+	utils.printd((info == "") ? message : "["+ info +"]" + message);
 	res.status(405).json({status: 405, message: message});
 };
 
 /**
  * Sets a 400 http response status, bad request
  */
- utils.badRequest = (res, message) => {
+ utils.badRequest = (res, message, info = "") => {
 	if(!utils.isValid(message)) 
 		message = 'Bad Request';
-	utils.printd(message);
+		utils.printd((info == "") ? message : "["+ info +"]" + message);
 	res.status(400).json({status: 400, message: message});
 };
 
 /**
  * Sets a 404 http response status, not found
  */
-utils.notFound = (res, message) => {
+utils.notFound = (res, message, info = "") => {
 	if(!utils.isValid(message)) 
 		message = 'Not Found';
-	utils.printd(message);
+	utils.printd((info == "") ? message : "["+ info +"]" + message);
 	res.status(404).json({status: 404, message: message});
 };
 
@@ -71,17 +74,17 @@ utils.notFound = (res, message) => {
  * Sets a 401 http response status, Unathorized
  */
 
-utils.wrongPassword = (res, message) => {
+utils.wrongPassword = (res, message, info = "") => {
 	if(!utils.isValid(message))
 		message = 'Unathorized';
-	utils.printd(message);
+	utils.printd((info == "") ? message : "["+ info +"]" + message);
 	res.status(401).json({status: 401, message: message});
 }
 
 /**
  * Sets a status, 200 ok or 404 Not found
  */
-utils.setResponseStatus = (param,res, message) => {
+utils.setResponseStatus = (param, res, message, info = "") => {
 	if(param) {
 		if(!utils.isValid(message))
 			utils.printd('Successful request');
@@ -96,30 +99,30 @@ utils.setResponseStatus = (param,res, message) => {
 /**
  * Sets a 201 status code, resource created
  */
-utils.created = (res, message) => {
+utils.created = (res, message, info = "") => {
 	if(!utils.isValid(message)) 
 		message = 'Created';
-	utils.printd(message);
+	utils.printd((info == "") ? message : "["+ info +"]" + message);
 	res.status(201).json({status: 201, message: message});
 };
 
 /**
  * Sets a 409 status code, the resource already exists
  */
-utils.alreadyExists = (res, message) => {
+utils.alreadyExists = (res, message, info = "") => {
 	if(!utils.isValid(message)) 
 		message = 'The resource already exists';
-	utils.printd(message);
+	utils.printd((info == "") ? message : "["+ info +"]" + message);
 	res.status(409).json({status: 409, message: message});
 };
 
 /**
  * Sets a 500 status code, Internal Server Error
  */
- utils.internalServerError = (res, message) => {
+ utils.internalServerError = (res, message, info = "") => {
 	if(!utils.isValid(message)) 
 		message = 'Internal Server Error';
-	utils.printd(message);
+	utils.printd((info == "") ? message : "["+ info +"]" + message);
 	res.status(500).json({status: 500, message: message});
 };
 

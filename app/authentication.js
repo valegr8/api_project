@@ -3,7 +3,7 @@ const router = express.Router();
 /**
  * get user mongoose model
  */
-const User = require('./models/user'); 
+const User = require('./models/user_v2'); 
 /**
  * used to create, sign, and verify tokens
  */

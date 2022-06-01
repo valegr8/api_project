@@ -1,14 +1,17 @@
-/**
+﻿/**
  * This variable stores the logged in user
  */
 var loggedUser = {};
 var counter = 0;
 const inMod = new bootstrap.Modal('#modalInput', {keyboard: false});
+const addRoomMod = new bootstrap.Modal('#modalAddRoom', {keyboard: false});
+const modalAdd = document.getElementById("modalAdd"); 
 const modInp = document.getElementById("modIn"); 
 const postDetailMod = new bootstrap.Modal('#postDetailModal', {});
 const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
 const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-window.onload = loadPosts();
+var roomsToAdd = [];
+
 
 function showToast(message,title, type){
     const toast = new bootstrap.Toast(document.getElementById('liveToast'));
@@ -71,26 +74,33 @@ const fullStar = '<i class="bi bi-star-fill"></i>';
 /**
  * Create a post with a card user interface (bootstap)
  */
-function addStar(fav,id){ return fav ? `<a href="#" id="Fav${id}" onclick="remFavorite('${id}')" class="text-decoration-none text-warning">${fullStar}</a>` : `<a href="#" id="notFav${id}" onclick="setFavorite('${id}')" class="text-decoration-none text-warning">${empStar}</a>`}
+function addStar(fav,id){ return  fav ? `<button id="Fav${id}" onclick="remFavorite('${id}')" class="btn btn-link text-warning">${fullStar}</button>` : `<button id="notFav${id}" onclick="setFavorite('${id}')" class="btn btn-link text-warning">${empStar}</button>`;}
 
 
-function createCardPost(id, title){
-    return `    <div class='card mb-3 float-center' style='width: 40rem;'> <div class="card-header clearfix">
+function createCardPost(id, title, showPrice, where, typect, nRoom, buttons = false){
+    return `    <div class='card mb-3 float-center' style='width: 40rem;'> <div class="card-header text-bg-dark clearfix">
     <div class="hstack gap-3"><h5>${title}</h5><span class="ms-auto h4 fav" id="starAtt${id}"></span></div></div>
   <div class='card-body grid'>
-    <a href="#" onclick='loadDetails("${id}")' class="text-decoration-none text-dark">
+    <a onclick='loadDetails("${id}")' class="text-decoration-none text-dark">
     <div class="g-col-6"><img src="https://www.agenziazaramella.it/wp-content/uploads/2019/05/14-Larredo-per-un-mini-appartamento-di-50-mq.jpg" class="rounded float-start w-50" ></div>
     <div class='g-col-6 card-text' >
-      <dl class="row"><dt class="col-sm-6 text-start">Numero Camere</dt><dd class="col-sm-6 text-start">3</dd>
-        <dt class="col-sm-6 text-start">Tipologia Contratto</dt><dd class="col-sm-6 text-start">Annuale</dd><dt class="col-sm-6 text-start">Tipologia Locale</dt>
-        <dd class="col-sm-6 text-start">Monolocale</dd></dl>
-      <p><i class="bi bi-geo-alt-fill"> Via Gino,32 - Trento(TN)</i></p> <h2>320€</h2></div></a></div></div>`;
+      <dl class="row"><dt class="col-sm-6 text-start">Numero Camere</dt><dd class="col-sm-6 text-start">${nRoom}</dd>
+        <dt class="col-sm-6 text-start">Contratto</dt><dd class="col-sm-6 text-start">${(typect == "") ? "<small class='text-muted'>Non definito</small>" :typect}</dd></dl>
+      <p><i class="bi bi-geo-alt-fill"> ${where}</i></p> <h2>${showPrice}€</h2></div></a></div>${(buttons) ? `<div class="card-footer bg-transparent justify-content-center d-flex">
+      <div class="d-flex justify-content-between ">
+          <div class="btn-group">
+          <button type="button" class="btn btn-sm btn-outline-secondary" onclick="editPostPage('${id}')">Modifica <i class="bi bi-pencil-square"></i></button>
+          <button type="button" class="btn btn-sm btn-outline-danger" onclick="deletePost('${id}')">Elimina <i class="bi bi-trash-fill"></i></button>
+          </div></div>
+      </div>` : ""}</div>`;
+
+
 }
 
-function createDetailPost(id,title, descr,createdBy){
+function createDetailPost(id,title, descr, typect, phone, email, where, nRoom, roomDiv){
     return `
     <div class='card mb-3 float-center'> 
-    <div class="card-header clearfix"><div class="hstack gap-3"><h5>${title}</h5><span class="ms-auto h4" id="starAtt${id}"></span></div></div>
+    <div class="card-header"><div class="hstack gap-3"><h5>${title}</h5><span class="ms-auto h4" id="starAtt${id}"></span></div></div>
     <div class='card-body '><div class="grid"><div class="g-col-6">
           <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel"><div class="carousel-inner">
             <div class="carousel-item active"><img src="https://www.agenziazaramella.it/wp-content/uploads/2019/05/14-Larredo-per-un-mini-appartamento-di-50-mq.jpg" class="d-block w-100"></div>
@@ -101,93 +111,187 @@ function createDetailPost(id,title, descr,createdBy){
             <span class="carousel-control-next-icon" aria-hidden="true"></span><span class="visually-hidden">Successiva</span></button></div>
       </div><hr><div class='g-col-6 card-text' ><dl class="row">
             <dt class="col-sm-6 text-start">Numero Camere</dt>
-            <dd class="col-sm-6 text-start">3</dd>
+            <dd class="col-sm-6 text-start">${nRoom}</dd>
             <dt class="col-sm-6 text-start">Tipologia Contratto</dt>
-            <dd class="col-sm-6 text-start">Annuale</dd>
-            <dt class="col-sm-6 text-start">Tipologia Locale</dt>
-            <dd class="col-sm-6 text-start">Monolocale</dd></dl>
+            <dd class="col-sm-6 text-start">${(typect == "") ? "<small class='text-muted'>Non definito</small>" :typect}</dd>
           </dl></div></div><hr>
-      <p><i class="bi bi-geo-alt-fill"> Via Gino, 32 - Trento(TN)</i></p><hr>
+      <p><i class="bi bi-geo-alt-fill">${where} </i></p><hr>
       <div class="text-start"><dl class="row">
           <dt class="col-sm-6 text-start">Telefono</dt>
-          <dd class="col-sm-6 text-start">321 1234567</dd>
+          <dd class="col-sm-6 text-start">${(phone == "") ? "<small class='text-muted'>Non definito</small>" :phone}</dd>
           <dt class="col-sm-6 text-start">Email</dt>
-          <dd class="col-sm-6 text-start">${createdBy}</dd></dl>
+          <dd class="col-sm-6 text-start">${email}</dd></dl>
       </div><hr><div class="text-start">${descr}</div><hr><div class="mt-3">
         <h5>Camere disponibili:</h5>
         <div class="row row-cols-1 row-cols-md-2 g-4">
-          <div class="col">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">Singola 1</h5>
-                <h2 class="card-text">320€</h2>
-              </div>
-            </div>
-          </div>
-          <div class="col">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">Singola 2</h5>
-                <h2 class="card-text">320€</h2>
-              </div>
-            </div>
-          </div>
-          <div class="col">
-            <div class="card">
-              <div class="card-body">
-                <h5 class="card-title">Doppia</h5>
-                <h2 class="card-text">280 €</h2>
-              </div>
-            </div>
-          </div>
+          ${roomDiv}
         </div>
       </div>
     </div>
   </div>`;
 }
 
+function createSmallRoomDiv(rooms, buttons = false){
+    var div = '';
+    rooms.forEach((room,index )=> {
+        div+= `
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">${room.name}</h5>
+                    <h2 class="card-text">${room.price}€</h2>
+                    ${(buttons) ? `
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="showEditRoom(${index})"><i class="bi bi-pencil-square"></i></button>
+                        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeRoom(${index})"><i class="bi bi-trash-fill"></i></button>
+                        </div>
+                    </div>` : ""}
+                </div>
+            </div>
+        </div>`;
+    });
+    return div;
+}
+
+
+
+
 /**
  * This function creates a page that shows the details of a post
  */
 function loadDetails(id) {
-        //remove posts
-        const main_div = document.getElementById("main_div");
-        //main_div.innerHTML = "";
+    //remove posts
+    const main_div = document.getElementById("main_div");
+    //main_div.innerHTML = "";
 
- 
-        const div = document.createElement("div");
-        div.setAttribute('class', "form-group");
-        div.setAttribute('id', "posts_div");
 
-        div.innerHTML = "<div id='posts'></div>";
-        main_div.appendChild(div);
+    const div = document.createElement("div");
+    div.setAttribute('class', "form-group");
+    div.setAttribute('id', "posts_div");
 
-        fetch('../api/v2/posts/' + id)
-        .then((resp) => resp.json()) // Transform the data into json
-        .then(function(data) { // Here you get the data to modify
-            // console.log(data);
-            
-            if (!data.message) 
-                console.log('no data');
-            if (Array.isArray(data.message)) 
-                console.log('result is an array');
+    div.innerHTML = "<div id='posts'></div>";
+    main_div.appendChild(div);
 
-            post = data.message;
-            const post_div = document.getElementById("detailModal");
-            post_div.innerHTML = "";
+    fetch('../api/v2/posts/' + id)
+    .then((resp) => resp.json()) // Transform the data into json
+    .then(function(data) { // Here you get the data to modify
+        // console.log(data);
+        
+        if (!data.message) 
+            console.log('no data');
+        if (Array.isArray(data.message)) 
+            console.log('result is an array');
 
-            var star = false;
-            if(loggedUser.favorite != null){loggedUser.favorite.forEach(fav => {if(id == fav) star = true;});}
-            
-            post_div.innerHTML+= createDetailPost(id,post.title, post.description, post.createdBy);
-            var postIn = document.getElementById("starAtt"+id);
-            postIn.innerHTML=addStar(star, id);
-            post_div.innerHTML+= "<a href='#' class='text-muted text-decoration-none mb-3' data-bs-dismiss='modal'><i class='bi bi-arrow-left-short'></i> indietro</a>";
-            postDetailMod.show();
-        })
-        .catch( error => console.error(error) );// If there is any error you will catch them here
+        post = data.message;
+        const post_div = document.getElementById("detailModal");
+        post_div.innerHTML = "";
+
+        var star = false;
+        if(loggedUser.favorite != null){loggedUser.favorite.forEach(fav => {if(id == fav) star = true;});}
+
+        post_div.innerHTML+= createDetailPost(id,post.title, post.description, post.contract, post.phone,post.email,post.where,post.rooms, createSmallRoomDiv(post.available));
+        var postIn = document.getElementById("starAtt"+id);
+        postIn.innerHTML=addStar(star, id);
+        post_div.innerHTML+= "<a href='#' class='text-muted text-decoration-none mb-3' data-bs-dismiss='modal'><i class='bi bi-arrow-left-short'></i> indietro</a>";
+        postDetailMod.show();
+    })
+    .catch( error => console.error(error) );// If there is any error you will catch them here
         
 }
+
+function showAddRoom(title = "Aggiugni Stanza", button = "Aggiungi", oncl = "addRoom()", nome = "", prezzo = ""){
+    modalAdd.innerHTML = 
+    `<div class="modal-header p-5 pb-4 border-bottom-0">
+        <h2 class="fw-bold mb-0">${title}</h2>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body p-5 pt-0">
+        <form class="">
+            <div class="mb-3">
+                <input type="text" class="form-control mb-3" id="roomName" placeholder="Nome" value="${nome}">
+                <div class="input-group mb-3">
+                <input type="number" class="form-control" id="price" min="0" max="100000" placeholder="Prezzo" value="${prezzo}">
+                <div class="input-group-text"><i class="bi bi-currency-euro"></i></div>
+                </div>
+                <hr>
+                <div class="btn-group mb-3" role="group">
+                    <button class="btn btn-lg btn-primary" type="button" onclick="${oncl}">${button}</button>
+                    <button class="btn btn-lg btn-danger" type="button" data-bs-dismiss="modal" aria-label="Close">Annulla</button>
+                </div>
+                <div id="addRoomAlertDiv" class="container"></div>
+            </div>
+        </form>
+    </div>`;
+    addRoomMod.show();
+}
+
+function showEditRoom(ind){
+    showAddRoom("Modifica Stanza", "Modifica", `editRoom(${ind})`, roomsToAdd[ind].name, roomsToAdd[ind].price);
+}
+
+
+
+function addRoom(){
+    var nome = document.getElementById("roomName").value;
+    var prezzo = document.getElementById("price").value;
+    if(nome == ""){
+        showAlert("Inserisci un nome!" , "danger", "addRoomAlertDiv");
+        return;
+    }
+    if(prezzo == ""){
+        showAlert("Inserisci un prezzo!" , "danger", "addRoomAlertDiv");
+        return;
+    }
+    if(prezzo < 0){
+        showAlert("Inserisci un prezzo valido!" , "danger", "addRoomAlertDiv");
+        return;
+    }
+    if(prezzo > 100000){
+        showAlert("Inserisci un prezzo ragionevole!" , "danger", "addRoomAlertDiv");
+        return;
+    }
+    addRoomMod.hide();
+    roomsToAdd.push({name: nome, price: prezzo, description: ""});
+    showAlert("Stanza aggiunta" , "success");
+    var roms = document.getElementById("newRooms");
+    roms.innerHTML = createSmallRoomDiv(roomsToAdd, true);
+}
+
+function removeRoom(ind){
+    roomsToAdd.splice(ind, 1);
+    var roms = document.getElementById("newRooms");
+    roms.innerHTML = createSmallRoomDiv(roomsToAdd, true);
+    showAlert("Stanza rimossa" , "success");
+}
+
+function editRoom(ind){
+    var nome = document.getElementById("roomName").value;
+    var prezzo = document.getElementById("price").value;
+    if(nome == ""){
+        showAlert("Inserisci un nome!" , "danger", "addRoomAlertDiv");
+        return;
+    }
+    if(prezzo == ""){
+        showAlert("Inserisci un prezzo!" , "danger", "addRoomAlertDiv");
+        return;
+    }
+    if(prezzo < 0){
+        showAlert("Inserisci un prezzo valido!" , "danger", "addRoomAlertDiv");
+        return;
+    }
+    if(prezzo > 100000){
+        showAlert("Inserisci un prezzo ragionevole!" , "danger", "addRoomAlertDiv");
+        return;
+    }
+    addRoomMod.hide();
+    roomsToAdd[ind] = {name: nome, price: prezzo, description: ""};
+    var roms = document.getElementById("newRooms");
+    roms.innerHTML = createSmallRoomDiv(roomsToAdd, true);
+}
+
+
+
 
 /**
  * This function refresh the list of posts
@@ -197,11 +301,10 @@ function loadPosts() {
     inMod.hide();
 
     const main_div = document.getElementById("main_div");
-    main_div.innerHTML = "";
-
+    const home_div = document.getElementById("home_div");
+    home_div.hidden = true;
 
     main_div.innerHTML = "<h2>Annunci:</h2>";
-
 
 
     fetch('../api/v2/posts')
@@ -219,7 +322,7 @@ function loadPosts() {
             counter++;
             var star = false;
             if(loggedUser.favorite != null){loggedUser.favorite.forEach(fav => {if(post._id == fav) star = true;});}
-            main_div.innerHTML+= createCardPost(post._id, post.title, star);
+            main_div.innerHTML+= createCardPost(post._id, post.title, post.showPrice, post.where, post.contract,post.rooms);
             let postIn = document.getElementById("starAtt"+post._id);
             postIn.innerHTML=addStar(star, post._id);
         });
@@ -236,14 +339,44 @@ function insertPost()
 {
     //get the post title
     var postTitle = document.getElementById("postTitle").value;
+    if(postTitle == "") {showAlert("Inserisci un titolo!", "danger"); return;};
     var postDesc = document.getElementById("postDesc").value;
+    if(postDesc == "") {showAlert("Inserisci una descrizione!", "danger"); return;};
+    var phone = document.getElementById("phone").value;
+    var via = document.getElementById("addrOne").value;
+    var comu = document.getElementById("addrTwo").value;
+    if(comu == "") {showAlert("Inserisci il comune!", "danger"); return;};
+    var prov = document.getElementById("addrThree").value;
+    if(prov == "") {showAlert("Inserisci il comune!", "danger"); return;};
+    var contr = document.getElementById("tyContr").value;
+    if(roomsToAdd.length == 0) {showAlert("Inserisci almeno una stanza!", "danger"); return;};
+    var min = roomsToAdd[0].price;
+    var max = roomsToAdd[0].price;
+    roomsToAdd.forEach(room => {
+        if(room.price < min) min = room.price;
+        if(room.price > max) max = room.price;
+    });
+    var showPrice;
+    if(min == max) showPrice = min;
+    else showPrice = `${min} - ${max}`;
     
     // console.log(postTitle);
 
-    fetch('../api/v2/posts', {
+    fetch('../api/v2/users/'+ loggedUser.id +'/posts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify( { title: postTitle , description: postDesc , email: loggedUser.email} ),
+        body: JSON.stringify( { 
+            title: postTitle , 
+            description: postDesc,
+            email: loggedUser.email,
+            contract: contr,
+            phone: phone,
+            rooms: roomsToAdd.length + 1,
+            available: roomsToAdd,
+            where: `${(via == "") ? "" : via + ' - '}${comu}[${prov}]`,
+            showPrice: showPrice,
+            createdBy: loggedUser.id
+        }),
     })
     .then((resp) => {
         // console.log(resp);
@@ -253,6 +386,8 @@ function insertPost()
         }
         else {
             showToast('Post creato con successo!',"Successo", "success");
+            roomsToAdd = [];
+            modalAdd.innerHTML = "";
             loadPosts();
         }
         return;
@@ -308,7 +443,9 @@ function login()
 
             //show username on top of the page
             document.getElementById("user").innerText = loggedUser.username;
-            showAlert("Benvenuto "+ loggedUser.username +"!", "success");
+            showToast("Benvenuto "+ loggedUser.username +"!","Benvenuto!", "success");
+            const home_div = document.getElementById("home_div");
+            home_div.hidden = true;
             loadPosts(); //shows posts page
         }
         return;
@@ -323,7 +460,6 @@ function register(){
     var email = document.getElementById("registerEmail").value;
     var password = document.getElementById("registerPassword").value;
     var username = document.getElementById("registerUsr").value;
-
 
     if (username == "") {
         showAlert("Inserisci username", "danger");
@@ -370,7 +506,10 @@ function register(){
             enNavButtons();
             //show username on top of the page
             document.getElementById("user").innerHTML = loggedUser.username;
+            const home_div = document.getElementById("home_div");
+            home_div.hidden = true;
             loadPosts();
+
             showAlert("Registrato con successo!", "success");
         }
         return;
@@ -405,10 +544,10 @@ function changeUsername(){
     const nusername = document.getElementById("newUsername").value;
     inMod.hide();
 
-    fetch('../api/v1/users/updateUsername', {
+    fetch('../api/v2/users/'+ loggedUser.id+'/updateUsername', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify( { email: loggedUser.email, username: nusername }  ),
+        body: JSON.stringify( { username: nusername }  ),
     })
     .then((resp) => resp.json() ) // Transform the data into json
     .then(function(data){
@@ -425,6 +564,7 @@ function changeUsername(){
 }
 
 
+
 /**
  *this function set a particular post as favorite
  */
@@ -434,10 +574,10 @@ function setFavorite(id){
         modal.show();
         return;
     }
-    fetch('../api/v1/users/setFavorite', {
+    fetch('../api/v2/users/'+ loggedUser.id+'/setFavorite', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify( { email: loggedUser.email, id: id }  ),
+        body: JSON.stringify( {id: id }  ),
     })
     .then((resp) => resp.json() ) // Transform the data into json
     .then(function(data){
@@ -459,10 +599,10 @@ function remFavorite(id){
         modal.show();
         return;
     }
-    fetch('../api/v1/users/remFavorite', {
+    fetch('../api/v2/users/'+ loggedUser.id+'/remFavorite', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify( { email: loggedUser.email, id: id }  ),
+        body: JSON.stringify( {id: id }  ),
     })
     .then((resp) => resp.json() ) // Transform the data into json
     .then(function(data){
@@ -479,7 +619,6 @@ function remFavorite(id){
     .catch( error => console.error(error) ); // If there is any error you will catch them here
 }
 
-
  
 /**
  * This function is called by clicking on the "add new post" button.
@@ -487,6 +626,7 @@ function remFavorite(id){
  */
 function newPostPage()
 {
+    roomsToAdd = [];
     if(loggedUser.email == null){
         const modal = new bootstrap.Modal('#modalLoginNeed', {keyboard: false});
         modal.show();
@@ -495,9 +635,85 @@ function newPostPage()
     //check if the create form already exists
     if(!document.getElementById("createform")) 
     {
-        var form= `<form id="createform" method="post" action="api/v1/post"><h2>Crea nuovo annuncio:</h2><div class="form-floating mb-3" id="usrDiv"><input id="postTitle" name="title" maxlength="30" class="form-control" placeholder="Titolo"><label for="postTitle">Titolo</label><div class="form-text">Lunghezza massima: 30 caratteri</div></div><div class="input-group mb-3" id="usrDiv"><span class="input-group-text">Descrizione</span><textarea id="postDesc" name="postDesc" class="form-control" maxlength="500" placeholder="Descrizione"></textarea></div><button type="button" class="btn btn-primary" onclick="insertPost()">Salva</button></form>`;
+        var form= `    <form id="createform" method="post" action="api/v1/post">
+        <h2>Crea nuovo annuncio:</h2>
+        <input id="postTitle" name="title" maxlength="50" class="form-control" placeholder="Titolo">
+        <div class="invalid-feedback">
+            Inserisci un titolo.
+        </div>
+        <hr>
+        <div class="input-group mb-3 " id="usrDiv">
+          <span class="input-group-text">Descrizione</span>
+          <textarea id="postDesc" name="postDesc" class="form-control" maxlength="800" placeholder="Descrizione" rows="5"></textarea>
+        </div>
+        <hr>
+        <div class="input-group mt-3 mb-3">
+        <div class="input-group-text"><i class="bi bi-telephone"></i></div>
+        <input type="text" class="form-control" id="phone" placeholder="Numero di telefono" type="number">
+        </div>
+        <div class="row g-3">
+          <hr>
+          <div class="input-group mb-3 col-12">
+            <label class="input-group-text" for="tyContr">Tipologia contratto</label>
+            <select class="form-select" id="tyContr">
+              <option selected disabled value="">Scegli...</option>
+              <option value="Annuale">Annuale</option>
+              <option value="Mensile">Mensile</option>
+              <option value="Altro">Altro</option>
+            </select>
+            <div class="invalid-feedback">
+                Scegli il tipo di contratto.
+            </div>
+          </div>
+          <hr>
+          <div class="mb-3 col-6">
+            <div class="input-group">
+              <div class="input-group-text"><i class="bi bi-geo-alt"></i></div>
+              <input type="text" class="form-control" id="addrOne" placeholder="Indirizzo">
+              <div class="invalid-feedback">
+                Inserisci un indirizzo.
+                </div>
+            </div>
+          </div>
+          <div class="mb-3 col-3">
+            <input id="addrTwo" name="provincia" class="form-control" placeholder="Comune" list="comu" type="text">
+            <div class="invalid-feedback">
+                Inserisci un Comune.
+            </div>
+          </div>
+          <div class="mb-3 col-3">
+            <input id="addrThree" name="provincia" class="form-control" placeholder="Provincia" list="prov" type="text">
+            <div class="invalid-feedback">
+                Inserisci una Provincia.
+            </div>
+          </div>
+          <hr>
+        </div>
+        <div class="card mb-3">
+          <div class="card-header"><h5 class="card-title">Stanze</h5></div>
+          <div class="card-body" >
+          <div class="row row-cols-1 row-cols-md-2 g-4" id="newRooms">
+            </div>
+            </div>
+          <button type="button" class="btn btn-secondary" onclick="showAddRoom()">Aggiungi Stanza</button>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="insertPost()">Crea annuncio</button>
+      </form>`;
+        
+        const home_div = document.getElementById("home_div");
+        home_div.hidden = true;
         const main_div = document.getElementById("main_div");
         main_div.innerHTML=form;
+        var prov = document.getElementById("prov");
+        for(let i = 0; i< province.length; i++){
+            let provi = province[i].split(",");
+            prov.appendChild(new Option(provi[0]));
+        }
+        var comun = document.getElementById("comu");
+        for(let i = 0; i< comuni.length; i++){
+            let comune = comuni[i].split(",");
+            comun.appendChild(new Option(comune[0]));
+        }
     }
 }
 
@@ -509,7 +725,7 @@ function loginPage()
 {
     modInp.innerHTML = `<div class="modal-header p-5 pb-4 border-bottom-0">
         <h2 class="fw-bold mb-0">Login</h2>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="loadPosts()"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
     <div class="modal-body p-5 pt-0">
         <form class="">
@@ -535,20 +751,32 @@ function loginPage()
  */
 function registerPage()
 {
+    
     //check if the register form already exists
     if(!document.getElementById("registerform")) 
     {
-        var form = `<form method="post" action="api/v1/users" name="registerform" id="registerform"><h2>Registra un nuovo account:</h2><div class="form-floating mb-3" id="usrDiv"><input id="registerUsr" name="username" class="form-control" placeholder="Username"><label for="registerUsr">Username</label></div><div class="form-floating mb-3" id="emailDiv"><input id="registerEmail" name="email" class="form-control" placeholder="Email"><label for="registerEmail">Email</label></div><div class="form-floating mb-3" id="pwdDiv"><input id="registerPassword" name="password" class="form-control" placeholder="Password" type="password"><label for="registerPassword">Password</label></div><div class="form-floating mb-3" id="pwdDiv"><input id="registerPasswordVer" name="password" class="form-control" placeholder="Password" type="password"><label for="registerPasswordVer">Confirm Password</label></div><button type="button" class="btn btn-primary" onclick="register()">Registrati</button></form>`;
-
+        var form = `<form method="post" action="api/v1/users" name="registerform" id="registerform"><h2>Registra un nuovo account:</h2><div class="form-floating mb-3" id="usrDiv"><input id="registerUsr" name="username" class="form-control" placeholder="Username"><label for="registerUsr">Username</label></div><div class="form-floating mb-3" id="emailDiv"><input id="registerEmail" name="email" class="form-control" placeholder="Email"><label for="registerEmail">Email</label></div><div class="form-floating mb-3" id="pwdDiv"><input id="registerPassword" name="password" class="form-control" placeholder="Password" type="password"><label for="registerPassword">Password</label></div><div class="form-floating mb-3" id="pwdDiv"><input id="registerPasswordVer" name="password" class="form-control" placeholder="Password" type="password"><label for="registerPasswordVer">Confirm Password</label></div><button type="button" class="btn btn-success" onclick="register()">Registrati</button></form>`;
+        
+        const home_div = document.getElementById("home_div");
+        home_div.hidden = true;
         const main_div = document.getElementById("main_div");
         main_div.innerHTML = form;
     }
 }
 
+function homePage(){
+        const main_div = document.getElementById("main_div");
+        main_div.innerHTML = "";
+        const home_div = document.getElementById("home_div");
+        home_div.hidden = false;
+        
+}
+
+
 /**
  * @returns a card with some post info
  */
-function smallFavPost(id,title, price, position){
+function smallPost(id,title, price, position){
     return `<div class="col"><a href="#" class="text-decoration-none text-dark" onclick='loadDetails("${id}")'><div class="card"><div class="card-body">
             <h5 class="card-title">${title}</h5><small class="card-text text-muted"><i class="bi bi-geo-alt-fill"></i>${position}</small>
             <h2 class="card-text">${price}€</h2></div></div></a></div>`;
@@ -580,6 +808,8 @@ function userPage(){
         </div>
     </div>
     </div>`;
+    const home_div = document.getElementById("home_div");
+    home_div.hidden = true;
     const main_div = document.getElementById("main_div");
     main_div.innerHTML = page;
 
@@ -596,7 +826,7 @@ function userPage(){
             if (Array.isArray(data.message)) 
                 console.log('result is an array');
             post = data.message;
-            smallFav.innerHTML+= smallFavPost(lid,post.title, "350", "Via Gino, 32 - Trento(TN)");
+            smallFav.innerHTML+= smallPost(lid,post.title, post.showPrice, post.where);
         })
         .catch( error => console.error(error) );// If there is any error you will catch them here
     });
@@ -610,6 +840,8 @@ function favPage(){
         modal.show();
         return;
     }
+    const home_div = document.getElementById("home_div");
+    home_div.hidden = true;
     const main_div = document.getElementById("main_div");
     if(loggedUser.favorite.length == 0) {main_div.innerHTML= "<h3>Nessun annuncio preferito</h3>"; return;}
     main_div.innerHTML = "<h2>Annunci preferiti:</h2>";
@@ -633,6 +865,181 @@ function favPage(){
     
 
 }
+
+function postCreatedPage(){
+    if(loggedUser.email == null){
+        const modal = new bootstrap.Modal('#modalLoginNeed', {keyboard: false});
+        modal.show();
+        return;
+    }
+    const home_div = document.getElementById("home_div");
+    home_div.hidden = true;
+    const main_div = document.getElementById("main_div");
+    main_div.innerHTML = "<h2>Annunci creati:</h2>";
+    fetch('../api/v2/users/'+ loggedUser.id +'/posts', {method: "GET"})
+    .then((resp) => resp.json()) // Transform the data into json
+    .then(function(data) { // Here you get the data to modify
+        if (!data.message) 
+            console.log('no data');
+        if (!Array.isArray(data.message)) {return;}
+        if(data.message.length == 0) main_div.innerHTML = "<h3>Nessun annuncio creato</h3><button type='button' class='btn btn-success' onclick='newPostPage()'>Crea il tuo primo annuncio</button>";
+        return data.message.map(function(post) { // Map through the results and for each run the code below
+            counter++;
+            main_div.innerHTML+= createCardPost(post._id, post.title, post.showPrice, post.where, post.contract,post.rooms, true);
+        });
+    })
+    .catch( error => console.error(error) );// If there is any error you will catch them here
+}
+
+function editPostPage(id){
+    ///:uid/posts/:id
+    if(loggedUser.email == null){
+        const modal = new bootstrap.Modal('#modalLoginNeed', {keyboard: false});
+        modal.show();
+        return;
+    }
+    fetch('../api/v2/posts/' + id)
+    .then((resp) => resp.json()) // Transform the data into json
+    .then(function(data) { // Here you get the data to modify
+        // console.log(data);
+        var post = data.message;
+        if (!data.message) 
+            console.log('no data');
+        if (Array.isArray(data.message)) 
+            console.log('result is an array');
+
+            var form= `    <form id="createform" method="post" action="api/v1/post">
+        <h2>Modifica Annuncio</h2>
+        <input id="postTitle" name="title" maxlength="50" class="form-control" placeholder="Titolo" value="${post.title}">
+        <hr>
+        <div class="input-group mb-3" id="usrDiv">
+          <span class="input-group-text">Descrizione</span>
+          <textarea id="postDesc" name="postDesc" class="form-control" maxlength="800" placeholder="Descrizione" rows="5">${post.description}</textarea>
+        </div>
+        <hr>
+        <div class="input-group mt-3 mb-3">
+            <div class="input-group-text"><i class="bi bi-telephone"></i></div>
+            <input type="text" class="form-control" id="phone" placeholder="Numero di telefono" value="${post.phone}" type="number">
+        </div>
+        <div class="row g-3">
+          <hr>
+          <div class="input-group mb-3 col-12">
+            <label class="input-group-text" for="tyContr">Tipologia contratto</label>
+            <select class="form-select" id="tyContr" value="${post.contract}">
+              <option value="Annuale">Annuale</option>
+              <option value="Mensile">Mensile</option>
+              <option value="Altro">Altro</option>
+            </select>
+          </div>
+          <hr>
+            <div class="input-group">
+              <div class="input-group-text"><i class="bi bi-geo-alt"></i></div>
+              <input type="text" class="form-control" id="addr" placeholder="Indirizzo" value="${post.where}">
+            </div>
+          <hr>
+        </div>
+        <div class="card mb-3">
+          <div class="card-header"><h5 class="card-title">Stanze</h5></div>
+          <div class="card-body" >
+          <div class="row row-cols-1 row-cols-md-2 g-4" id="newRooms">
+            </div>
+            </div>
+          <button type="button" class="btn btn-secondary" onclick="showAddRoom()">Aggiungi Stanza</button>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="editPost('${id}')">Conferma le modifiche</button>
+        <button type="button" class="btn btn-danger" onclick="postCreatedPage()">Annulla</button>
+      </form>`;
+        
+        const home_div = document.getElementById("home_div");
+        home_div.hidden = true;
+        const main_div = document.getElementById("main_div");
+        main_div.innerHTML=form;
+        var prov = document.getElementById("prov");
+        for(let i = 0; i< province.length; i++){
+            let provi = province[i].split(",");
+            prov.appendChild(new Option(provi[0]));
+        }
+        var comun = document.getElementById("comu");
+        for(let i = 0; i< comuni.length; i++){
+            let comune = comuni[i].split(",");
+            comun.appendChild(new Option(comune[0]));
+        }
+
+        roomsToAdd = post.available;
+        var roms = document.getElementById("newRooms");
+        roms.innerHTML = createSmallRoomDiv(roomsToAdd, true);
+
+        
+    })
+    .catch( error => console.error(error) );// If there is any error you will catch them here
+}
+function editPost(id){
+    ///:uid/posts/:id
+    var postTitle = document.getElementById("postTitle").value;
+    if(postTitle == "") {showAlert("Inserisci un titolo!", "danger"); return;};
+    var postDesc = document.getElementById("postDesc").value;
+    if(postDesc == "") {showAlert("Inserisci una descrizione!", "danger"); return;};
+    var phone = document.getElementById("phone").value;
+    var addr = document.getElementById("addr").value;
+    if(addr == "") {showAlert("Inserisci il comune!", "danger"); return;};
+    if(prov == "") {showAlert("Inserisci il comune!", "danger"); return;};
+    var contr = document.getElementById("tyContr").value;
+    if(roomsToAdd.length == 0) {showAlert("Inserisci almeno una stanza!", "danger"); return;};
+    var min = roomsToAdd[0].price;
+    var max = roomsToAdd[0].price;
+    roomsToAdd.forEach(room => {
+        if(room.price < min) min = room.price;
+        if(room.price > max) max = room.price;
+    });
+    var showPrice;
+    if(min == max) showPrice = min;
+    else showPrice = `${min} - ${max}`;
+    
+    // console.log(postTitle);
+
+    fetch('../api/v2/published/'+ loggedUser.id +'/posts/' + id, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify( { 
+            title: postTitle , 
+            description: postDesc,
+            email: loggedUser.email,
+            contract: contr,
+            phone: phone,
+            rooms: roomsToAdd.length + 1,
+            available: roomsToAdd,
+            where: addr,
+            showPrice: showPrice,
+            createdBy: loggedUser.id
+        }),
+    })
+    .then((resp) => {
+        if(resp.status == 400){
+            showAlert("Errore modifica annuncio", "danger")
+        }
+        else {
+            showToast('Post modificato con successo',"Successo", "success");
+            roomsToAdd = [];
+            modalAdd.innerHTML = "";
+            postCreatedPage();
+        }
+        return;
+    })
+    .catch( error => console.error(error) ); // If there is any error you will catch them here
+}
+
+
+
+function deletePost(pid){
+    //
+    fetch('../api/v2/published/'+ loggedUser.id+'/posts/'+pid , {method: 'DELETE',})
+    .then((resp) => resp.json()) // Transform the data into json
+    .then(function(data) {
+        showToast(data.message, "Eliminazione Post", "dark");
+        postCreatedPage();
+    });
+}
+
 
 /**
  * This function check if the pattern of an email is correct
