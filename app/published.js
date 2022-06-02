@@ -40,7 +40,7 @@ router.delete('/:uid/posts/:id', async (req, res) =>{
         });
     }
     User.find({}).then(users => users.forEach( (user) => {
-        console.log("sto analizzando i preferiti di "+user.email);
+        //console.log("sto analizzando i preferiti di "+user.email);
         let preferiti = user.favorite;
         let uid = user.id;
         //console.log(preferiti);
@@ -85,6 +85,11 @@ router.put('/:uid/posts/:id', async (req, res) =>{
         utils.printd("Invalid parameters","EDIT");
 		return;
 	}
+    if (!isValid(req.body.title) || !isValid(req.body.description)) {
+        utils.badRequest(res,'Invalid parameters');
+        utils.printd("Invalid parameters","EDIT");
+		return;
+    }
     if (post.createdBy != uid) {
         return res.status(401).json({
             message: 'You can only modify your own posts'

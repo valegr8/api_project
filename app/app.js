@@ -13,7 +13,7 @@ const postsV2 = require('./posts_v2.js');
 const authentication = require('./authentication.js');
 const published = require('./published.js');
 const tokenChecker = require('./tokenChecker.js');
-const user_posts = require('./user_posts.js');
+const user_posts = require('./users_posts.js');
 
 /**
  * Configure Express.js parsing middleware
@@ -30,6 +30,7 @@ app.use('/', express.static('static'));
  * Authentication routing and middleware
  */
 app.use('/api/v1/authentications', authentication);
+app.use('/api/v2/published', tokenChecker);
 
 
 /**
