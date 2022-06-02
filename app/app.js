@@ -13,6 +13,7 @@ const postsV2 = require('./posts_v2.js');
 const authentication = require('./authentication.js');
 const published = require('./published.js');
 const tokenChecker = require('./tokenChecker.js');
+const user_posts = require('./user_posts.js');
 
 /**
  * Configure Express.js parsing middleware
@@ -40,6 +41,7 @@ app.use('/api/v1/users', users);
 
 //version 2
 app.use('/api/v2/users', usersV2);
+app.use('/api/v2/users/:uid/posts', user_posts);
 app.use('/api/v2/published', published);
 app.use('/api/v2/posts', postsV2);
 
