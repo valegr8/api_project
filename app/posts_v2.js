@@ -15,11 +15,11 @@ const { isValidObjectId } = require('mongoose');
  * Get posts collection
  */
 router.get('', async (req, res) => {
-	console.log(req.query.maxp);		/* maximum price */
-	console.log(req.query.minp);		/* minimum price */
-	console.log(req.query.param);		/* title/description/location */
-	console.log(req.query.rooms);		/* room number */
-	console.log(req.query.contract);	/* contract type (e.g annual...) */
+	printd(req.query.maxp);		/* maximum price */
+	printd(req.query.minp);		/* minimum price */
+	printd(req.query.param);		/* title/description/location */
+	printd(req.query.rooms);		/* room number */
+	printd(req.query.contract);	/* contract type (e.g annual...) */
 
 	let filter = {}; /* query */
 
@@ -54,7 +54,7 @@ router.get('', async (req, res) => {
 	}
 
 
-	console.log("query: " + JSON.stringify(filter));
+	printd("query: " + JSON.stringify(filter));
 	
 	try{
 		const posts = await Post.find(filter).exec();
