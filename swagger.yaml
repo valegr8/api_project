@@ -17,7 +17,8 @@ paths:
   /posts:
     get:
       description: >-
-        Gets the list of posts.
+        Gets the list of posts. The list can be filtered by some optional parameters, such as the number of romms,
+        the type of the contract (e.g annual/monthly/...), the price, ...
       summary: List of posts.
       parameters:
         - in: query
@@ -400,7 +401,7 @@ paths:
                    - status
                    - message
 
-  /users/{email}/posts/:
+  /users/{uid}/posts/:
     post:
       description: >-
         Creates a new post.
@@ -423,6 +424,8 @@ paths:
                 - createdBy
                 - contract
                 - phone
+                - showPrice
+                - email
                 - rooms
                 - available
                 - where
@@ -435,13 +438,19 @@ paths:
                     example: Vicino al supermercato
                   createdBy:
                     type: string
-                    example: pippo@email.com
+                    example: 62926a256236cd334360ac49
                   contract:
                     type: string
                     example: annuale
                   phone:
                     type: string
                     example: 3456 12890
+                  showPrice:
+                    type: string
+                    example: "500"
+                  email:
+                    type: string
+                    example: pippo@email.com
                   rooms:
                     type: integer
                     example: 6
@@ -468,7 +477,7 @@ paths:
                      description: status code
                    message:
                      type: string
-                     example: Created
+                     example: Post saved successfully
                      description: status code
                  required:
                    - status
@@ -527,7 +536,7 @@ paths:
                    - status
                    - message
                    
-  /usesrs/{email}/posts/{id}:
+  /users/{uid}/posts/{id}:
     get:
       description: >-
         Gets a post.
@@ -540,11 +549,11 @@ paths:
             type: string
           description: The mongodb objectId of the post
         - in: path
-          name: email
+          name: uid
           required: true
           schema:
             type: string
-          description: The email of the registered user
+          description: The mongodb objectId of the registered user
       responses:
         '200':
           description: 'A single post'
@@ -566,8 +575,8 @@ paths:
                         description: "Further info"
                       createdBy:
                         type: string
-                        example: pippo@email.com
-                        description: "Email address of the creator"
+                        example: 62926a256236cd334360ac49
+                        description: "mongodb objectId of the creator"
                       contract:
                         type: string
                         example: annuale
@@ -576,6 +585,14 @@ paths:
                         type: string
                         example: 1234 56789
                         description: "Phone number of the creator"
+                      showPrice:
+                        type: string
+                        example: 500
+                        description: "The price of the whole apartment"
+                      email:
+                        type: string
+                        example: pippo@prova.com
+                        description: "Email address of the creator"
                       rooms:
                         type: integer
                         example: 6
@@ -629,6 +646,157 @@ paths:
                    - status
                    - message
 
+  /users/{uid}/posts/{id}/rooms:
+    get:
+      description: >-
+        Fetches the array of rooms available inside the post.
+      summary: View rooms
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The mongodb objectId of the post
+        - in: path
+          name: uid
+          required: true
+          schema:
+            type: string
+          description: The mongodb objectId of the registered user
+      responses:
+        '200':
+          description: 'List of the rooms available'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Room'
+        '400':
+           description: 'Either at least one id is not valid or the uid does not match with id'
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   status:
+                     type: integer
+                     example: 400
+                     description: status code
+                   message:
+                     type: string
+                     example: At least one id is not valid
+                     example: Post id and user id are mismatching
+                     description: explanation of the error
+                 required:
+                   - status
+                   - message
+                   
+  /users/{uid}/posts/{id}/rooms/{rid}:
+    get:
+      description: >-
+        Gets a room.
+      summary: View a room
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The mongodb objectId of the post
+        - in: path
+          name: uid
+          required: true
+          schema:
+            type: string
+          description: The mongodb objectId of the registered user
+        - in: path
+          name: rid
+          required: true
+          schema:
+            type: string
+          description: The mongodb objectId of the room
+      responses:
+        '200':
+          description: 'A room'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: Stanza1
+                        description: "Name of the room"
+                      price:
+                        type: integer
+                        example: 500
+                        description: "Price for the room"
+                      description:
+                        type: string
+                        example: Stanza molto bella
+                        description: "Further info"
+        '400':
+           description: 'Either at least one id is not valid or the uid does not match with id'
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   status:
+                     type: integer
+                     example: 400
+                     description: status code
+                   message:
+                     type: string
+                     example: At least one id is not valid
+                     example: Post id and user id are mismatching
+                     description: explanation of the error
+                 required:
+                   - status
+                   - message
+
+
+    delete:
+      responses:
+        '200':
+          description: 'Removes a room'
+          content:
+            application/json:
+              schema:
+                 type: object
+                 properties:
+                   message:
+                     type: string
+                     example: Room removed correctly
+                     description: Human-readable description
+                 required:
+                   - message
+        '400':
+          description: 'Either at least one id is not valid or the uid does not match with id'
+          content:
+            application/json:
+              schema:
+                 type: object
+                 properties:
+                   status:
+                     type: integer
+                     example: 400
+                     description: status code
+                   message:
+                     type: string
+                     example: Room removed correctly
+                     description: Human-readable description
+                 required:
+                   - status
+                   - message
 
 
   /authentications:
@@ -766,7 +934,7 @@ components:
           example: Vicino a tutto
         createdBy:
           type: string
-          example: BenedettoBenedetti@email.com
+          example: 62926a256236cd334360ac49
           description: 'email address of the creator of the post'
         contract:
           type: string
@@ -776,10 +944,18 @@ components:
           type: string
           example: 7890 12345
           description: 'phone number of th creator'
+        showPrice:
+          type: string
+          example: 500
+          description: 'price of the rent for the whole apartment'
         rooms:
           type: integer
           example: 5
           description: 'number of rooms'
+        email:
+          type: string
+          example: pippo@email.com
+          description: 'Email address of the creator'
         available:
           type: array
           items:
@@ -795,7 +971,6 @@ components:
       required:
         - name
         - price
-        - type
         - description
       properties:
         name:
@@ -806,9 +981,6 @@ components:
           type: integer
           example: 200
           description: 'price of the room'
-        type:
-          type: string
-          example: Vicino a tutto
         description:
           type: string
           example: stanza bella
