@@ -104,7 +104,7 @@ describe('DELETE /api/v2/published/:uid/posts/:id', () =>{
           .delete(`/api/v2/published/${userId}/posts/${postId}`)
 		  .expect('Content-Type', /json/)
           .expect(401,{
-            message: 'You can only delete your own posts'
+            success: false, message: 'No token provided.'
         });
       });
     });
@@ -144,12 +144,25 @@ describe('PUT /api/v2/published/:uid/posts/:id', () => {
 
   describe('with correct info', () => {
     it('should respond with a 200 status code', async () => {
-      const postId = "62934b366fbad5dd62cc9849";
+      const postId = "6298c834772da176771d7373";
       await request(app)
         .put(`/api/v2/published/628a1d73fc4964ea27473f96/posts/${postId}?token=`+token)
         .send({
-          title: "primo post nuovo",
-          description: "ecco il primo"
+          title: "casa modificata",
+          description: "descrizione modificata",
+          contract: "mensile",
+          phone: 2222222222,
+          showPrice: 400,
+          rooms: 1,
+          email: "pippo@mail.com",
+          available: [
+            {
+              name: "stanza di pippo",
+              price: 210,
+              description: "una piccola stanzetta"
+            }
+          ],
+          where: "Via Pippis - GESSOPALENA[KR]"
         })
         .expect(200);
     });
@@ -157,12 +170,25 @@ describe('PUT /api/v2/published/:uid/posts/:id', () => {
 
   describe('with no title', () => {
     it('should respond with a 400 status code', async () => {
-      const postId = "62934b366fbad5dd62cc9849";
+      const postId = "6298c834772da176771d7373";
       await request(app)
         .put(`/api/v2/published/628a1d73fc4964ea27473f96/posts/${postId}?token=`+token)
         .send({
           title: "",
-          description: "ecco il primo"
+          description: "descrizione modificata",
+          contract: "mensile",
+          phone: 2222222222,
+          showPrice: 400,
+          rooms: 1,
+          email: "pippo@mail.com",
+          available: [
+            {
+              name: "stanza di pippo",
+              price: 210,
+              description: "una piccola stanzetta"
+            }
+          ],
+          where: "Via Pippis - GESSOPALENA[KR]"
         })
         .expect(400);
     });
@@ -170,12 +196,25 @@ describe('PUT /api/v2/published/:uid/posts/:id', () => {
 
   describe('with no description', () => {
     it('should respond with a 400 status code', async () => {
-      const postId = "62934b366fbad5dd62cc9849";
+      const postId = "6298c834772da176771d7373";
       await request(app)
         .put(`/api/v2/published/628a1d73fc4964ea27473f96/posts/${postId}?token=`+token)
         .send({
-          title: "primo post nuovo",
-          description: ""
+          title: "casa modificata",
+          description: "",
+          contract: "mensile",
+          phone: 2222222222,
+          showPrice: 400,
+          rooms: 1,
+          email: "pippo@mail.com",
+          available: [
+            {
+              name: "stanza di pippo",
+              price: 210,
+              description: "una piccola stanzetta"
+            }
+          ],
+          where: "Via Pippis - GESSOPALENA[KR]"
         })
         .expect(400);
     });
@@ -183,12 +222,25 @@ describe('PUT /api/v2/published/:uid/posts/:id', () => {
 
   describe('without token', () => {
     it('should respond with a 401 status code', async () => {
-      const postId = "62934b366fbad5dd62cc9849";
+      const postId = "6298c834772da176771d7373";
       await request(app)
         .put(`/api/v2/published/628a1d73fc4964ea27473f96/posts/${postId}`)
         .send({
-          title: "primo post nuovo",
-          description: "ecco il primo"
+          title: "casa modificata",
+          description: "descrizione modificata",
+          contract: "mensile",
+          phone: 2222222222,
+          showPrice: 400,
+          rooms: 1,
+          email: "pippo@mail.com",
+          available: [
+            {
+              name: "stanza di pippo",
+              price: 210,
+              description: "una piccola stanzetta"
+            }
+          ],
+          where: "Via Pippis - GESSOPALENA[KR]"
         })
         .expect(401);
     });
@@ -196,12 +248,25 @@ describe('PUT /api/v2/published/:uid/posts/:id', () => {
 
   describe('with wrong token', () => {
     it('should respond with a 403 status code', async () => {
-      const postId = "62934b366fbad5dd62cc9849";
+      const postId = "6298c834772da176771d7373";
       await request(app)
         .put(`/api/v2/published/628a1d73fc4964ea27473f96/posts/${postId}?token=wrong`)
         .send({
-          title: "primo post nuovo",
-          description: "ecco il primo"
+          title: "casa modificata",
+          description: "descrizione modificata",
+          contract: "mensile",
+          phone: 2222222222,
+          showPrice: 400,
+          rooms: 1,
+          email: "pippo@mail.com",
+          available: [
+            {
+              name: "stanza di pippo",
+              price: 210,
+              description: "una piccola stanzetta"
+            }
+          ],
+          where: "Via Pippis - GESSOPALENA[KR]"
         })
         .expect(403);
     });
