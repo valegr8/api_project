@@ -98,52 +98,7 @@ router.get('/:id', async (req, res) => {
  * Create a new post
  */
 router.post('', async (req, res) => {
-	printd('Request email: ' + req.body.email);
-	printd('Title: ' + req.body.title);
-	//check if the request email is not null otherwise returns 400
-	if(!utils.isValid(req.body.email)) {
-		utils.badRequest(res,'User email not valid');	//return 400;
-		return;
-	}
-	else {
-		//A post can uploaded only by signed-up user.
-		//Checks whether the user is already signed up.
-		//'await' is used to stop the execution until the promise is fullfilled or rejected
-		// find a user with the email in the request otherwise null
-		let user = await User.findOne({ email : req.body.email });
-		if(user == null){
-			utils.badRequest(res, 'User does not exist');	//return 400;
-			return;//the run ends here.
-		}
-	}
-
-	//check if the request title is not null
-	if(!utils.isValid(req.body.title)) {
-		utils.badRequest(res, 'User title not valid');	//return 400;
-		return;
-	}
-		
-	let post = new Post({
-        title: req.body.title,
-		description: req.body.description,
-		createdBy: req.body.email
-    });
-
-	//save a new post
-	post = post.save().then((savedPost) =>{
-		// printd(savedPost._id);
-		let postId = savedPost._id;
-		if(!isValidObjectId(postId)) {
-			utils.notFound(res, 'Post id not valid');
-		}
-		else {
-			res.location("/api/v2/posts/" + postId);
-			utils.created(res, 'Post saved successfully');
-		}
-	}).catch((e) => {		
-		// If the post fails we return 404 status code
-		utils.notFound(res,'Post saving failed');
-	});
+	utils.notAllowed(res);
 });
 
 module.exports = router;
