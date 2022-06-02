@@ -5,7 +5,7 @@
 const utils = {}; 
 
 // enables the debug print when is setted to 1
-const debug = 1;
+const debug = 0;
 const grcl = "\x1b[32m"; /**< green */
 const rdcl = "\x1b[31m"; /**< red */
 const rst = "\x1b[0m";   /**< no color */
@@ -73,7 +73,6 @@ utils.notFound = (res, message, info = "") => {
  * 
  * Sets a 401 http response status, Unathorized
  */
-
 utils.wrongPassword = (res, message, info = "") => {
 	if(!utils.isValid(message))
 		message = 'Unathorized';

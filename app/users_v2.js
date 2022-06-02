@@ -15,8 +15,7 @@ const User = require('./models/user_v2');
 /**
  * Get post model
  */
-//I need this
-const Post = require('./models/post_v2'); //the new version
+const Post = require('./models/post_v2');
 
 /**
  * function for creating a new user
@@ -106,7 +105,6 @@ router.post('/:uid/posts', async function(req,res) {
 		return;
 	}		
 	
-
 	//check if the request title is not null
 	if(!utils.isValid(req.body.title)) {
 		utils.badRequest(res, 'User title not valid', info);	//return 400;
@@ -118,8 +116,6 @@ router.post('/:uid/posts', async function(req,res) {
 		return;
 	}
 	
-	
-		
 	let post = new Post({
         title: req.body.title,
 		description: req.body.description,
@@ -150,9 +146,8 @@ router.post('/:uid/posts', async function(req,res) {
 });
 
 /**
- * Get all posts published by a user
+ * Get all posts published by a user, uid = user id
  */
- //uid = user id 
 router.get('/:uid/posts', async function(req,res) {
 	let uid = req.params.uid;
 	
@@ -176,9 +171,8 @@ router.get('/:uid/posts', async function(req,res) {
 });
 
 /**
- * Get a single post published by a user
+ * Get a single post published by a user, uid = user id
  */
- //uid = user id
 router.get('/:uid/posts/:id', async function(req,res) {
 	let uid = req.params.uid;
 	let user = await User.findById(uid).exec();
@@ -198,8 +192,9 @@ router.get('/:uid/posts/:id', async function(req,res) {
 	
 });
 
-//returns the array containing
-//all the rooms
+/**
+ * returns the array containing all the rooms
+ */
 router.get('/:uid/posts/:id/rooms/', async function(req,res) {
 	let uid = req.params.uid;
 	let id = req.params.id;
@@ -223,8 +218,9 @@ router.get('/:uid/posts/:id/rooms/', async function(req,res) {
 	utils.setResponseStatus(post.available,res);
 });
 
-//returns the room with id equal to rid
-//rid = room id
+/**
+ * returns the room with id equal to rid, rid = room id
+ */
 router.get('/:uid/posts/:id/rooms/:rid', async function(req,res) {
 	let uid = req.params.uid;
 	let id = req.params.id;
@@ -258,9 +254,9 @@ router.get('/:uid/posts/:id/rooms/:rid', async function(req,res) {
 });
 
 
-//removes from the array the room with
-//id equal to rid
-//rid = room id
+/**
+ * removes from the array the room with id equal to rid, rid = room id
+ */
 router.delete('/:uid/posts/:id/rooms/:rid', async function(req,res) {
 	let uid = req.params.uid;
 	let id = req.params.id;
@@ -299,7 +295,7 @@ router.delete('/:uid/posts/:id/rooms/:rid', async function(req,res) {
 /**
  * This function sets a specific post as "favorite"
  */
- router.post('/:uid/setFavorite', async function(req,res) {
+router.post('/:uid/setFavorite', async function(req,res) {
 	const postId = req.body.id;
 	if(!isValid(postId)) {utils.badRequest(res, "Bad request, postId not valid");return;}
 	const uid = req.params.uid;
@@ -326,12 +322,12 @@ router.delete('/:uid/posts/:id/rooms/:rid', async function(req,res) {
 	});
     printd("Fav added. Post id: " + postId,info);
 	return;
- });
+});
 
  /**
  * This function remove a specific post as "favorite"
  */
-  router.post('/:uid/remFavorite', async function(req,res) {
+router.post('/:uid/remFavorite', async function(req,res) {
 	const postId = req.body.id;
 	if(!isValid(postId)) {utils.badRequest(res, "Bad request, postId not valid",info);return;}
 	const uid = req.params.uid;
@@ -360,13 +356,13 @@ router.delete('/:uid/posts/:id/rooms/:rid', async function(req,res) {
 	});
     printd("Fav removed. Post id: " + postId,info);
 	return;
- });
+});
 
 
- /**
+/**
  * This function updates a specific username
  */
-  router.post('/:uid/updateUsername', async function(req,res) {
+router.post('/:uid/updateUsername', async function(req,res) {
 	const uid = req.params.uid;
 	utils.printd(uid);
 	if(!isValid(uid)) {utils.badRequest(res, "Bad request, uid not valid");return;}
@@ -388,6 +384,6 @@ router.delete('/:uid/posts/:id/rooms/:rid', async function(req,res) {
 		username: nusername
 	});
 	return;
- });
+});
 
 module.exports = router;

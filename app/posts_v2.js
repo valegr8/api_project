@@ -15,9 +15,56 @@ const { isValidObjectId } = require('mongoose');
  * Get posts collection
  */
 router.get('', async (req, res) => {
-	// gets all posts
-    let posts = await Post.find({});	
-    utils.setResponseStatus(posts,res, 'Post collection retrieved correctly');
+	console.log(req.query.maxp);		/* maximum price */
+	console.log(req.query.minp);		/* minimum price */
+	console.log(req.query.param);		/* title/description/location */
+	console.log(req.query.rooms);		/* room number */
+	console.log(req.query.contract);	/* contract type (e.g annual...) */
+
+	let filter = {}; /* query */
+
+	if (req.query.param) {
+		// $regex = look for the word in the 'where' field, i = case insensivity
+	  	filter.$or = [{ where: { $regex: req.query.param, $options: 'i' }},
+		  			 { title: { $regex: req.query.param, $options: 'i'}},
+					 { description: { $regex: req.query.param, $options: 'i'} },
+					 { available: { $elemMatch: { name: { $regex: req.query.param, $options: 'i'} } } },
+					 { available: { $elemMatch: { description: { $regex: req.query.param, $options: 'i'} } } }
+					 ];
+	}
+
+	// filters on the price range
+	if(req.query.maxp && req.query.minp) {
+		filter.available =  { $elemMatch: { price: { $lte: req.query.maxp , $gte: req.query.minp } } };
+	}
+	else if(req.query.minp) {
+		filter.available = { $elemMatch: { price: { $gte: req.query.minp } } };
+	}
+	else if(req.query.maxp) {
+		filter.available =  { $elemMatch: { price: { $lte: req.query.maxp } } };
+	}
+
+	// filter on the number of rooms
+	if(req.query.rooms) {
+		filter.rooms = { $eq: req.query.rooms };
+	}
+	// filter on the contract type
+	if(req.query.contract) {
+		filter.contract = req.query.contract;
+	}
+
+
+	console.log("query: " + JSON.stringify(filter));
+	
+	try{
+		const posts = await Post.find(filter).exec();
+		// const posts = await Post.find({ "available.price": { $lte: '400' }}).exec();
+		// const posts = await Post.find({ "available": { $elemMatch: { price: { $lte: req.query.maxp } } } }).exec();
+		utils.setResponseStatus(posts,res, 'Post collection retrieved correctly');
+	}
+	catch(e) {
+		utils.internalServerError(res, e);
+	}
 });
 
 /**

@@ -7,5 +7,4 @@ module.exports = mongoose.model('User', new Schema({
 	password: String,
 	username: String,
 	favorite: Array
-
 }));
