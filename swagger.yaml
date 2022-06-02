@@ -18,7 +18,36 @@ paths:
     get:
       description: >-
         Gets the list of posts.
-      summary: View all posts
+      summary: List of posts.
+      parameters:
+        - in: query
+          name: param
+          schema:
+            type: string
+          description: String that can contain a location name or a specific word. 
+                       Used to retrieve the posts 
+                       that contain that word in the title or description of the post, 
+                       the name or description of the room or in the location field.
+        - in: query
+          name: rooms
+          schema:
+            type: integer
+          description: The number of rooms in a post.
+        - in: query
+          name: maxp
+          schema:
+            type: integer
+          description: Maximum price limit.
+        - in: query
+          name: minp
+          schema:
+            type: integer
+          description: Minimum price limit.
+        - in: query
+          name: contract
+          schema:
+            type: integer
+          description: Type of contract (e.g annual/monthly/...).
       responses:
         '200':
           description: 'Collection of posts'
@@ -45,6 +74,24 @@ paths:
                    message:
                      type: string
                      example: Not found
+                     description: further info
+                 required:
+                   - status
+                   - message
+        '500':
+           description: 'Internal server error, returned if the query to the database fails'
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   status:
+                     type: integer
+                     example: 500
+                     description: status code
+                   message:
+                     type: string
+                     example: Internal server error
                      description: further info
                  required:
                    - status
