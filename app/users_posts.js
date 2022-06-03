@@ -17,7 +17,6 @@ const User = require('./models/user_v2');
  */
 const Post = require('./models/post_v2');
 
-
 //work in progress
 //uid = user id
 router.post('/:uid/posts/', async function(req,res) {
@@ -176,7 +175,6 @@ router.get('/:uid/posts/:id/rooms/:rid', async function(req,res) {
 	utils.setResponseStatus(room,res);
 });
 
-
 /**
  * removes from the array the room with id equal to rid, rid = room id
  */
@@ -213,7 +211,5 @@ router.delete('/:uid/posts/:id/rooms/:rid', async function(req,res) {
 	await post.save();	
 	utils.setResponseStatus(post.available,res, 'Post removed correctly');
 });
-
-
 
 module.exports = router;

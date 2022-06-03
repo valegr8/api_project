@@ -22,10 +22,13 @@ describe('v2/posts', () => {
     /* Mock the Post.find method of mongoose */
     postSpy = jest.spyOn(Post, 'find').mockImplementation((data) => {
       console.log(JSON.stringify(data));
+
       // {"available":{"$elemMatch":{"price":{"$lte":"600","$gte":"500"}}}}
       let max_price;
       let min_price;
-      if(data) {
+
+      if(data.available) {
+        console.log("data.available");
         if(data.available.$elemMatch.price.$lte) {
           max_price = data.available.$elemMatch.price.$lte;
           console.log(JSON.stringify(data.available.$elemMatch.price.$lte)) 
@@ -58,34 +61,30 @@ describe('v2/posts', () => {
                       "__v": 0
                   };
         }
-        if(data.rooms.$eq == "-1") {
-          console.log('sono qui')
-          return []
-        }
+      } 
+      else {
+        return { 
+                "_id": "62973e83473efb79a0f68e03",
+                "title": "Appartamento in centro con vista lago",
+                "description": "Appartamento bellissimo ed economico solo per gente ricca",
+                "createdBy": "628e267ec98047caa6ecd654",
+                "contract": "Annuale",
+                "phone": "3214562308",
+                "showPrice": "50 - 375",
+                "rooms": 5,
+                "email": "officialCavedine@email.com",
+                "available": [
+                    {
+                        "name": "Singola spaziosa",
+                        "price": 375,
+                        "description": "",
+                        "_id": "62973e83473efb79a0f68e04"
+                    }
+                ],
+                "where": "Borgo Santa Lucia 12 - TRENTO[TN]",
+                "__v": 0
+        };
       }
-      console.log('return sono qui');
-      
-      return { 
-              "_id": "62973e83473efb79a0f68e03",
-              "title": "Appartamento in centro con vista lago",
-              "description": "Appartamento bellissimo ed economico solo per gente ricca",
-              "createdBy": "628e267ec98047caa6ecd654",
-              "contract": "Annuale",
-              "phone": "3214562308",
-              "showPrice": "50 - 375",
-              "rooms": 5,
-              "email": "officialCavedine@email.com",
-              "available": [
-                  {
-                      "name": "Singola spaziosa",
-                      "price": 375,
-                      "description": "",
-                      "_id": "62973e83473efb79a0f68e04"
-                  }
-              ],
-              "where": "Borgo Santa Lucia 12 - TRENTO[TN]",
-              "__v": 0
-            };
     });
 
     /* Mock the Post.findById method of mongoose */
@@ -157,7 +156,8 @@ describe('v2/posts', () => {
    */
   describe('GET "/" route', () => {
     describe('without query parameters', () => {
-      test.only('should return 200 and an array of posts', async () => {
+      it('should return 200 and an array of posts', async () => {
+        jest.setTimeout(8000); /** < Increments the timeout */
         await request(app)
           .get(`/api/v2/posts`)
           .expect('Content-Type', /json/)
@@ -167,6 +167,7 @@ describe('v2/posts', () => {
 
     describe('with query parameter: price between 500 & 600', () => {
       it('should return 200 and an array of posts that match the constraint', async () => {
+        jest.setTimeout(8000); /** < Increments the timeout */
         await request(app).get(`/api/v2/posts?minp=500&maxp=600`)
         .expect(200,{
           "message": {
@@ -194,15 +195,6 @@ describe('v2/posts', () => {
       });
     });  
   });
-
-  describe('with query parameter: rooms -1', () => {
-    it('should return 200 and an empty array', async () => {
-      await request(app).get(`/api/v2/posts?rooms=-1`)
-      .expect(200,{
-        "message": []
-      });
-    });
-  });  
 
   /**
    * Test the PUT method

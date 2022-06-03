@@ -32,7 +32,6 @@ app.use('/', express.static('static'));
 app.use('/api/v1/authentications', authentication);
 app.use('/api/v2/published', tokenChecker);
 
-
 /**
  * Resource routing
  */

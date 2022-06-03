@@ -94,7 +94,6 @@ router.post('', async function(req,res) {
     return res.test(text);
 }
 
-
 /**
  * This function sets a specific post as "favorite"
  */
@@ -160,7 +159,6 @@ router.post('/:uid/remFavorite', async function(req,res) {
     printd("Fav removed. Post id: " + postId,info);
 	return;
 });
-
 
 /**
  * This function updates a specific username

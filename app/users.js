@@ -80,7 +80,6 @@ router.post('', async function(req,res) {
 	});
 });
 
-
 /**
  * This function updates a specific username
  */
@@ -103,7 +102,6 @@ router.post('', async function(req,res) {
 	});
 	return;
  });
-
 
 /**
  * This function sets a specific post as "favorite"

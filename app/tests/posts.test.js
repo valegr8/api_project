@@ -21,7 +21,7 @@ describe('v1/posts', () => {
     /* Set database connection */
     jest.setTimeout(8000); /** < Increments the timeout */
     jest.unmock('mongoose');
-    console.log('process.env.DB_URL');
+    // console.log('process.env.DB_URL');
     mongoose.connect(process.env.DB_URL, {useNewUrlParser: true, useUnifiedTopology: true});
     printd('Database connected!');
     
