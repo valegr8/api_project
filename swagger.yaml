@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   version: '2.0'
   title: "HouseMate OpenAPI"
-  description: HouseMate is a web API that allows users to view and create posts for renting houses and appartaments..
+  description: HouseMate is a web API that allows users to view and create posts for renting houses and appartaments.
   license:
     name: MIT
 servers:
@@ -18,7 +18,7 @@ paths:
     get:
       description: >-
         Gets the list of posts. The list can be filtered by some optional parameters, such as the number of romms,
-        the type of the contract (e.g annual/monthly/...), the price, ...
+        the type of the contract (e.g annual/monthly/...), the price, excetera.
       summary: List of posts.
       parameters:
         - in: query
@@ -98,96 +98,9 @@ paths:
                    - status
                    - message
 
-
-    post:
-      description: >-
-        Creates a new post in the system. The operation can be performed only by registered users.
-      summary: New post creation
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - title
-                - description
-                - email
-              properties:
-                title:
-                  type: string
-                  example: Appartamento bellissimo
-                  description: 'Title of the post'
-                description:
-                  type: string
-                  example: Vicino a tutto
-                  description: 'Details of the post'
-                email:
-                  type: string
-                  example: BenedettoBenedetti@email.com
-                  description: 'Email address of the user'
-      responses:
-        '201':
-          description: 'Post created. Link in the Location header'
-          headers:
-            'Location':
-              schema:
-                type: string
-                example: /api/v1/posts/2
-              description: Link to the newly created post.
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                  - status
-                  - message
-                properties:                
-                  status:
-                    type: integer
-                    example: 201
-                  message:
-                    type: string
-                    example: Post saved successfully
-        '400':
-           description: 'Either the email address or the user is not in the database or the title is empty'
-           content:
-             application/json:
-               schema:
-                 type: object
-                 properties:
-                   status:
-                     type: integer
-                     example: 400
-                     description: status code
-                   message:
-                     type: string
-                     example: Email not valid
-                     description: status code
-                 required:
-                   - status
-                   - message
-
-        '404':
-           description: 'Either the saving of the post failed or the id provided is invalid'
-           content:
-             application/json:
-               schema:
-                 type: object
-                 properties:
-                   status:
-                     type: integer
-                     example: 404
-                     description: status code
-                   message:
-                     type: string
-                     example: Post saving failed
-                     example: Post id not valid
-                     description: status code
-                 required:
-                   - status
-                   - message
-
     put:
+      description: >-
+        This method is not allowed.
       responses:
         '405':
           description: 'Method Not Allowed'
@@ -207,8 +120,32 @@ paths:
                  required:
                    - status
                    - message
+    post:
+      description: >-
+        This method is not allowed.
+      responses:
+        '405':
+          description: 'Method Not Allowed'
+          content:
+            application/json:
+              schema:
+                 type: object
+                 properties:
+                   status:
+                     type: integer
+                     example: 405
+                     description: status code
+                   message:
+                     type: string
+                     example: Method Not Allowed
+                     description: Human-readable description
+                 required:
+                   - status
+                   - message                   
 
     delete:
+      description: >-
+        This method is not allowed.
       responses:
         '405':
           description: 'Method Not Allowed'
@@ -765,6 +702,8 @@ paths:
 
 
     delete:
+      description: >-
+        Deletes a room.
       responses:
         '200':
           description: 'Removes a room'
