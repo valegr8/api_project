@@ -26,10 +26,10 @@ router.get('', async (req, res) => {
 	if (req.query.param) {
 		// $regex = look for the word in the 'where' field, i = case insensivity
 	  	filter.$or = [{ where: { $regex: req.query.param, $options: 'i' }},
-		  			 { title: { $regex: req.query.param, $options: 'i'}},
-					 { description: { $regex: req.query.param, $options: 'i'} },
-					 { available: { $elemMatch: { name: { $regex: req.query.param, $options: 'i'} } } },
-					 { available: { $elemMatch: { description: { $regex: req.query.param, $options: 'i'} } } }
+		  			  { title: { $regex: req.query.param, $options: 'i'}},
+					  { description: { $regex: req.query.param, $options: 'i'} },
+					  { available: { $elemMatch: { name: { $regex: req.query.param, $options: 'i'} } } },
+					  { available: { $elemMatch: { description: { $regex: req.query.param, $options: 'i'} } } }
 					 ];
 	}
 
@@ -53,11 +53,10 @@ router.get('', async (req, res) => {
 		filter.contract = req.query.contract;
 	}
 
-
 	printd("query: " + JSON.stringify(filter));
 	
 	try{
-		const posts = await Post.find(filter).exec();
+		const posts = await Post.find(filter);
 		// const posts = await Post.find({ "available.price": { $lte: '400' }}).exec();
 		// const posts = await Post.find({ "available": { $elemMatch: { price: { $lte: req.query.maxp } } } }).exec();
 		utils.setResponseStatus(posts,res, 'Post collection retrieved correctly');

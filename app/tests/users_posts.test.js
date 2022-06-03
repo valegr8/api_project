@@ -100,8 +100,8 @@ describe('v2/users', () => {
 
     
 /*
-*Testing rooms
-*/	
+ * Testing rooms
+ */	
 	describe('GET on /:uid/posts/:id/rooms/', () => {
 		it('should return 200, successful request', async () => {
 			const ownerId = "62926a256236cd334360ac49";
@@ -310,8 +310,5 @@ describe('v2/users', () => {
 				  });
 		});		
 	});
-	
-	
- 
 });
  

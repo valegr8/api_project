@@ -12,38 +12,80 @@ describe('v2/posts', () => {
  
   let postSpy;
   let postSpyFindById;
-  let userSpyFindOne;
 
   /**
    * Set the mock implementations of mongoose methods before the tests start
    */
-  beforeAll( () => {
-    /* Set database connection */
-    jest.setTimeout(8000); /** < Increments the timeout */
-    jest.unmock('mongoose');
-    console.log('process.env.DB_URL');
-    mongoose.connect(process.env.DB_URL, {useNewUrlParser: true, useUnifiedTopology: true});
-    printd('Database connected!');
-    
+  beforeAll( () => {    
     const Post = require('../models/post_v2');
-    const User = require('../models/user_v2');
 
     /* Mock the Post.find method of mongoose */
-    postSpy = jest.spyOn(Post, 'find').mockImplementation(() => {
-      return {
-        message: [
-          {
-            _id: "629346eee4ffb99bc81af228",
-            title: "primo post nuovo",
-            description: "ecco il primo",
-            createdBy: "628a1d73fc4964ea27473f96",
-            contract: "mono",
-            phone: "0425404040",
-            where: "lontano",
-            __v: 0
-          }
-        ]
-      };
+    postSpy = jest.spyOn(Post, 'find').mockImplementation((data) => {
+      console.log(JSON.stringify(data));
+      // {"available":{"$elemMatch":{"price":{"$lte":"600","$gte":"500"}}}}
+      let max_price;
+      let min_price;
+      if(data) {
+        if(data.available.$elemMatch.price.$lte) {
+          max_price = data.available.$elemMatch.price.$lte;
+          console.log(JSON.stringify(data.available.$elemMatch.price.$lte)) 
+        }
+        if(data.available.$elemMatch.price.$gte) {
+          min_price = data.available.$elemMatch.price.$gte;
+          console.log(JSON.stringify(data.available.$elemMatch.price.$gte)) 
+        }
+
+        if(max_price && min_price) {
+          return {
+                      "_id": "629866c3b1ad8068d12d6072",
+                      "title": "appartamento a 500€",
+                      "description": "annuncio",
+                      "createdBy": "6297b6f718c44ba5c3ae4d55",
+                      "contract": "Mensile",
+                      "phone": "",
+                      "showPrice": "500",
+                      "rooms": 1,
+                      "email": "admin@mail.com",
+                      "available": [
+                          {
+                              "name": "500€",
+                              "price": 500,
+                              "description": "",
+                              "_id": "629866c3b1ad8068d12d6073"
+                          }
+                      ],
+                      "where": "Trento - TRENTO[TN]",
+                      "__v": 0
+                  };
+        }
+        if(data.rooms.$eq == "-1") {
+          console.log('sono qui')
+          return []
+        }
+      }
+      console.log('return sono qui');
+      
+      return { 
+              "_id": "62973e83473efb79a0f68e03",
+              "title": "Appartamento in centro con vista lago",
+              "description": "Appartamento bellissimo ed economico solo per gente ricca",
+              "createdBy": "628e267ec98047caa6ecd654",
+              "contract": "Annuale",
+              "phone": "3214562308",
+              "showPrice": "50 - 375",
+              "rooms": 5,
+              "email": "officialCavedine@email.com",
+              "available": [
+                  {
+                      "name": "Singola spaziosa",
+                      "price": 375,
+                      "description": "",
+                      "_id": "62973e83473efb79a0f68e04"
+                  }
+              ],
+              "where": "Borgo Santa Lucia 12 - TRENTO[TN]",
+              "__v": 0
+            };
     });
 
     /* Mock the Post.findById method of mongoose */
@@ -65,21 +107,6 @@ describe('v2/posts', () => {
       else
         return null;
     });
-
-    /* Mock the Post.findOne method of mongoose */
-    userSpyFindOne = jest.spyOn(User, 'findOne').mockImplementation((data) => {
-      if (data.email=="pippo@mail.com") {
-        return {
-          _id:"628a1d73fc4964ea27473f96",
-          email:"pippo@mail.com",
-          password:"1234",
-          username:"pippo",
-          __v:0
-        };
-      }
-      else
-        return null;
-    });
   });
 
   /**
@@ -88,11 +115,6 @@ describe('v2/posts', () => {
   afterAll(async () => {
     postSpy.mockRestore();
     postSpyFindById.mockRestore();
-    userSpyFindOne.mockRestore();
-
-    /* Close database connection */
-    mongoose.connection.close(true);
-    printd("Database connection closed");
   });
 
   /**
@@ -134,13 +156,53 @@ describe('v2/posts', () => {
    * Test the GET method
    */
   describe('GET "/" route', () => {
-    it('should return 200 and an array of posts', async () => {
-      await request(app)
-        .get(`/api/v2/posts`)
-        .expect('Content-Type', /json/)
-        .expect(200);
+    describe('without query parameters', () => {
+      test.only('should return 200 and an array of posts', async () => {
+        await request(app)
+          .get(`/api/v2/posts`)
+          .expect('Content-Type', /json/)
+          .expect(200);
+      });
     });
+
+    describe('with query parameter: price between 500 & 600', () => {
+      it('should return 200 and an array of posts that match the constraint', async () => {
+        await request(app).get(`/api/v2/posts?minp=500&maxp=600`)
+        .expect(200,{
+          "message": {
+                "_id": "629866c3b1ad8068d12d6072",
+                "title": "appartamento a 500€",
+                "description": "annuncio",
+                "createdBy": "6297b6f718c44ba5c3ae4d55",
+                "contract": "Mensile",
+                "phone": "",
+                "showPrice": "500",
+                "rooms": 1,
+                "email": "admin@mail.com",
+                "available": [
+                    {
+                        "name": "500€",
+                        "price": 500,
+                        "description": "",
+                        "_id": "629866c3b1ad8068d12d6073"
+                    }
+                ],
+                "where": "Trento - TRENTO[TN]",
+                "__v": 0
+            }
+				  });
+      });
+    });  
   });
+
+  describe('with query parameter: rooms -1', () => {
+    it('should return 200 and an empty array', async () => {
+      await request(app).get(`/api/v2/posts?rooms=-1`)
+      .expect(200,{
+        "message": []
+      });
+    });
+  });  
 
   /**
    * Test the PUT method
@@ -169,75 +231,12 @@ describe('v2/posts', () => {
   /**
    * Test the POST method
    */
-  describe('POST "/" route', () => {
-    describe('with correct user', () => {
-      it('should return 201, created', async () => {
-        await request(app)
-          .post(`/api/v2/posts`)
-          .send({
-            email: "pippo@mail.com",
-            title: "test",
-            description: "test"
-          })
-          .expect('Content-Type', /json/)
-          .expect(201);
-      });
-    });
-
-    describe('with a user that does not exist', () => {
-      it('should return 400, bad request', async () => {
-        await request(app)
-          .post(`/api/v2/posts`)
-          .send({
-            email: "pippo@email.com",
-            title: "test",
-            description: "test"
-          })
-          .expect('Content-Type', /json/)
-          .expect(400);
-      });
-    });
-
-    describe('leaving the title field empty', () => {
-      it('should return 400, bad request', async () => {
-        await request(app)
-          .post(`/api/v2/posts`)
-          .send({
-            email: "pippo@mail.com",
-            title: "",
-            description: "test"
-          })
-          .expect('Content-Type', /json/)
-          .expect(400);
-      });
-    });
-
-    describe('leaving the email field empty', () => {
-      it('should return 400, bad request', async () => {
-        await request(app)
-          .post(`/api/v2/posts`)
-          .send({
-            email: "",
-            title: "test",
-            description: "test"
-          })
-          .expect('Content-Type', /json/)
-          .expect(400);
-      });
-    });
-
-    describe('with an email not in the correct format', () => {
-      it('should return 400, bad request', async () => {
-        await request(app)
-          .post(`/api/v2/posts`)
-          .send({
-            email: "test",
-            title: "test",
-            description: "test"
-          })
-          .expect('Content-Type', /json/)
-          .expect(400);
-      });
+   describe('POST on "/" route', () => {
+    it('should return 405, method not allowed', async () => {
+      await request(app)
+        .post(`/api/v2/posts`)
+        .expect('Content-Type', /json/)
+        .expect(405);
     });
   });
 });

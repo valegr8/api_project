@@ -271,5 +271,4 @@ describe('PUT /api/v2/published/:uid/posts/:id', () => {
         .expect(403);
     });
   });
-
 });
