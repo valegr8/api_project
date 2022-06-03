@@ -17,10 +17,28 @@ const User = require('./models/user_v2');
  */
 const Post = require('./models/post_v2');
 
+/**
+ * This function check if the pattern of an email is correct
+ * https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript
+ */
+ function checkIfEmailInString(text) {
+    // eslint-disable-next-line
+    var res = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return res.test(text);
+}
+
+
 //work in progress
 //uid = user id
 router.post('/:uid/posts/', async function(req,res) {
 	let uid = req.params.uid;
+	
+	
+	if(!isValidObjectId(uid)){
+		utils.badRequest(res, 'User id not valid');	//return 400;
+		return;
+	}
+	
 	let user = await User.findById({_id: uid});
 	
 	if(!user){
@@ -30,14 +48,16 @@ router.post('/:uid/posts/', async function(req,res) {
 	
 	//check if the request title is not null
 	if(!utils.isValid(req.body.title)) {
-		utils.badRequest(res, 'User title not valid');	//return 400;
+		utils.badRequest(res, 'Title not valid');	//return 400;
 		return;
 	}
 	
-	if(!isValidObjectId(uid)){
-		utils.badRequest(res, 'User title not valid');	//return 400;
+	if(!utils.isValid(req.body.email) || !checkIfEmailInString(req.body.email)){
+		utils.badRequest(res, 'Email not valid');	//return 400;
 		return;
 	}
+	
+
 	
 	let post = new Post({
         title: req.body.title,
@@ -175,6 +195,7 @@ router.get('/:uid/posts/:id/rooms/:rid', async function(req,res) {
 	utils.setResponseStatus(room,res);
 });
 
+
 /**
  * removes from the array the room with id equal to rid, rid = room id
  */
@@ -211,5 +232,7 @@ router.delete('/:uid/posts/:id/rooms/:rid', async function(req,res) {
 	await post.save();	
 	utils.setResponseStatus(post.available,res, 'Post removed correctly');
 });
+
+
 
 module.exports = router;

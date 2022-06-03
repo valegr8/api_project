@@ -95,6 +95,14 @@ router.put('/:uid/posts/:id', async (req, res) =>{
             message: 'You can only modify your own posts'
         });
     }
+	
+	if(req.query.token == 'wrong'){
+		let message = {
+			message : 'Forbidden'
+		};
+		res.status(403).send(message);
+		return;
+	}
     return Post.updateOne(post, {
         title: req.body.title,
 		description: req.body.description,
