@@ -21,21 +21,21 @@ describe('v2/posts', () => {
 
     /* Mock the Post.find method of mongoose */
     postSpy = jest.spyOn(Post, 'find').mockImplementation((data) => {
-      console.log(JSON.stringify(data));
+      printd(JSON.stringify(data));
 
       // {"available":{"$elemMatch":{"price":{"$lte":"600","$gte":"500"}}}}
       let max_price;
       let min_price;
 
       if(data.available) {
-        console.log("data.available");
+        printd("data.available");
         if(data.available.$elemMatch.price.$lte) {
           max_price = data.available.$elemMatch.price.$lte;
-          console.log(JSON.stringify(data.available.$elemMatch.price.$lte)) 
+          printd(JSON.stringify(data.available.$elemMatch.price.$lte)) 
         }
         if(data.available.$elemMatch.price.$gte) {
           min_price = data.available.$elemMatch.price.$gte;
-          console.log(JSON.stringify(data.available.$elemMatch.price.$gte)) 
+          printd(JSON.stringify(data.available.$elemMatch.price.$gte)) 
         }
 
         if(max_price && min_price) {
