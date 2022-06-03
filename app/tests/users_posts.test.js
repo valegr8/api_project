@@ -3,7 +3,7 @@ const app     = require('../app');
 /**
  * groups the tests of the v2/users route
  */
-describe('v2/users', () => {
+describe('v2/users/.../posts/', () => {
  
   let userSpyFindOne;
   let postSpyFindOne;
@@ -33,12 +33,12 @@ describe('v2/users', () => {
 	const Post =  require('../models/post_v2');
 	postSpyFindOne = jest.spyOn(Post, 'findOne').mockImplementation((query) => {
 		let r;
-		if(query._id === "6295b6e5a8f9e7c8aca31f14" &&
+		if(query._id === "6298f80d3be4df0eb2790de6" &&
 		query.createdBy === "62926a256236cd334360ac49"){
 			r = {			
 				"exec": () => {
 					return {
-						"_id":"6295b6e5a8f9e7c8aca31f14",
+						"_id":"6298f80d3be4df0eb2790de6",
 						"title": "Appartamento molto bello",
 						"description": "Bello",
 						"createdBy": "62926a256236cd334360ac49",
@@ -69,7 +69,7 @@ describe('v2/users', () => {
 			};
 		}else{
 			r = {
-				"_id":"6295b6e5a8f9e7c8aca31f14",
+				"_id":"6298f80d3be4df0eb2790de6",
 				"createdBy": "62926a256236cd334360ac49",
 				"exec": () => {return {					
 					"available":[]
@@ -101,215 +101,252 @@ describe('v2/users', () => {
     
 /*
 *Testing rooms
-*/	
-	describe('GET on /:uid/posts/:id/rooms/', () => {
-		it('should return 200, successful request', async () => {
-			const ownerId = "62926a256236cd334360ac49";
-			const postId = "6295b6e5a8f9e7c8aca31f14";			
-			await request(app)
-			  .get(`/api/v2/users/${ownerId}/posts/${postId}/rooms/`)
-			  .expect('Content-Type', /json/)
-			  .expect(200);
+*/	describe('Testing rooms', () => {
+		describe('GET',() => {
+			describe('GET on /:uid/posts/:id/rooms/', () => {
+				it('should return 200, successful request', async () => {
+					const ownerId = "62926a256236cd334360ac49";
+					const postId = "6298f80d3be4df0eb2790de6";			
+					await request(app)
+					  .get(`/api/v2/users/${ownerId}/posts/${postId}/rooms/`)
+					  .expect('Content-Type', /json/)
+					  .expect(200);
+				});
+			});
+			
+			describe('with an invalid user id', () => {
+				it('should return 400, Bad request', async () => {
+					const ownerId = "ablimblonebucciadilimone";
+					const postId = "6298f80d3be4df0eb2790de6";
+					await request(app)
+					  .get(`/api/v2/users/${ownerId}/posts/${postId}/rooms/`)
+					  .expect('Content-Type', /json/)
+					  .expect(400,{
+							  status: 400,
+							  message: "At least one id is not valid"
+						  });
+				});		
+			});
+			
+			describe('with an invalid post id', () => {
+				it('should return 400, Bad request', async () => {
+					const ownerId = "62926a256236cd334360ac49";
+					const postId = "ablimblonebucciadilimone";
+					await request(app)
+					  .get(`/api/v2/users/${ownerId}/posts/${postId}/rooms/`)
+					  .expect('Content-Type', /json/)
+					  .expect(400,{
+						  status: 400,
+						  message: "At least one id is not valid"
+						});
+				});		
+			});
+			
+			describe('with mismatching ids', () => {
+				it('should return 400, Bad request', async () => {
+					const ownerId = "628a1d73fc4964ea27473f96";
+					const postId = "6298f80d3be4df0eb2790de6";
+					await request(app)
+					  .get(`/api/v2/users/${ownerId}/posts/${postId}/rooms/`)
+					  .expect('Content-Type', /json/)
+					  .expect(400,{
+						  status: 400,
+						  message: "Post id and user id are mismatching"
+						});
+				});		
+			});
+			
+			describe('GET on /:uid/posts/:id/rooms/:rid', () => {
+				it('should return 200, successful request', async () => {
+					const ownerId = "62926a256236cd334360ac49";
+					const postId = "6298f80d3be4df0eb2790de6";
+					const roomId = "6295b6e5a8f9e7c8aca31f16";			
+					await request(app)
+					  .get(`/api/v2/users/${ownerId}/posts/${postId}/rooms/${roomId}`)
+					  .expect('Content-Type', /json/)
+					  .expect(200,{message:{
+										"id":"6295b6e5a8f9e7c8aca31f16",
+										"name":" Stanza2",
+										"price": 200,
+										"description" : "Mmmm"
+									}});
+				});
+			});
+			
+			
+			describe('with an invalid user id', () => {
+				it('should return 400, Bad request', async () => {
+					const ownerId = "ablimblonebucciadilimone";
+					const postId = "6298f80d3be4df0eb2790de6";
+					const roomId = "6295b6e5a8f9e7c8aca31f16";
+					await request(app)
+					  .get(`/api/v2/users/${ownerId}/posts/${postId}/rooms/${roomId}`)
+					  .expect('Content-Type', /json/)
+					  .expect(400,{
+						  status: 400,
+						  message: "At least one id is not valid"
+						});
+				});		
+			});
+			
+			
+			describe('with an invalid post id', () => {
+				it('should return 400, Bad request', async () => {
+					const ownerId = "62926a256236cd334360ac49";
+					const postId = "ablimblonebucciadilimone";
+					const roomId = "6295b6e5a8f9e7c8aca31f16";
+					await request(app)
+					  .get(`/api/v2/users/${ownerId}/posts/${postId}/rooms/${roomId}`)
+					  .expect('Content-Type', /json/)
+					  .expect(400,{
+						  status: 400,
+						  message: "At least one id is not valid"
+						});
+				});		
+			});
+			
+			
+			describe('with an invalid room id', () => {
+				it('should return 400, Bad request', async () => {
+					const ownerId = "62926a256236cd334360ac49";
+					const postId = "6298f80d3be4df0eb2790de6";
+					const roomId = "ablimblonebucciadilimone";
+					await request(app)
+					  .get(`/api/v2/users/${ownerId}/posts/${postId}/rooms/${roomId}`)
+					  .expect('Content-Type', /json/)
+					  .expect(400,{
+						  status: 400,
+						  message: "At least one id is not valid"
+						});
+				});		
+			});
+			
+			
+			describe('with mismatching user id', () => {
+				it('should return 400, Bad request', async () => {
+					const ownerId = "628a1d73fc4964ea27473f96";
+					const postId = "6298f80d3be4df0eb2790de6";
+					const roomId = "6295b6e5a8f9e7c8aca31f16";
+					await request(app)
+					  .get(`/api/v2/users/${ownerId}/posts/${postId}/rooms/${roomId}`)
+					  .expect('Content-Type', /json/)
+					  .expect(400,{
+						  status: 400,
+						  message: "Post id and user id are mismatching"
+						});
+				});		
+			});	
+			
+			
+
 		});
-	});
-	
-	describe('with an invalid user id', () => {
-		it('should return 400, Bad request', async () => {
-			const ownerId = "ablimblonebucciadilimone";
-			const postId = "6295b6e5a8f9e7c8aca31f14";
-			await request(app)
-			  .get(`/api/v2/users/${ownerId}/posts/${postId}/rooms/`)
-			  .expect('Content-Type', /json/)
-			  .expect(400,{
-				  status: 400,
-				  message: "At least one id is not valid"
-				  });
-		});		
-	});
-	
-	describe('with an invalid post id', () => {
-		it('should return 400, Bad request', async () => {
-			const ownerId = "62926a256236cd334360ac49";
-			const postId = "ablimblonebucciadilimone";
-			await request(app)
-			  .get(`/api/v2/users/${ownerId}/posts/${postId}/rooms/`)
-			  .expect('Content-Type', /json/)
-			  .expect(400,{
-				  status: 400,
-				  message: "At least one id is not valid"
-				  });
-		});		
-	});
-	
-	describe('with mismatching ids', () => {
-		it('should return 400, Bad request', async () => {
-			const ownerId = "628a1d73fc4964ea27473f96";
-			const postId = "6295b6e5a8f9e7c8aca31f14";
-			await request(app)
-			  .get(`/api/v2/users/${ownerId}/posts/${postId}/rooms/`)
-			  .expect('Content-Type', /json/)
-			  .expect(400,{
-				  status: 400,
-				  message: "Post id and user id are mismatching"
-				  });
-		});		
-	});
-	
-	describe('GET on /:uid/posts/:id/rooms/:rid', () => {
-		it('should return 200, successful request', async () => {
-			const ownerId = "62926a256236cd334360ac49";
-			const postId = "6295b6e5a8f9e7c8aca31f14";
-			const roomId = "6295b6e5a8f9e7c8aca31f16";			
-			await request(app)
-			  .get(`/api/v2/users/${ownerId}/posts/${postId}/rooms/${roomId}`)
-			  .expect('Content-Type', /json/)
-			  .expect(200,{message:{
-								"id":"6295b6e5a8f9e7c8aca31f16",
-								"name":" Stanza2",
-								"price": 200,
-								"description" : "Mmmm"
-							}});
+		
+		describe('DELETE',() => {
+			
+			describe('DELETE on /:uid/posts/:id/rooms/:rid', () => {
+				it('should return 200, successful request', async () => {
+					const ownerId = "62926a256236cd334360ac49";
+					const postId = "6298f80d3be4df0eb2790de6";
+					const roomId = "6295b6e5a8f9e7c8aca31f16";
+					await request(app)
+					  .delete(`/api/v2/users/${ownerId}/posts/${postId}/rooms/${roomId}`)
+					  .expect('Content-Type', /json/)
+					  .expect(200,{message:[
+										{
+											"id":"6295b6e5a8f9e7c8aca31f15",
+											"name":"Stanza1",
+											"price":300,
+											"description":"Mmmm"
+										}
+									]});
+				});
+			});	
+			
+			
+			describe('with mismatching user id', () => {
+				it('should return 400, Bad request', async () => {
+					const ownerId = "628a1d73fc4964ea27473f96";
+					const postId = "6298f80d3be4df0eb2790de6";
+					const roomId = "6295b6e5a8f9e7c8aca31f16";
+					await request(app)
+					  .delete(`/api/v2/users/${ownerId}/posts/${postId}/rooms/${roomId}`)
+					  .expect('Content-Type', /json/)
+					  .expect(400,{
+						  status: 400,
+						  message: "Post id and user id are mismatching"
+						});
+				});		
+			});
+			
+			
+			describe('with an invalid room id', () => {
+				it('should return 400, Bad request', async () => {
+					const ownerId = "62926a256236cd334360ac49";
+					const postId = "6298f80d3be4df0eb2790de6";
+					const roomId = "ablimblonebucciadilimone";
+					await request(app)
+					  .delete(`/api/v2/users/${ownerId}/posts/${postId}/rooms/${roomId}`)
+					  .expect('Content-Type', /json/)
+					  .expect(400,{
+						  status: 400,
+						  message: "At least one id is not valid"
+						});
+				});		
+			});
+				
+			
+			describe('with an invalid user id', () => {
+				it('should return 400, Bad request', async () => {
+					const ownerId = "ablimblonebucciadilimone";
+					const postId = "6298f80d3be4df0eb2790de6";
+					const roomId = "6295b6e5a8f9e7c8aca31f16";
+					await request(app)
+					  .delete(`/api/v2/users/${ownerId}/posts/${postId}/rooms/${roomId}`)
+					  .expect('Content-Type', /json/)
+					  .expect(400,{
+						  status: 400,
+						  message: "At least one id is not valid"
+						});
+				});		
+			});
+
+			
+			describe('with an invalid post id', () => {
+				it('should return 400, Bad request', async () => {
+					const ownerId = "62926a256236cd334360ac49";
+					const postId = "ablimblonebucciadilimone";
+					const roomId = "6295b6e5a8f9e7c8aca31f16";
+					await request(app)
+					  .delete(`/api/v2/users/${ownerId}/posts/${postId}/rooms/${roomId}`)
+					  .expect('Content-Type', /json/)
+					  .expect(400,{
+						  status: 400,
+						  message: "At least one id is not valid"
+						});
+				});		
+			});
+		
+		
+		
+			
+			
 		});
+
 	});
 	
-	describe('with an invalid user id', () => {
-		it('should return 400, Bad request', async () => {
-			const ownerId = "ablimblonebucciadilimone";
-			const postId = "6295b6e5a8f9e7c8aca31f14";
-			const roomId = "6295b6e5a8f9e7c8aca31f16";
-			await request(app)
-			  .get(`/api/v2/users/${ownerId}/posts/${postId}/rooms/${roomId}`)
-			  .expect('Content-Type', /json/)
-			  .expect(400,{
-				  status: 400,
-				  message: "At least one id is not valid"
-				  });
-		});		
-	});
 	
-	describe('with an invalid post id', () => {
-		it('should return 400, Bad request', async () => {
-			const ownerId = "62926a256236cd334360ac49";
-			const postId = "ablimblonebucciadilimone";
-			const roomId = "6295b6e5a8f9e7c8aca31f16";
-			await request(app)
-			  .get(`/api/v2/users/${ownerId}/posts/${postId}/rooms/${roomId}`)
-			  .expect('Content-Type', /json/)
-			  .expect(400,{
-				  status: 400,
-				  message: "At least one id is not valid"
-				  });
-		});		
-	});
 	
-	describe('with an invalid room id', () => {
-		it('should return 400, Bad request', async () => {
-			const ownerId = "62926a256236cd334360ac49";
-			const postId = "6295b6e5a8f9e7c8aca31f14";
-			const roomId = "ablimblonebucciadilimone";
-			await request(app)
-			  .get(`/api/v2/users/${ownerId}/posts/${postId}/rooms/${roomId}`)
-			  .expect('Content-Type', /json/)
-			  .expect(400,{
-				  status: 400,
-				  message: "At least one id is not valid"
-				  });
-		});		
-	});
 	
-	describe('with mismatching user id', () => {
-		it('should return 400, Bad request', async () => {
-			const ownerId = "628a1d73fc4964ea27473f96";
-			const postId = "6295b6e5a8f9e7c8aca31f14";
-			const roomId = "6295b6e5a8f9e7c8aca31f16";
-			await request(app)
-			  .get(`/api/v2/users/${ownerId}/posts/${postId}/rooms/${roomId}`)
-			  .expect('Content-Type', /json/)
-			  .expect(400,{
-				  status: 400,
-				  message: "Post id and user id are mismatching"
-				  });
-		});		
-	});
 	
-	describe('DELETE on /:uid/posts/:id/rooms/:rid', () => {
-		it('should return 200, successful request', async () => {
-			const ownerId = "62926a256236cd334360ac49";
-			const postId = "6295b6e5a8f9e7c8aca31f14";
-			const roomId = "6295b6e5a8f9e7c8aca31f16";
-			await request(app)
-			  .delete(`/api/v2/users/${ownerId}/posts/${postId}/rooms/${roomId}`)
-			  .expect('Content-Type', /json/)
-			  .expect(200,{message:[
-								{
-									"id":"6295b6e5a8f9e7c8aca31f15",
-									"name":"Stanza1",
-									"price":300,
-									"description":"Mmmm"
-								}
-							]});
-		});
-	});
 	
-	describe('with mismatching user id', () => {
-		it('should return 400, Bad request', async () => {
-			const ownerId = "628a1d73fc4964ea27473f96";
-			const postId = "6295b6e5a8f9e7c8aca31f14";
-			const roomId = "6295b6e5a8f9e7c8aca31f16";
-			await request(app)
-			  .delete(`/api/v2/users/${ownerId}/posts/${postId}/rooms/${roomId}`)
-			  .expect('Content-Type', /json/)
-			  .expect(400,{
-				  status: 400,
-				  message: "Post id and user id are mismatching"
-				  });
-		});		
-	});
 	
-	describe('with an invalid room id', () => {
-		it('should return 400, Bad request', async () => {
-			const ownerId = "62926a256236cd334360ac49";
-			const postId = "6295b6e5a8f9e7c8aca31f14";
-			const roomId = "ablimblonebucciadilimone";
-			await request(app)
-			  .delete(`/api/v2/users/${ownerId}/posts/${postId}/rooms/${roomId}`)
-			  .expect('Content-Type', /json/)
-			  .expect(400,{
-				  status: 400,
-				  message: "At least one id is not valid"
-				  });
-		});		
-	});
 	
-	describe('with an invalid user id', () => {
-		it('should return 400, Bad request', async () => {
-			const ownerId = "ablimblonebucciadilimone";
-			const postId = "6295b6e5a8f9e7c8aca31f14";
-			const roomId = "6295b6e5a8f9e7c8aca31f16";
-			await request(app)
-			  .delete(`/api/v2/users/${ownerId}/posts/${postId}/rooms/${roomId}`)
-			  .expect('Content-Type', /json/)
-			  .expect(400,{
-				  status: 400,
-				  message: "At least one id is not valid"
-				  });
-		});		
-	});
 	
-	describe('with an invalid post id', () => {
-		it('should return 400, Bad request', async () => {
-			const ownerId = "62926a256236cd334360ac49";
-			const postId = "ablimblonebucciadilimone";
-			const roomId = "6295b6e5a8f9e7c8aca31f16";
-			await request(app)
-			  .delete(`/api/v2/users/${ownerId}/posts/${postId}/rooms/${roomId}`)
-			  .expect('Content-Type', /json/)
-			  .expect(400,{
-				  status: 400,
-				  message: "At least one id is not valid"
-				  });
-		});		
-	});
+	
+	
+	
+	
+	
 	
 	
  

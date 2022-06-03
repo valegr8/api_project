@@ -20,23 +20,23 @@ const Post = require('./models/post_v2');
 
 //work in progress
 //uid = user id
-router.post('', async function(req,res) {
+router.post('/:uid/posts/', async function(req,res) {
 	let uid = req.params.uid;
 	let user = await User.findById({_id: uid});
 	
 	if(!user){
-		utils.badRequest(res,info);
+		utils.badRequest(res);
 		return;
 	}		
 	
 	//check if the request title is not null
 	if(!utils.isValid(req.body.title)) {
-		utils.badRequest(res, 'User title not valid', info);	//return 400;
+		utils.badRequest(res, 'User title not valid');	//return 400;
 		return;
 	}
 	
 	if(!isValidObjectId(uid)){
-		utils.badRequest(res, 'User title not valid', info);	//return 400;
+		utils.badRequest(res, 'User title not valid');	//return 400;
 		return;
 	}
 	
@@ -57,26 +57,26 @@ router.post('', async function(req,res) {
 		// printd(savedPost._id);
 		let postId = savedPost._id;
 		if(!isValidObjectId(postId)) {
-			utils.notFound(res, 'Post id not valid',info);
+			utils.notFound(res, 'Post id not valid');
 		}
 		else {
 			res.location("/api/v2/users/"+ uid + "/posts/" + postId);
-			utils.created(res, 'Post saved successfully',info);
+			utils.created(res, 'Post saved successfully');
 		}
 	}).catch((e) => {		
 		// If the post fails we return 404 status code
-		utils.notFound(res,'Post saving failed, '+ e,info);
+		utils.notFound(res,'Post saving failed, '+ e);
 	});
 });
 
 /**
  * Get all posts published by a user, uid = user id
  */
-router.get('', async function(req,res) {
+router.get('/:uid/posts/', async function(req,res) {
 	let uid = req.params.uid;
 	
 	if(!isValidObjectId(uid)){
-		utils.badRequest(res, 'User id not valid', info);	//return 400;
+		utils.badRequest(res, 'User id not valid');	//return 400;
 		return;
 	}
 	
@@ -86,7 +86,7 @@ router.get('', async function(req,res) {
 		return;
 	}else{		
 		Post.find({createdBy : user._id }).exec().then((post)=>{
-			utils.setResponseStatus(post,res, 'Post published retrieved correctly',info);
+			utils.setResponseStatus(post,res, 'Post published retrieved correctly');
 		}).catch((e) => {
 			printd('Error: ' + e,info);
 			utils.notFound(res);
@@ -97,17 +97,17 @@ router.get('', async function(req,res) {
 /**
  * Get a single post published by a user, uid = user id
  */
-router.get('/:id', async function(req,res) {
+router.get('/:uid/posts/:id', async function(req,res) {
 	let uid = req.params.uid;
 	let user = await User.findById(uid).exec();
 	let id = req.params.id;
 	
 	if(!user || !isValidObjectId(id)){
-		utils.badRequest(res,info);
+		utils.badRequest(res);
 		return;
 	}else{
 		Post.findOne({ _id : id }).exec().then((post)=>{
-			utils.setResponseStatus(post,res, 'Post published retrieved successfully',info);
+			utils.setResponseStatus(post,res, 'Post published retrieved successfully');
 		}).catch((e) => {
 			printd('Error: ' + e);
 			utils.notFound(res);
@@ -119,10 +119,9 @@ router.get('/:id', async function(req,res) {
 /**
  * returns the array containing all the rooms
  */
-router.get('/:id/rooms/', async function(req,res) {
+router.get('/:uid/posts/:id/rooms/', async function(req,res) {
 	let uid = req.params.uid;
 	let id = req.params.id;
-	
 	if(!isValidObjectId(uid) || !isValidObjectId(id)){
 		utils.badRequest(res, 'At least one id is not valid');	//return 400;
 		return;
@@ -145,7 +144,7 @@ router.get('/:id/rooms/', async function(req,res) {
 /**
  * returns the room with id equal to rid, rid = room id
  */
-router.get('/:id/rooms/:rid', async function(req,res) {
+router.get('/:uid/posts/:id/rooms/:rid', async function(req,res) {
 	let uid = req.params.uid;
 	let id = req.params.id;
 	let name = req.params.name;
@@ -181,7 +180,7 @@ router.get('/:id/rooms/:rid', async function(req,res) {
 /**
  * removes from the array the room with id equal to rid, rid = room id
  */
-router.delete('/:id/rooms/:rid', async function(req,res) {
+router.delete('/:uid/posts/:id/rooms/:rid', async function(req,res) {
 	let uid = req.params.uid;
 	let id = req.params.id;
 	let rid = req.params.rid;
