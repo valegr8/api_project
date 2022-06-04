@@ -154,6 +154,45 @@ function createSmallRoomDiv(rooms, buttons = false){
     return div;
 }
 
+function createFilterSection(){
+    return `<div class="card mb-3 mt-3" style="width: 40rem;">
+    <div class="card-body">
+      <h5 class="card-title">Filtra la ricerca</h5>
+      <p class="card-text"><a class="text-decoration-none text-secondary" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">Ricerca avanzata <i class="bi bi-chevron-down"></i></a></p>
+      <div class="collapse mb-3" id="collapseExample">
+          <div class="row">
+            <div class="col-sm">
+              <select class="form-select mb-3" aria-label="Default select example" id="sContr">
+                <option class="text-secondary" value="" selected>Seleziona il tipo di contratto...</option>
+                <option value="Mensile">Mensile</option>
+                <option value="Annuale">Annuale</option>
+                <option value="Altro">Altro...</option>
+              </select>
+            </div>
+            <div class="col-sm">
+              <input type="number" id="sNRoom" class="form-control mb-3" placeholder="Numero camere" min="0">
+            </div>
+            <div class="col-sm">
+              <input type="text" id="sWhere" class="form-control mb-3" placeholder="Comune[Provincia]">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm">
+              <input type="number" id="sMinPrice" class="form-control mb-3" placeholder="Prezzo minimo" min="0">
+            </div>
+            <div class="col-sm">
+              <input type="number" id="sMaxPrice" class="form-control mb-3" placeholder="Prezzo massimo" min="0">
+            </div>
+          </div>
+      </div>
+      <div id="filterAlert" class="container mt-3"></div>
+      <input type="text" class="form-control mb-3" placeholder="Cerca..." aria-label="search" id="sSearch">
+      <a href="#" class="btn btn-danger" onclick="" hidden>Annulla <i class="bi bi-x-lg"></i></i></a>
+      <a href="#" class="btn btn-primary" onclick="loadFilteredPost()">Cerca <i class='bi bi-search'></i></a>
+    </div>
+  </div>`;
+}
+
 
 
 
@@ -199,6 +238,14 @@ function loadDetails(id) {
     .catch( error => console.error(error) );// If there is any error you will catch them here
         
 }
+/**
+ * This function load a selection of filtered posts
+ */
+function loadFilteredPost(){
+
+}
+
+
 
 function showAddRoom(title = "Aggiugni Stanza", button = "Aggiungi", oncl = "addRoom()", nome = "", prezzo = ""){
     modalAdd.innerHTML = 
@@ -304,7 +351,7 @@ function loadPosts() {
     const home_div = document.getElementById("home_div");
     home_div.hidden = true;
 
-    main_div.innerHTML = "<h2>Annunci:</h2>";
+    main_div.innerHTML = createFilterSection();
 
 
     fetch('../api/v2/posts')
@@ -316,7 +363,6 @@ function loadPosts() {
         }
         if (!Array.isArray(data.message)) 
             showAlert("Errore nel caricare gli annunci", "danger");
-
         counter = 0;
         return data.message.map(function(post) { // Map through the results and for each run the code below
             counter++;
@@ -555,6 +601,7 @@ function changeUsername(){
             console.log("Errore cambiamento username");
         }else{
             loggedUser.username = data.username;
+            document.getElementById("user").innerText = data.username;
         }
         userPage();
         return;
@@ -778,7 +825,7 @@ function homePage(){
  */
 function smallPost(id,title, price, position){
     return `<div class="col"><a href="#" class="text-decoration-none text-dark" onclick='loadDetails("${id}")'><div class="card"><div class="card-body">
-            <h5 class="card-title">${title}</h5><small class="card-text text-muted"><i class="bi bi-geo-alt-fill"></i>${position}</small>
+            <h5 class="card-title text-truncate">${title}</h5><small class="card-text text-muted"><i class="bi bi-geo-alt-fill"></i>${position}</small>
             <h2 class="card-text">${price}€</h2></div></div></a></div>`;
 }
 
@@ -856,7 +903,7 @@ function favPage(){
             post = data.message;
             var star = false;
             if(loggedUser.favorite != null){loggedUser.favorite.forEach(fav => {if(lid == fav) star = true;});}
-            main_div.innerHTML+= createCardPost(lid,post.title, post.description, post.createdBy);
+            main_div.innerHTML+= createCardPost(lid, post.title, post.showPrice, post.where, post.contract,post.rooms);
             let postIn = document.getElementById("starAtt"+lid);
             postIn.innerHTML=addStar(star, lid);
         })
@@ -997,7 +1044,7 @@ function editPost(id){
     
     // console.log(postTitle);
 
-    fetch('../api/v2/published/'+ loggedUser.id +'/posts/' + id, {
+    fetch('../api/v2/published/'+ loggedUser.id +'/posts/' + id+'?token='+loggedUser.token, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify( { 
@@ -1032,7 +1079,7 @@ function editPost(id){
 
 function deletePost(pid){
     //
-    fetch('../api/v2/published/'+ loggedUser.id+'/posts/'+pid , {method: 'DELETE',})
+    fetch('../api/v2/published/'+ loggedUser.id+'/posts/'+pid+'?token='+loggedUser.token , {method: 'DELETE',})
     .then((resp) => resp.json()) // Transform the data into json
     .then(function(data) {
         showToast(data.message, "Eliminazione Post", "dark");
