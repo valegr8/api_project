@@ -158,6 +158,7 @@ function createFilterSection(){
     return `<div class="card mb-3 mt-3" style="width: 40rem;">
     <div class="card-body">
       <h5 class="card-title">Filtra la ricerca</h5>
+      <input type="text" class="form-control mb-3" placeholder="Cerca..." aria-label="search" id="sSearch">
       <p class="card-text"><a class="text-decoration-none text-secondary" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">Ricerca avanzata <i class="bi bi-chevron-down"></i></a></p>
       <div class="collapse mb-3" id="collapseExample">
           <div class="row">
@@ -186,8 +187,7 @@ function createFilterSection(){
           </div>
       </div>
       <div id="filterAlert" class="container mt-3"></div>
-      <input type="text" class="form-control mb-3" placeholder="Cerca..." aria-label="search" id="sSearch">
-      <a href="#" class="btn btn-danger" onclick="" hidden>Annulla <i class="bi bi-x-lg"></i></i></a>
+      <a href="#" class="btn btn-danger" onclick="loadPosts()" hidden>Annulla <i class="bi bi-x-lg"></i></i></a>
       <a href="#" class="btn btn-primary" onclick="loadFilteredPost()">Cerca <i class='bi bi-search'></i></a>
     </div>
   </div>`;
