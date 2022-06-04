@@ -19,14 +19,14 @@ describe('v2/users', () => {
     userSpyFindOne = jest.spyOn(User, 'findOne').mockImplementation((data) => {
       if (data.email=="exists@email.com" || data._id === "6295b6e5a8f9e7c8aca31f14") {
         return {
-          _id:"628a1d73fc4964ea27473f96",
+          _id:"6295b6e5a8f9e7c8aca31f14",
           email:"exists@email.com",
           password:"exists",
           username:"exists",
 		  favorite: [],
 		  exec: () => {
 			  return {
-			  _id:"628a1d73fc4964ea27473f96",
+			  _id:"6295b6e5a8f9e7c8aca31f14",
 			  email:"exists@email.com",
               password:"exists",
 			  username:"exists",
@@ -37,7 +37,9 @@ describe('v2/users', () => {
         };
       }
       else
-        return null;
+        return {
+			exec: () => {return null;}
+		};
     });
 	
 	function findOne(query){
@@ -174,7 +176,7 @@ describe('v2/users', () => {
 				 await request(app)				 
 				   .post(`/api/v2/users/${userId}/setFavorite`)
 				   .send({
-					   "id":"6295b6e5a8f9e7c8aca31f14"
+					   "id":"628a1d73fc4964ea27473f96"
 				   })
 				   .expect('Content-Type', /json/)
 				   .expect(200);
@@ -187,7 +189,7 @@ describe('v2/users', () => {
 				 await request(app)				 
 				   .post(`/api/v2/users/${userId}/setFavorite`)
 				   .send({
-					   "id":"6295b6e5a8f9e7c8aca31f14"
+					   "id":"628a1d73fc4964ea27473f96"
 				   })
 				   .expect('Content-Type', /json/)
 				   .expect(400,{
@@ -209,6 +211,22 @@ describe('v2/users', () => {
 				   .expect(400,{
 					   status: 400,
 					   message: "Bad request, postId not valid"
+				   });
+			 });
+		 });
+		 
+		 describe('user does not exists',() => {
+			 it('should return User not found', async () => {
+				 const userId = "62926a256236cd334360ac49";
+				 await request(app)
+				   .post(`/api/v2/users/${userId}/setFavorite`)
+				   .send({
+					   "id":"628a1d73fc4964ea27473f96"
+				   })
+				   .expect('Content-Type', /json/)
+				   .expect(404,{
+					   status: 404,
+					   message: "User not found"
 				   });
 			 });
 		 });
@@ -256,6 +274,22 @@ describe('v2/users', () => {
 				 .expect(400,{
 					   status: 400,
 					   message: "Bad request, postId not valid"
+				   });
+			 });
+		 });
+		 
+		  describe('user does not exists',() => {
+			 it('should return User not found', async () => {
+				 const userId = "62926a256236cd334360ac49";
+				 await request(app)
+				   .post(`/api/v2/users/${userId}/remFavorite`)
+				   .send({
+					   "id":"628a1d73fc4964ea27473f96"
+				   })
+				   .expect('Content-Type', /json/)
+				   .expect(404,{
+					   status: 404,
+					   message: "User not found"
 				   });
 			 });
 		 });
