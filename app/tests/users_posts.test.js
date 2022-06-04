@@ -93,6 +93,8 @@ describe('v2/users/.../posts/', () => {
     userSpyFindById.mockRestore();
 	postSpyFindOne.mockRestore();
   });
+  
+  jest.setTimeout(30000);
 
   /**
    * Test the POST method
@@ -106,7 +108,7 @@ describe('v2/users/.../posts/', () => {
 			const ownerId = "62926a256236cd334360ac49";
 			await request(app)
 			  .post(`/api/v2/users/${ownerId}/posts/`)
-			  .send({
+			  .send({					
 					"title": "Appartamento molto bello",
 					"description": "Bello",
 					"createdBy": "62926a256236cd334360ac49",
@@ -132,7 +134,14 @@ describe('v2/users/.../posts/', () => {
 					"where":"Via Marconi, 33"
 			  })
 			  .expect('Content-Type', /json/)
-			  .expect(201);
+			  .expect(function (res){
+				  if(!res.hasOwnProperty('location')) throw new Error("No location");
+			  })
+			  .expect(201,{
+				  status: 201,
+				  message: "Post saved successfully"
+			  });
+			  
 		  });
 		});
 		describe('with a user that does not exist', () => {
@@ -142,12 +151,29 @@ describe('v2/users/.../posts/', () => {
 			  .post(`/api/v2/users/${ownerId}/posts/`)
 			  .send({})
 			  .expect('Content-Type', /json/)
-			  .expect(400);
+			  .expect(400,{
+				  status: 400,
+				  message:"Bad Request"
+			  });
 		  });
 		});
 		
+		describe('with an invalid user id', () => {
+			it('should return 400, User id not valid',async () => {
+				const ownerId = "ablimblonebucciadilimone";
+				await request(app)
+				  .post(`/api/v2/users/${ownerId}/posts/`)
+				  .send({})
+				  .expect('Content-Type', /json/)
+				  .expect(400,{
+					  status: 400,
+					  message: "User id not valid"
+				  });
+			});
+		});
+		
 		describe('leaving the title field empty', () => {
-		  it('should return 400, bad request', async () => {
+		  it('should return 400, Title not valid', async () => {
 			const ownerId = "62926a256236cd334360ac49";
 			await request(app)
 			  .post(`/api/v2/users/${ownerId}/posts/`)
@@ -155,13 +181,16 @@ describe('v2/users/.../posts/', () => {
 				title: ""
 			  })
 			  .expect('Content-Type', /json/)
-			  .expect(400);
+			  .expect(400,{
+				  status: 400,
+				  message: "Title not valid"
+			  });
 		  });
 		});
 		
 		
 		describe('leaving the email field empty', () => {
-		  it('should return 400, bad request', async () => {
+		  it('should return 400, Email not valid', async () => {
 			const ownerId = "62926a256236cd334360ac49";
 			await request(app)
 			  .post(`/api/v2/users/${ownerId}/posts/`)
@@ -170,13 +199,16 @@ describe('v2/users/.../posts/', () => {
 				email: ""
 			  })
 			  .expect('Content-Type', /json/)
-			  .expect(400);
+			  .expect(400,{
+				  status: 400,
+				  message:"Email not valid"
+			  });
 		  });
 		});
 		
 		
 		describe('with an email not in the correct format', () => {
-		  it('should return 400, bad request', async () => {
+		  it('should return 400, Email not valid', async () => {
 			const ownerId = "62926a256236cd334360ac49";
 			await request(app)
 			  .post(`/api/v2/users/${ownerId}/posts/`)
@@ -186,7 +218,10 @@ describe('v2/users/.../posts/', () => {
 				description: "test"
 			  })
 			  .expect('Content-Type', /json/)
-			  .expect(400);
+			  .expect(400,{
+				  status: 400,
+				  message:"Email not valid"
+			  });
 		  });
 		});
 		  

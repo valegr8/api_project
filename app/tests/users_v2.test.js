@@ -6,7 +6,7 @@ const app     = require('../app');
 describe('v2/users', () => {
  
   let userSpyFindOne;
-  let postSpyFindOne;
+  let userSpyUpdateOne;
 
   /**
    * Set the mock implementations of mongoose methods before the tests start
@@ -17,67 +17,52 @@ describe('v2/users', () => {
 
     /* Mock the User.findOne method of mongoose */
     userSpyFindOne = jest.spyOn(User, 'findOne').mockImplementation((data) => {
-      if (data.email=="exists@email.com") {
+      if (data.email=="exists@email.com" || data._id === "6295b6e5a8f9e7c8aca31f14") {
         return {
           _id:"628a1d73fc4964ea27473f96",
           email:"exists@email.com",
           password:"exists",
           username:"exists",
+		  favorite: [],
+		  exec: () => {
+			  return {
+			  _id:"628a1d73fc4964ea27473f96",
+			  email:"exists@email.com",
+              password:"exists",
+			  username:"exists",
+			  favorite: ["6298f80d3be4df0eb2790de6"]
+			  };
+			},
           __v:0
         };
       }
       else
         return null;
     });
-	//for testing rooms 
-	const Post =  require('../models/post_v2');
-	postSpyFindOne = jest.spyOn(Post, 'findOne').mockImplementation((query) => {
+	
+	function findOne(query){
 		let r;
-		if(query._id === "6295b6e5a8f9e7c8aca31f14" &&
-		query.createdBy === "62926a256236cd334360ac49"){
-			r = {			
-				"exec": () => {
-					return {
-						"_id":"6295b6e5a8f9e7c8aca31f14",
-						"title": "Appartamento molto bello",
-						"description": "Bello",
-						"createdBy": "62926a256236cd334360ac49",
-						"contract": "annuale",
-						"phone": "1234 56789",
-						"showPrice":"500",
-						"rooms": 2,
-						"email":"sonic@prova.com",
-						"available": [
-							{
-								"id":"6295b6e5a8f9e7c8aca31f15",
-								"name":"Stanza1",
-								"price":300,
-								"description":"Mmmm"
-							},
-							{
-								"id":"6295b6e5a8f9e7c8aca31f16",
-								"name":" Stanza2",
-								"price": 200,
-								"description" : "Mmmm"
-							}
-						],
-						"where":"Via Marconi, 33",
-						"save":() => {return;},
-						"__v":0	
-					};					
-				}			
+		if(query._id === "6295b6e5a8f9e7c8aca31f14"){
+			r = {
+				_id:"6295b6e5a8f9e7c8aca31f14",
+				email: "pippo@prova.com",
+				password: "1234",
+				favorite: []
 			};
 		}else{
-			r = {
-				"_id":"6295b6e5a8f9e7c8aca31f14",
-				"createdBy": "62926a256236cd334360ac49",
-				"exec": () => {return {					
-					"available":[]
-				}}
-			};			
+			r = undefined;
 		}
 		return r;
-    });
+	}
+	
+	userSpyUpdateOne = jest.spyOn(User,'updateOne').mockImplementation((query,update) => {
+		let user = findOne(query);
+		if(user){
+			user.favorite = update.favorite;
+		}
+		return user;
+	});
+	
 	
   });
   
@@ -86,8 +71,8 @@ describe('v2/users', () => {
    * Restore the mock functions after the test suite ends
    */
   afterAll(async () => {
-    userSpyFindOne.mockRestore();
-	postSpyFindOne.mockRestore();
+    userSpyFindOne.mockRestore();	
+	userSpyUpdateOne.mockRestore();
   });
 
   /**
@@ -179,5 +164,102 @@ describe('v2/users', () => {
       });
     });
   });
+  
+  
+ describe('Favorites',() => {
+	 describe('SetFavorite',() => {
+		 describe('with correct input data',() => {
+			 it('should return 200',async () => {
+				 const userId = "6295b6e5a8f9e7c8aca31f14";
+				 await request(app)				 
+				   .post(`/api/v2/users/${userId}/setFavorite`)
+				   .send({
+					   "id":"6295b6e5a8f9e7c8aca31f14"
+				   })
+				   .expect('Content-Type', /json/)
+				   .expect(200);
+			 });
+		 });
+		 
+		 describe('with invalid uid',() => {
+			 it('should return Bad request, uid not valid', async () => {
+				 const userId = "invalid";
+				 await request(app)				 
+				   .post(`/api/v2/users/${userId}/setFavorite`)
+				   .send({
+					   "id":"6295b6e5a8f9e7c8aca31f14"
+				   })
+				   .expect('Content-Type', /json/)
+				   .expect(400,{
+					   status: 400,
+					   message: "Bad request, uid not valid"
+				   });
+			 });
+		 });
+		 
+		 describe('with invalid post id',() => {
+			 it('should return Bad request, postId not valid', async () => {
+				 const userId = "6295b6e5a8f9e7c8aca31f14";
+				 await request(app)
+				   .post(`/api/v2/users/${userId}/setFavorite`)
+				   .send({
+					   "id":"invalid"
+				   })
+				   .expect('Content-Type', /json/)
+				   .expect(400,{
+					   status: 400,
+					   message: "Bad request, postId not valid"
+				   });
+			 });
+		 });
+	 });
+	 
+	 describe('RemFavorite',() => {
+		 describe('with correct input data',() => {
+			 it('should return 200',async () => {
+				 const userId = "6295b6e5a8f9e7c8aca31f14";
+				 await request(app)
+				  .post(`/api/v2/users/${userId}/remFavorite`)				 
+				  .send({
+					 "id":"6298f80d3be4df0eb2790de6"
+				  })
+				  .expect('Content-Type', /json/)
+				  .expect(200);
+			 });
+		 });
+		 
+		 describe('with invalid uid',() => {
+			 it('should return Bad request, uid not valid', async () => {
+				 const userId = "invalid";
+				 await request(app)				 
+				   .post(`/api/v2/users/${userId}/remFavorite`)
+				   .send({
+					   "id":"6295b6e5a8f9e7c8aca31f14"
+				   })
+				   .expect('Content-Type', /json/)
+				   .expect(400,{
+					   status: 400,
+					   message: "Bad request, uid not valid"
+				   });
+			 });
+		 });
+		 
+		 describe('with invalid post id',() => {
+			 it('should return Bad request, postId not valid', async () => {
+				 const userId = "6295b6e5a8f9e7c8aca31f14";
+				 await request(app)
+				 .post(`/api/v2/users/${userId}/remFavorite`)
+				 .send({
+					 "id":"invalid"
+				 })
+				 .expect('Content-Type', /json/)
+				 .expect(400,{
+					   status: 400,
+					   message: "Bad request, postId not valid"
+				   });
+			 });
+		 });
+	 });
+ });
 });
  
