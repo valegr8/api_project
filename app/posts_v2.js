@@ -17,19 +17,20 @@ const { isValidObjectId } = require('mongoose');
 router.get('', async (req, res) => {
 	printd(req.query.maxp);		/* maximum price */
 	printd(req.query.minp);		/* minimum price */
-	printd(req.query.param);		/* title/description/location */
+	printd(req.query.search);		/* title/description of posts and rooms */
+	printd(req.query.where);		/* location */
 	printd(req.query.rooms);		/* room number */
 	printd(req.query.contract);	/* contract type (e.g annual...) */
 
 	let filter = {}; /* query */
 
-	if (req.query.param) {
+	if (req.query.search) {
 		// $regex = look for the word in the 'where' field, i = case insensivity
-	  	filter.$or = [{ where: { $regex: req.query.param, $options: 'i' }},
-		  			  { title: { $regex: req.query.param, $options: 'i'}},
-					  { description: { $regex: req.query.param, $options: 'i'} },
-					  { available: { $elemMatch: { name: { $regex: req.query.param, $options: 'i'} } } },
-					  { available: { $elemMatch: { description: { $regex: req.query.param, $options: 'i'} } } }
+	  	filter.$or = [
+		  			  { title: { $regex: req.query.search, $options: 'i'}},
+					  { description: { $regex: req.query.search, $options: 'i'} },
+					  { available: { $elemMatch: { name: { $regex: req.query.search, $options: 'i'} } } },
+					  { available: { $elemMatch: { description: { $regex: req.query.search, $options: 'i'} } } }
 					 ];
 	}
 
@@ -42,6 +43,9 @@ router.get('', async (req, res) => {
 	}
 	else if(req.query.maxp) {
 		filter.available =  { $elemMatch: { price: { $lte: req.query.maxp } } };
+	}
+	else if(req.query.where) {
+		filter.where = { $regex: req.query.where, $options: 'i' };
 	}
 
 	// filter on the number of rooms

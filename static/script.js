@@ -193,9 +193,6 @@ function createFilterSection(){
   </div>`;
 }
 
-
-
-
 /**
  * This function creates a page that shows the details of a post
  */
@@ -242,7 +239,77 @@ function loadDetails(id) {
  * This function load a selection of filtered posts
  */
 function loadFilteredPost(){
+    console.log("load FILTER post");
+    var params = "";
 
+    var sWhere = document.getElementById("sWhere").value;
+    if(sWhere) {
+        params += "where=" + sWhere+"&";
+        console.log(sWhere);
+    }
+
+    var sNRoom = document.getElementById("sNRoom").value;
+    if(sNRoom) {
+        params += "rooms=" + sNRoom+"&";
+        console.log(sNRoom);
+    }
+
+    var sMinPrice = document.getElementById("sMinPrice").value;
+    if(sMinPrice){
+        console.log(sMinPrice);
+        params += "minp=" + sMinPrice+"&";
+    }
+
+    var sMaxPrice = document.getElementById("sMaxPrice").value;
+    if(sMaxPrice) {
+        params += "maxp=" + sMaxPrice+"&";
+        console.log(sMaxPrice);
+    }
+    
+    var sContr = document.getElementById("sContr").value;
+    if(sContr) {
+        console.log(sContr);
+        params += "contract=" + sContr+"&"; 
+    }
+
+    var sSearch = document.getElementById("sSearch").value;
+    if(sSearch){
+        console.log(sSearch);
+        params += "search=" + sSearch; 
+    }    
+    
+    console.log("PARAMS:" + params);
+
+    //remove form login
+    inMod.hide();
+
+    const main_div = document.getElementById("main_div");
+    const home_div = document.getElementById("home_div");
+    home_div.hidden = true;
+
+    main_div.innerHTML = createFilterSection();
+
+
+    fetch('../api/v2/posts?'+ params)
+    .then((resp) => resp.json()) // Transform the data into json
+    .then(function(data) { // Here you get the data to modify
+        if (!data.message.length){
+            main_div.innerHTML += "<h3>Nessun annuncio...</h3><br><h4>Sii il primo a pubblicare qualcosa!</h4>";
+            console.log('no data');
+        }
+        if (!Array.isArray(data.message)) 
+            showAlert("Errore nel caricare gli annunci", "danger");
+        counter = 0;
+        return data.message.map(function(post) { // Map through the results and for each run the code below
+            counter++;
+            var star = false;
+            if(loggedUser.favorite != null){loggedUser.favorite.forEach(fav => {if(post._id == fav) star = true;});}
+            main_div.innerHTML+= createCardPost(post._id, post.title, post.showPrice, post.where, post.contract,post.rooms);
+            let postIn = document.getElementById("starAtt"+post._id);
+            postIn.innerHTML=addStar(star, post._id);
+        });
+    })
+    .catch( error => console.error(error) );// If there is any error you will catch them here
 }
 
 
@@ -337,9 +404,6 @@ function editRoom(ind){
     roms.innerHTML = createSmallRoomDiv(roomsToAdd, true);
 }
 
-
-
-
 /**
  * This function refresh the list of posts
  */
@@ -357,7 +421,7 @@ function loadPosts() {
     fetch('../api/v2/posts')
     .then((resp) => resp.json()) // Transform the data into json
     .then(function(data) { // Here you get the data to modify
-        if (!data.message){
+        if (!data.message.length){
             main_div.innerHTML += "<h3>Nessun annuncio...</h3><br><h4>Sii il primo a pubblicare qualcosa!</h4>";
             console.log('no data');
         }
