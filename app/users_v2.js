@@ -99,9 +99,9 @@ router.post('', async function(req,res) {
  */
 router.post('/:uid/setFavorite', async function(req,res) {
 	const postId = req.body.id;
-	if(!isValid(postId)) {utils.badRequest(res, "Bad request, postId not valid");return;}
+	if(!isValidObjectId(postId)) {utils.badRequest(res, "Bad request, postId not valid");return;}
 	const uid = req.params.uid;
-	if(!isValid(uid)) {utils.badRequest(res, "Bad request, uid not valid");return;}
+	if(!isValidObjectId(uid)) {utils.badRequest(res, "Bad request, uid not valid");return;}
 	utils.printd("PostId: " + postId,"AddFav");
 	utils.printd("UserId: " + uid,"AddFav");
 	const user = await User.findOne({ _id: uid}).exec();
@@ -131,9 +131,9 @@ router.post('/:uid/setFavorite', async function(req,res) {
  */
 router.post('/:uid/remFavorite', async function(req,res) {
 	const postId = req.body.id;
-	if(!isValid(postId)) {utils.badRequest(res, "Bad request, postId not valid",info);return;}
+	if(!isValidObjectId(postId)) {utils.badRequest(res, "Bad request, postId not valid",info);return;}
 	const uid = req.params.uid;
-	if(!isValid(uid)) {utils.badRequest(res, "Bad request, uid not valid",info);return;}
+	if(!isValidObjectId(uid)) {utils.badRequest(res, "Bad request, uid not valid",info);return;}
 	utils.printd("PostId: " + postId,"RemFav");
 	utils.printd("UserId: " + uid,"RemFav");
 	const user = await User.findOne({ _id: uid}).exec();
