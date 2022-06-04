@@ -230,6 +230,23 @@ describe('v2/users', () => {
 				   });
 			 });
 		 });
+		 
+		 describe('The post is already in the list',() => {
+			 it('should return 409', async () => {
+				 const userId = "6295b6e5a8f9e7c8aca31f14";
+				 const postId = "6298f80d3be4df0eb2790de6";
+				 await request(app)
+				   .post(`/api/v2/users/${userId}/setFavorite`)
+				   .send({
+					   "id":postId
+				   })
+				   .expect('Content-Type', /json/)
+				   .expect(409,{
+					   status: 409,
+					   message: `Post ${postId} already on Favorite List`
+				   });
+			 });
+		 });
 	 });
 	 
 	 describe('RemFavorite',() => {
@@ -252,7 +269,7 @@ describe('v2/users', () => {
 				 await request(app)				 
 				   .post(`/api/v2/users/${userId}/remFavorite`)
 				   .send({
-					   "id":"6295b6e5a8f9e7c8aca31f14"
+					   "id":"6298f80d3be4df0eb2790de6"
 				   })
 				   .expect('Content-Type', /json/)
 				   .expect(400,{
@@ -290,6 +307,23 @@ describe('v2/users', () => {
 				   .expect(404,{
 					   status: 404,
 					   message: "User not found"
+				   });
+			 });
+		 });
+		 
+		 describe('The post is not in the list',() => {
+			 it('should return 404', async () => {
+				 const userId = "6295b6e5a8f9e7c8aca31f14";
+				 const postId = "628a1d73fc4964ea27473f96";
+				 await request(app)
+				 .post(`/api/v2/users/${userId}/remFavorite`)
+				 .send({
+					 "id":postId
+				 })
+				 .expect('Content-Type', /json/)
+				 .expect(404,{
+					   status: 404,
+					   message: `Post ${postId} not found on Favorite List`
 				   });
 			 });
 		 });
