@@ -174,7 +174,7 @@ describe('v2/users', () => {
 			 it('should return 200',async () => {
 				 const userId = "6295b6e5a8f9e7c8aca31f14";
 				 await request(app)				 
-				   .post(`/api/v2/users/${userId}/setFavorite`)
+				   .post(`/api/v2/users/${userId}/favorites`)
 				   .send({
 					   "id":"628a1d73fc4964ea27473f96"
 				   })
@@ -187,7 +187,7 @@ describe('v2/users', () => {
 			 it('should return Bad request, uid not valid', async () => {
 				 const userId = "invalid";
 				 await request(app)				 
-				   .post(`/api/v2/users/${userId}/setFavorite`)
+				   .post(`/api/v2/users/${userId}/favorites`)
 				   .send({
 					   "id":"628a1d73fc4964ea27473f96"
 				   })
@@ -203,7 +203,7 @@ describe('v2/users', () => {
 			 it('should return Bad request, postId not valid', async () => {
 				 const userId = "6295b6e5a8f9e7c8aca31f14";
 				 await request(app)
-				   .post(`/api/v2/users/${userId}/setFavorite`)
+				   .post(`/api/v2/users/${userId}/favorites`)
 				   .send({
 					   "id":"invalid"
 				   })
@@ -219,7 +219,7 @@ describe('v2/users', () => {
 			 it('should return User not found', async () => {
 				 const userId = "62926a256236cd334360ac49";
 				 await request(app)
-				   .post(`/api/v2/users/${userId}/setFavorite`)
+				   .post(`/api/v2/users/${userId}/favorites`)
 				   .send({
 					   "id":"628a1d73fc4964ea27473f96"
 				   })
@@ -236,7 +236,7 @@ describe('v2/users', () => {
 				 const userId = "6295b6e5a8f9e7c8aca31f14";
 				 const postId = "6298f80d3be4df0eb2790de6";
 				 await request(app)
-				   .post(`/api/v2/users/${userId}/setFavorite`)
+				   .post(`/api/v2/users/${userId}/favorites`)
 				   .send({
 					   "id":postId
 				   })
@@ -254,7 +254,7 @@ describe('v2/users', () => {
 			 it('should return 200',async () => {
 				 const userId = "6295b6e5a8f9e7c8aca31f14";
 				 await request(app)
-				  .post(`/api/v2/users/${userId}/remFavorite`)				 
+				  .put(`/api/v2/users/${userId}/favorites`)				 
 				  .send({
 					 "id":"6298f80d3be4df0eb2790de6"
 				  })
@@ -267,7 +267,7 @@ describe('v2/users', () => {
 			 it('should return Bad request, uid not valid', async () => {
 				 const userId = "invalid";
 				 await request(app)				 
-				   .post(`/api/v2/users/${userId}/remFavorite`)
+				   .put(`/api/v2/users/${userId}/favorites`)
 				   .send({
 					   "id":"6298f80d3be4df0eb2790de6"
 				   })
@@ -283,7 +283,7 @@ describe('v2/users', () => {
 			 it('should return Bad request, postId not valid', async () => {
 				 const userId = "6295b6e5a8f9e7c8aca31f14";
 				 await request(app)
-				 .post(`/api/v2/users/${userId}/remFavorite`)
+				 .put(`/api/v2/users/${userId}/favorites`)
 				 .send({
 					 "id":"invalid"
 				 })
@@ -299,7 +299,7 @@ describe('v2/users', () => {
 			 it('should return User not found', async () => {
 				 const userId = "62926a256236cd334360ac49";
 				 await request(app)
-				   .post(`/api/v2/users/${userId}/remFavorite`)
+				   .put(`/api/v2/users/${userId}/favorites`)
 				   .send({
 					   "id":"628a1d73fc4964ea27473f96"
 				   })
@@ -316,7 +316,7 @@ describe('v2/users', () => {
 				 const userId = "6295b6e5a8f9e7c8aca31f14";
 				 const postId = "628a1d73fc4964ea27473f96";
 				 await request(app)
-				 .post(`/api/v2/users/${userId}/remFavorite`)
+				 .put(`/api/v2/users/${userId}/favorites`)
 				 .send({
 					 "id":postId
 				 })

@@ -97,7 +97,7 @@ router.post('', async function(req,res) {
 /**
  * This function sets a specific post as "favorite"
  */
-router.post('/:uid/setFavorite', async function(req,res) {
+router.post('/:uid/favorites', async function(req,res) {
 	const postId = req.body.id;
 	if(!isValidObjectId(postId)) {utils.badRequest(res, "Bad request, postId not valid");return;}
 	const uid = req.params.uid;
@@ -129,7 +129,7 @@ router.post('/:uid/setFavorite', async function(req,res) {
  /**
  * This function remove a specific post as "favorite"
  */
-router.post('/:uid/remFavorite', async function(req,res) {
+router.put('/:uid/favorites', async function(req,res) {
 	const postId = req.body.id;
 	if(!isValidObjectId(postId)) {utils.badRequest(res, "Bad request, postId not valid",info);return;}
 	const uid = req.params.uid;

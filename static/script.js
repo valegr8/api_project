@@ -685,7 +685,7 @@ function setFavorite(id){
         modal.show();
         return;
     }
-    fetch('../api/v2/users/'+ loggedUser.id+'/setFavorite', {
+    fetch('../api/v2/users/'+ loggedUser.id+'/favorites', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify( {id: id }  ),
@@ -710,8 +710,8 @@ function remFavorite(id){
         modal.show();
         return;
     }
-    fetch('../api/v2/users/'+ loggedUser.id+'/remFavorite', {
-        method: 'POST',
+    fetch('../api/v2/users/'+ loggedUser.id+'/favorites', {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify( {id: id }  ),
     })
