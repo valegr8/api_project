@@ -4,7 +4,7 @@
   "description": "Progetto di ingegneria del software 2, web API",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --detectOpenHandles",
     "start": "node index.js",
     "start_local": "node -r dotenv/config index.js"
   },
