@@ -18,6 +18,7 @@ describe('v1/posts', () => {
    * Set the mock implementations of mongoose methods before the tests start
    */
   beforeAll( () => {
+    done();
     /* Set database connection */
     jest.setTimeout(8000); /** < Increments the timeout */
     jest.unmock('mongoose');
@@ -82,6 +83,7 @@ describe('v1/posts', () => {
     postSpy.mockRestore();
     postSpyFindById.mockRestore();
     userSpyFindOne.mockRestore();
+    done();
   });
 
   /**

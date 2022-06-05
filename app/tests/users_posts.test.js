@@ -17,6 +17,7 @@ describe('v2/users/.../posts/', () => {
 	 * Set the mock implementations of mongoose methods before the tests start
 	 */
 	beforeAll(() => {
+		done();
 		const User = require('../models/user_v2');
 
 		userSpyFindById = jest.spyOn(User, 'findById').mockImplementation((data) => {
@@ -94,6 +95,7 @@ describe('v2/users/.../posts/', () => {
 	afterAll(async () => {
 		userSpyFindById.mockRestore();
 		postSpyFindOne.mockRestore();
+		done();
 	});
 
 	jest.setTimeout(30000);

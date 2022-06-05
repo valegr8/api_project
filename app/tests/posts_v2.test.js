@@ -17,6 +17,7 @@ describe('v2/posts', () => {
    * Set the mock implementations of mongoose methods before the tests start
    */
   beforeAll( () => {    
+    done();
     const Post = require('../models/post_v2');
 
     /* Mock the Post.find method of mongoose */
@@ -114,6 +115,7 @@ describe('v2/posts', () => {
   afterAll(async () => {
     postSpy.mockRestore();
     postSpyFindById.mockRestore();
+    done();
   });
 
   /**

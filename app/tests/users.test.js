@@ -12,7 +12,7 @@ describe('v1/users', () => {
    * Set the mock implementations of mongoose methods before the tests start
    */
   beforeAll( () => {
-    
+    done();
     const User = require('../models/user');
 
     /* Mock the User.findOne method of mongoose */
@@ -36,6 +36,7 @@ describe('v1/users', () => {
    */
   afterAll(async () => {
     userSpyFindOne.mockRestore();
+    done();
   });
 
   /**

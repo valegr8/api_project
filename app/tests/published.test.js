@@ -15,7 +15,7 @@ describe('DELETE /api/v2/published/:uid/posts/:id', () =>{
      * Set database connection
      */
     beforeAll( async () => {
-
+      done();
       const Post = require('../models/post_v2');
       
       /**
@@ -63,6 +63,7 @@ describe('DELETE /api/v2/published/:uid/posts/:id', () =>{
       afterAll( () => {
         postSpyFindById.mockRestore();
         postSpyDeleteOne.mockRestore();
+        done();
       });
       
   // create a valid token
