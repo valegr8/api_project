@@ -115,7 +115,7 @@ router.post('/:uid/favorites', async function(req,res) {
 	await User.updateOne({ _id: uid}, {
 		favorite: favList
 	});
-	res.status(200).json({
+	res.status(201).json({
 		success: true,
 		message: 'Post addedd to your favorites!',
 		uid: uid,
@@ -129,7 +129,7 @@ router.post('/:uid/favorites', async function(req,res) {
  /**
  * This function remove a specific post as "favorite"
  */
-router.put('/:uid/favorites', async function(req,res) {
+router.delete('/:uid/favorites', async function(req,res) {
 	const postId = req.body.id;
 	if(!isValidObjectId(postId)) {utils.badRequest(res, "Bad request, postId not valid",info);return;}
 	const uid = req.params.uid;

@@ -711,7 +711,7 @@ function remFavorite(id){
         return;
     }
     fetch('../api/v2/users/'+ loggedUser.id+'/favorites', {
-        method: 'PUT',
+        method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify( {id: id }  ),
     })
