@@ -1,29 +1,28 @@
 const request = require('supertest');
-const app     = require('../app');
+const app = require('../app');
 
 /**
  * groups the tests of the v1/users route
  */
 describe('v1/users', () => {
- 
+
   let userSpyFindOne;
 
   /**
    * Set the mock implementations of mongoose methods before the tests start
    */
-  beforeAll( () => {
-    done();
+  beforeAll(() => {
     const User = require('../models/user');
 
     /* Mock the User.findOne method of mongoose */
     userSpyFindOne = jest.spyOn(User, 'findOne').mockImplementation((data) => {
-      if (data.email=="exists@email.com") {
+      if (data.email == "exists@email.com") {
         return {
-          _id:"628a1d73fc4964ea27473f96",
-          email:"exists@email.com",
-          password:"exists",
-          username:"exists",
-          __v:0
+          _id: "628a1d73fc4964ea27473f96",
+          email: "exists@email.com",
+          password: "exists",
+          username: "exists",
+          __v: 0
         };
       }
       else
@@ -36,7 +35,6 @@ describe('v1/users', () => {
    */
   afterAll(async () => {
     userSpyFindOne.mockRestore();
-    done();
   });
 
   /**
@@ -128,4 +126,3 @@ describe('v1/users', () => {
     });
   });
 });
- 

@@ -19,5 +19,5 @@ describe('GET /', () => {
     return request(app)
       .get('/')
       .expect(200);
-  });  
+  });
 });

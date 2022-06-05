@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app     = require('../app');
+const app = require('../app');
 const mongoose = require('mongoose');
 
 /* To use the debug print */
@@ -9,7 +9,6 @@ const { printd } = require('../../utils/utils.js');
  * groups the tests of the v1/posts route
  */
 describe('v1/posts', () => {
- 
   let postSpy;
   let postSpyFindById;
   let userSpyFindOne;
@@ -17,15 +16,14 @@ describe('v1/posts', () => {
   /**
    * Set the mock implementations of mongoose methods before the tests start
    */
-  beforeAll( () => {
-    done();
+  beforeAll(() => {
     /* Set database connection */
     jest.setTimeout(8000); /** < Increments the timeout */
     jest.unmock('mongoose');
     // console.log('process.env.DB_URL');
-    mongoose.connect(process.env.DB_URL, {useNewUrlParser: true, useUnifiedTopology: true});
+    mongoose.connect(process.env.DB_URL, { useNewUrlParser: true, useUnifiedTopology: true });
     printd('Database connected!');
-    
+
     const Post = require('../models/post');
     const User = require('../models/user');
 
@@ -45,7 +43,7 @@ describe('v1/posts', () => {
 
     /* Mock the Post.findById method of mongoose */
     postSpyFindById = jest.spyOn(Post, 'findById').mockImplementation((id) => {
-      if (id=="628a1d99fc4964ea27473f9a") {
+      if (id == "628a1d99fc4964ea27473f9a") {
         return {
           message: {
             _id: "628a1d99fc4964ea27473f9a",
@@ -53,7 +51,7 @@ describe('v1/posts', () => {
             description: "Vicino a tutto",
             createdBy: "test@email.com",
             __v: 0
-            }
+          }
         };
       }
       else
@@ -62,13 +60,13 @@ describe('v1/posts', () => {
 
     /* Mock the Post.findOne method of mongoose */
     userSpyFindOne = jest.spyOn(User, 'findOne').mockImplementation((data) => {
-      if (data.email=="test@email.com") {
+      if (data.email == "test@email.com") {
         return {
-          _id:"628a1d73fc4964ea27473f96",
-          email:"test@email.com",
-          password:"test",
-          username:"test",
-          __v:0
+          _id: "628a1d73fc4964ea27473f96",
+          email: "test@email.com",
+          password: "test",
+          username: "test",
+          __v: 0
         };
       }
       else
@@ -83,7 +81,6 @@ describe('v1/posts', () => {
     postSpy.mockRestore();
     postSpyFindById.mockRestore();
     userSpyFindOne.mockRestore();
-    done();
   });
 
   /**
@@ -232,4 +229,3 @@ describe('v1/posts', () => {
     });
   });
 });
- 

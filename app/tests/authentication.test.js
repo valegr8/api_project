@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app     = require('../app');
+const app = require('../app');
 const mongoose = require('mongoose');
 const { deleteOne } = require('../models/user_v2');
 
@@ -7,26 +7,24 @@ const { deleteOne } = require('../models/user_v2');
  * groups the tests of the v1/authentications route
  */
 describe('v1/authentications', () => {
- 
+
   let userSpyFindOne;
 
   /**
    * Set the mock implementations of mongoose methods before the tests start
    */
-  beforeAll( () => {
-    done();
-    
+  beforeAll(() => {
     const User = require('../models/user_v2');
 
-   /* Mock the User.findOne method of mongoose */
+    /* Mock the User.findOne method of mongoose */
     userSpyFindOne = jest.spyOn(User, 'findOne').mockImplementation((data) => {
-      if (data.email=="pippo@mail.com") {
+      if (data.email == "pippo@mail.com") {
         return {
-          _id:"628a1d73fc4964ea27473f96",
-          email:"pippo@mail.com",
-          password:"1234",
-          username:"pippo",
-          __v:0
+          _id: "628a1d73fc4964ea27473f96",
+          email: "pippo@mail.com",
+          password: "1234",
+          username: "pippo",
+          __v: 0
         };
       }
       else
@@ -37,7 +35,6 @@ describe('v1/authentications', () => {
   /* Restore the mock functions after the test suite ends */
   afterAll(async () => {
     userSpyFindOne.mockRestore();
-    done();
   });
 
   /**
@@ -110,4 +107,3 @@ describe('v1/authentications', () => {
     });
   });
 });
- 
