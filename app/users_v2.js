@@ -94,6 +94,22 @@ router.post('', async function(req,res) {
     return res.test(text);
 }
 
+router.get('', async function(req,res) {
+	utils.notAllowed(res);
+});
+
+router.delete('', async function(req,res) {
+	utils.notAllowed(res);
+});
+
+router.get('/:uid', async function(req,res) {
+	utils.notAllowed(res);
+});
+
+router.delete('/:uid', async function(req,res) {
+	utils.notAllowed(res);
+});
+
 /**
  * This function sets a specific post as "favorite"
  */
@@ -124,6 +140,14 @@ router.post('/:uid/favorites', async function(req,res) {
 	});
     printd("Fav added. Post id: " + postId,info);
 	return;
+});
+
+router.get('/:uid/favorites', async function(req,res) {
+	utils.notAllowed(res);
+});
+
+router.put('/:uid/favorites', async function(req,res) {
+	utils.notAllowed(res);
 });
 
  /**

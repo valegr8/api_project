@@ -233,6 +233,12 @@ router.delete('/:uid/posts/:id/rooms/:rid', async function(req,res) {
 	utils.setResponseStatus(post.available,res, 'Post removed correctly');
 });
 
+router.put('/:uid/posts/:id/rooms', async function(req,res) {
+	utils.notAllowed(res);
+});
 
+router.put('/:uid/posts/:id/rooms/:rid', async function(req,res) {
+	utils.notAllowed(res);
+});
 
 module.exports = router;
