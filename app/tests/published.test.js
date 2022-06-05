@@ -55,18 +55,12 @@ describe('DELETE /api/v2/published/:uid/posts/:id', () =>{
      postSpyDeleteOne = jest.spyOn(Post, 'deleteOne').mockImplementation(() => {
        return;
     });
-        //jest.setTimeout(30000); /** < Increments the timeout */
-        //jest.unmock('mongoose');
-        //await  mongoose.connect('mongodb+srv://admin:admin1234@cluster0.deuin.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', {useNewUrlParser: true, useUnifiedTopology: true});
-        //printd('Database connected!');
-      });
+  });
       
       /**
        * End database connection
        */
       afterAll( () => {
-        //mongoose.connection.close(true);
-        //printd("Database connection closed");
         postSpyFindById.mockRestore();
         postSpyDeleteOne.mockRestore();
       });
