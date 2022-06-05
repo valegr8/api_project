@@ -1041,7 +1041,287 @@ paths:
                    - status
                    - message
 
-
+  /published/{uid}/posts/{id}:
+    delete: 
+      description: >-
+        Deletes one post previoulsy published by the user
+      summary: Delete published post
+      parameters:
+        - in: user id
+          name: uid
+          required: true
+          schema:
+            type: string
+          description: The mongodb objectId of the user
+        - in: post id
+          name: id
+          required: true
+          schema:
+            type: string
+            description: The mongodb objectId of the post
+      responses:
+        '200':
+          description: 'The post was successfully deleted'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: 62866283f3ff1e92d70116ef
+                        description: "mongodb id of the deleted post"
+                      title:
+                        type: string
+                        example: Appartamento bellissimo
+                        description: "Title of the post"
+                      description:
+                        type: string
+                        example: Vicino a tutto
+                        description: "Details of the post"
+                      createdBy:
+                        type: string
+                        example: 628a1d73fc4964ea27473f96
+                        description: "id of creator of the post"
+                      where:
+                        type: string
+                        example: "Piazza Marconi"
+                        description: "location of the building"
+                      contract:
+                        type: string
+                        example: "monthly"
+                        description: "type of contract (montly, annual)"
+                      phone: 
+                        type: string
+                        example: "3210457381"
+                        description: "phone number of the owner"
+                      showPrice: 
+                        type: string
+                        example: "300"
+                        description: "the price shown (can be different from the rooms)"
+                      rooms:
+                        type: number
+                        example: 3
+                        description: "number of rooms"
+                      email: 
+                        type: string
+                        example: "pippo@mail.com"
+                        description: "mail of the owner"
+                      available: 
+                        type: array
+                        example: ["room 1", 280, "room number 1"]
+                        description: "rooms available for this building"
+                items:
+                  $ref: '#/components/schemas/Post'
+        '404':
+          description: "the post to delete was not found"
+          content:
+            application/json: 
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 404
+                    description: status code
+                  message:
+                    type: string
+                    example: Post not found
+                    description: status code
+                required:
+                  - status
+                  - message
+        '400':
+           description: 'Either the user id or the post id is invalid'
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   status:
+                     type: integer
+                     example: 400
+                     description: status code
+                   message:
+                     type: string
+                     example: user id not valid
+                     description: status code
+                 required:
+                   - status
+                   - message
+        '403':
+           description: 'Wrong access token'
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   status:
+                     type: integer
+                     example: 400
+                     description: status code
+                   message:
+                     type: string
+                     example: Forbidden
+                     description: status code
+                 required:
+                   - status
+                   - message
+        '401':
+           description: 'Attempting to delete a post not published by a certain user'
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   status:
+                     type: integer
+                     example: 401
+                     description: status code
+                   message:
+                     type: string
+                     example: You can only delete your own posts
+                     description: status code
+                 required:
+                   - status
+                   - message
+  
+    put:
+      description: >-
+        Modify one post previously published by the user
+      summary: Modify published post
+      parameters:
+        - in: user id
+          name: uid
+          required: true
+          schema:
+            type: string
+          description: The mongodb objectId of the user
+        - in: post id
+          name: id
+          required: true
+          schema:
+            type: string
+            description: The mongodb objectId of the post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Modified title
+                  description: 'New title'
+                description_:
+                  type: string
+                  example: Modified description
+                  description: 'New description'
+                contract:
+                  type: string
+                  example: monthly
+                  description: 'New type of contract'
+                phone:
+                  type: string
+                  example: "3421266597"
+                  description: "New phone number of owner"
+                showPrice:
+                  type: string
+                  example: 310
+                  description: "New show price"
+                rooms:
+                  type: number
+                  example: 4
+                  description: "New number of rooms"
+                available:
+                  type: array
+                  example: ["room1", 280, "room number 1", "room2", 270, "room number 2"]
+                  description: "New array of rooms"
+                where:
+                  type: string
+                  example: "Piazza Garibaldi"
+                  description: "New location of building"
+      responses:
+        '200':
+          description: 'The post was successfully modified'
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  acknowledged:
+                    type: boolean
+                    example: true
+                    description: "Result of edit"
+                  modifiedCount: 
+                    type: number
+                    example: 1
+                    description: "No. of edits made"
+                  upsertedId: 
+                    type: objectId
+                    example: null
+                    description: "Id is still the same"
+                  matchedCount: 
+                    type: number
+                    example: 1
+                    description: "No. of posts found with matched attributes"
+        '404':
+           description: 'Post not found'
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   status:
+                     type: integer
+                     example: 404
+                     description: status code
+                   message:
+                     type: string
+                     example: post not found
+                     description: status code
+                 required:
+                   - status
+                   - message
+        '400':
+           description: 'User id or post id not valid'
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   status:
+                     type: integer
+                     example: 400
+                     description: status code
+                   message:
+                     type: string
+                     example: uid not valid
+                     description: status code
+                 required:
+                   - status
+                   - message
+        '401':
+           description: 'Attempting to modify a post not published by a certain user'
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   status:
+                     type: integer
+                     example: 401
+                     description: status code
+                   message:
+                     type: string
+                     example: You can only modify your own posts
+                     description: status code
+                 required:
+                   - status
+                   - message 
           
 components:
   schemas:
