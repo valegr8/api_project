@@ -345,11 +345,11 @@ paths:
       summary: New post creation
       parameters:
         - in: path
-          name: email
+          name: uid
           required: true
           schema:
             type: string
-          description: The email of the registered user
+          description: The objectId of the registered user
       requestBody:
         content:
           application/json:
@@ -737,6 +737,199 @@ paths:
                    - status
                    - message
 
+  /users/{uid}/favorites/:
+    post:
+      description: >-
+        Adds a post in the favorites.
+      summary: Addition to favorites
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          schema:
+            type: string
+          description: The mongodb objecId of the registered user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+              properties:
+                  id:
+                    type: string
+                    example: 628a1d73fc4964ea27473f96
+
+
+      responses:
+        '201':
+           description: 'The post has been added to the favorites'
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   success:
+                     type: boolean
+                     example: true
+                     description: The request is successful
+                   message:
+                     type: string
+                     example: Post added to your favorites!
+                     description: explanation
+                   uid:
+                     type: string
+                     example: 6295b6e5a8f9e7c8aca31f14
+                     description: user id
+                   id:
+                     type: string
+                     example: 628a1d73fc4964ea27473f96
+                     description: post id
+                   favorite:
+                     type: array
+                     description: Array of the ids of your bookmarked posts
+                     items:
+                       $ref: '#/components/schemas/Bookmarked'
+                 required:
+                   - success
+                   - message
+                   - uid
+                   - id
+                   - favorite
+
+        '404':
+           description: 'User not found in the databease'
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   status:
+                     type: integer
+                     example: 404
+                     description: status code
+                   message:
+                     type: string
+                     example: user not found
+                     description: explanation
+                 required:
+                   - status
+                   - message
+        '400':
+           description: 'Either the uid or the post id are not valid objectIds'
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   status:
+                     type: integer
+                     example: 400
+                     description: status code
+                   message:
+                     type: string
+                     example: Bad request, uid not valid
+                     description: explanation
+                 required:
+                   - status
+                   - message
+    delete:
+      description: >-
+        Removes a post from the favorites.
+      summary: Remove from favorites
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          schema:
+            type: string
+          description: The mongodb objecId of the registered user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id
+              properties:
+                  id:
+                    type: string
+                    example: 628a1d73fc4964ea27473f96
+
+
+      responses:
+        '201':
+           description: 'The post has been removed from the favorites'
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   success:
+                     type: boolean
+                     example: true
+                     description: The request is successful
+                   message:
+                     type: string
+                     example: Post removed from your favorites!
+                     description: explanation
+                   uid:
+                     type: string
+                     example: 6295b6e5a8f9e7c8aca31f14
+                     description: user id
+                   id:
+                     type: string
+                     example: 628a1d73fc4964ea27473f96
+                     description: post id
+                   favorite:
+                     type: array
+                     description: Array of the ids of your bookmarked posts
+                     items:
+                       $ref: '#/components/schemas/Bookmarked'
+                 required:
+                   - success
+                   - message
+                   - uid
+                   - id
+                   - favorite
+
+        '404':
+           description: 'User not found in the databease'
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   status:
+                     type: integer
+                     example: 404
+                     description: status code
+                   message:
+                     type: string
+                     example: user not found
+                     description: explanation
+                 required:
+                   - status
+                   - message
+        '400':
+           description: 'Either the uid or the post id are not valid objectIds'
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   status:
+                     type: integer
+                     example: 400
+                     description: status code
+                   message:
+                     type: string
+                     example: Bad request, uid not valid
+                     description: explanation
+                 required:
+                   - status
+                   - message
 
   /authentications:
     post:
@@ -924,15 +1117,6 @@ components:
           type: string
           example: stanza bella
           description: 'info about the room'
-    Error:
-      type: object
-      required:
-        - status
-        - message
-      properties:
-        status:
-          type: integer
-          description: 'status code'
-        message:
-          type: string
-          description: 'Description of the error'
+    Bookmarked:
+      type: string
+      example: 6298f80d3be4df0eb2790de6
